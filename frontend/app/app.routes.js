@@ -4,3 +4,4 @@ export const appRoutes = [
     { path: '/sign-in', view: 'signInView' },
     { path: '/sign-up', view: 'signUpView' },
 ]
+ 

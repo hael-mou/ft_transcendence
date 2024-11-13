@@ -6,4 +6,4 @@ services:
     ports:
       - "80:80"
     volumes:
-      - "/Volumes/EL MOUDDEN/ft_transcendence/frontend/src:/usr/share/nginx/html"
+      - "/Users/ndahib/Desktop/ft_transcendence/frontend:/usr/share/nginx/html"
