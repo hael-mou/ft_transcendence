@@ -110,6 +110,7 @@ export class ResetPassword extends Component
 
     /* === onConnected : ========================================================== */
     onConnected(){
+        console.log("================>>", uidb64, token)
         const submitButton = this.shadowRoot.getElementById("reset_form");
 
         this.addEventListener(submitButton, 'submit', async (event) =>
@@ -147,15 +148,12 @@ async function handleResetPassword(email)
     
     if (response.ok) {
         const data = JSON.parse(responseText);
-        console.log(data)
-        const uidb64 = data["uidb64"];
-        console.log(uidb64);
-        const token = data["token"];
-        console.log(token)
-
+        console.log(data["message"])
+        return ("success")
         // khass 7mza ystori hadxi fxi 9ont bax n9dr nsifto mn b3d f set new password
     } else {
-        console.error("Error:", responseText);
+        const error = JSON.parse(responseText);
+        return (error["error"])
     }
 }
 

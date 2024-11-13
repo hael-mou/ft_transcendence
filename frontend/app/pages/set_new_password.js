@@ -89,36 +89,40 @@ export class SetNewPassword extends Component
             <h1>set new password</h1>
             
             <form id="set-new-password-form">
-
-                <input id="password-input" type="password" placeholder="your new password" class="input-field" required>
-                <input id="password-input-confirm" type="password" placeholder="confirm your new password" class="input-field" required>
-                <button id="submit_button" type="submit" class="submit-btn">save</button>
+            
+            <input id="password-input" type="password" placeholder="your new password" class="input-field" required>
+            <input id="password-input-confirm" type="password" placeholder="confirm your new password" class="input-field" required>
+            <button id="submit_button" type="submit" class="submit-btn">save</button>
             </form>
             <div id= "errorMessage" class="error-message hidden">
             </div>
-        </div>
-        `; 
-    }
-
-
+            </div>
+            `; 
+        }
+        
+        
     //== onConnected =========================================================================
-
+        
     onConnected(){
-        const submitButton = this.shadowRoot.getElementById("set-new-password-form");
+        const urlParams = new URLSearchParams(window.location.search);
+        const uidb64 = urlParams.get('uidb64');
+        const token = urlParams.get('token');
 
-        this.addEventListener(submitButton, "submit", setNewPassword.bind(this));
+        const submitButton = this.shadowRoot.getElementById("set-new-password-form");
+        
+        this.addEventListener(submitButton, "submit", setNewPassword.bind(this)(uidb64, token));
     }
 }
 
-async function setNewPassword(){
-    const errorMessage = this.shadowRoot.getElementById(errorMessage);
+async function setNewPassword(uidb64, token){
+    const errorMessage = this.shadowRoot.getElementById("errorMessage");
     const password1 = this.shadowRoot.getElementById("password-input").value;
     const password2 = this.shadowRoot.getElementById("password-input-confirm").value;
 
     if (validatePasswords(password1, password2)){
 
         const response = await fetch("http://127.0.0.1:8080/auth/set-new-password",{
-            method: "POST", 
+            method: "PATCH", 
             headers: {
                 "Content-Type": "application/json"
             },
