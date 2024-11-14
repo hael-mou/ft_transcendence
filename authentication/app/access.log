@@ -1,0 +1,4 @@
+127.0.0.1 - - [12/Nov/2024:14:30:36 +0000] "OPTIONS /auth/login HTTP/1.1" 200 0 "http://127.0.0.1/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+127.0.0.1 - - [12/Nov/2024:14:30:37 +0000] "POST /auth/login HTTP/1.1" 500 145 "http://127.0.0.1/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+127.0.0.1 - - [12/Nov/2024:14:31:52 +0000] "OPTIONS /auth/login HTTP/1.1" 200 0 "http://127.0.0.1/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+127.0.0.1 - - [12/Nov/2024:14:31:52 +0000] "POST /auth/login HTTP/1.1" 500 145 "http://127.0.0.1/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
