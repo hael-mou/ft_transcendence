@@ -1,2 +1,5 @@
 .vscode
 .git
+.env
+.venv
+__pycache__
