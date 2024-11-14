@@ -1,5 +1,26 @@
-.vscode
+
+# === Git : ===========================
 .git
-.env
-.venv
+
+
+# === Python : ========================
+*.pyc
+*.pyo
+
+
+# === Django : ========================
+*.log
+migrations
 __pycache__
+
+
+# === macOS : =========================
+.DS_Store
+
+
+# === Docker secrets : ================
+.env
+*.env.*
+secret
+secrets
+.secrets
