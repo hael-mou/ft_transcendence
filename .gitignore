@@ -18,9 +18,17 @@ __pycache__
 .DS_Store
 
 
-# === Docker secrets : ================
+# === Vim : ===========================
+*.swp
+*.swo
+*.swx
+
+
+# === secrets : =======================
 .env
 *.env.*
 secret
 secrets
 .secrets
+*.crt
+*.key

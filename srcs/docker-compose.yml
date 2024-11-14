@@ -1,0 +1,15 @@
+
+version: '3.8'
+
+services:
+    api-gateway:
+        container_name: api-gateway
+        image: api-gateway:ft_transcendence
+        build:
+            context: .
+            dockerfile: api-gateway/Dockerfile
+        ports:
+            - "80:80"
+        volumes:
+            - "/Volumes/EL\ MOUDDEN/Project/ft_transcendence/srcs/frontend/:/usr/share/nginx/html"
+        restart: always

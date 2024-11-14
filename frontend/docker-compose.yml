@@ -1,9 +1,0 @@
-version: '3'
-services:
-  nginx:
-    container_name: nginxAuth
-    build: .
-    ports:
-      - "80:80"
-    volumes:
-      - "/Volumes/EL MOUDDEN/ft_transcendence/frontend/src:/usr/share/nginx/html"
