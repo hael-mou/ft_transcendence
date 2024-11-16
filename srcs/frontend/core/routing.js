@@ -14,23 +14,31 @@ export class Router
     }
 
     /* === initialize : ===================================================== */
-    static initialize()
+    static async initialize()
     {
         window.addEventListener('click', this.handleRouting);
         window.addEventListener('popstate', loadRoute);
-        loadRoute.call(this);
+        await loadRoute();
     }
 
     /* === handle Routing Event : =========================================== */
-    static handleRouting(event)
+    static async handleRouting(event)
     {
         if (event.target.matches("[data-link]"))
         {
             event.preventDefault()
             if (event.target.href === location.href) return;
             history.pushState(null, null, event.target.href);
-            loadRoute.call(this);
+            await loadRoute();
         }
+    }
+
+    /* === handle Routing Event : =========================================== */
+    static async redirect(url)
+    {
+        if (url === location.href) return;
+        history.replaceState(null, null, url);
+        await loadRoute();
     }
 }
 
@@ -53,5 +61,5 @@ async function loadRoute()
        console.error("No view associated with the route");
        return ;
     }
-    // await routeToLoad.view();
+    await routeToLoad.view();
 }

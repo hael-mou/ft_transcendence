@@ -11,8 +11,9 @@ canvas {
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    background-color: #011627;
+    background-color: var(--color-bg);
     background-repeat: no-repeat;
     background-size: 20%;
     background-position: 50% 50%;
+    overflow: hidden;
 }
