@@ -11,31 +11,26 @@ export class BaseApp extends Component
     {
         return /* html */ `
             <header class="top-bar">
-                <img
-                    src="/static/assets/imgs/logo.svg"
-                    class="logo"
-                    alt="Logo">
+                <img src="/static/assets/imgs/logo.svg" class="logo" alt="Logo">
+
                 <div class="search-container">
-                    <input
-                        type="text"
-                        class="search-input"
-                        placeholder="Search...">
-                    <button class="search-button">
-                        <img
-                            src="/static/assets/imgs/search_icon.svg"
-                            alt="Search">
-                    </button>
+                    <input type="text" class="search-input"
+                           placeholder="Search...">
+
+                    <img src="/static/assets/imgs/search_icon.svg" alt="Search">
                 </div>
+
                 <div class="notification-container">
-                    <img
-                        src="/static/assets/imgs/user_avatar.png"
-                        class="user-avatar"
-                        alt="User Avatar">
+                    <img src="/static/assets/imgs/user_avatar.png"
+                         class="user-avatar" alt="User Avatar">
+
                     <span class="user-name">Hael-mou</span>
+
                     <button class="notification-button">
                         <img
                             src="/static/assets/imgs/notification_icon.svg"
                             alt="Notifications">
+
                         <span class="notification-badge">3</span>
                     </button>
                 </div>
@@ -44,17 +39,15 @@ export class BaseApp extends Component
             <div class="container-main">
                 <nav class="container-nav">
                     ${this.navItems.map(navItem => /* html */ `
-                        <div
-                            class="nav-item"
-                            data-nav="${navItem.name}">
+                        <div class="nav-item" data-nav="${navItem.name}">
                             <div class="nav-background"></div>
-                            <img
-                                class="nav-icon ${navItem.iconClass}"
-                                src="${navItem.iconSrc}"
-                                alt="${navItem.name}"/>
+
+                            <img class="nav-icon ${navItem.iconClass}"
+                                src="${navItem.iconSrc}" alt="${navItem.name}"/>
                         </div>
                     `).join('')}
                 </nav>
+
                 <main class="content-area">
                     <slot></slot>
                 </main>
@@ -63,7 +56,8 @@ export class BaseApp extends Component
     }
 
     /* === navItems : ======================================================= */
-    get navItems() {
+    get navItems()
+    {
         return [
             {
                 name: 'home',
@@ -89,7 +83,7 @@ export class BaseApp extends Component
                 name: 'setting',
                 iconClass: 'setting-icon',
                 iconSrc: '/static/assets/imgs/Setting_icon.svg'
-            }
+            },
         ];
     }
 
@@ -125,7 +119,6 @@ export class BaseApp extends Component
                 border-radius: 30px;
                 background: linear-gradient(to right, var(--gradient-start) 3%,
                             var(--gradient-end) 100%);
-                /*max-width: 100%;*/
                 box-sizing: border-box;
             }
 
@@ -148,22 +141,18 @@ export class BaseApp extends Component
                 background: none;
                 color: var(--text-color);
                 width: 150px;
+                outline: none;
             }
 
             .search-input::placeholder {
                 color: rgba(255, 255, 255, 0.5);
             }
 
-            .search-button {
-                background: none;
-                border: none;
-                cursor: pointer;
-            }
-
-            .search-button img {
+            .search-container img {
                 width: 20px;
                 height: 20px;
                 filter: invert(1);
+                padding-left: 7px;
             }
 
             .notification-container {
@@ -214,12 +203,6 @@ export class BaseApp extends Component
             }
 
             .container-main {
-                /*flex: 1;
-                display: flex;
-                height: 0;
-                flex-grow: 1;
-                max-width: 100%;*/
-
                 display: flex;
                 flex: 1;
                 overflow: hidden;
@@ -312,6 +295,12 @@ export class BaseApp extends Component
                 100% { background-color: rgba(33, 148, 148, 0.1); }
             }
 
+            @media (max-width: 2000px) {
+                :host {
+                    padding: 2rem 0 !important;
+                    gap: 1rem;
+                }
+            }
 
             @media (max-width: 1300px) {
                 .user-name {
@@ -320,6 +309,11 @@ export class BaseApp extends Component
             }
 
             @media (max-width: 900px) {
+                :host {
+                    padding: 1rem 0 !important;
+                    gap: 0.5rem;
+                }
+
                 .top-bar {
                     flex-wrap: wrap;
                     justify-content: center;
@@ -348,11 +342,11 @@ export class BaseApp extends Component
                     margin-left: auto;
                 }
 
-
                 .container-main {
                     flex-direction: column-reverse;
                     border-radius: 5px;
                 }
+
                 .container-nav {
                     width: 100%;
                     height: auto;
@@ -380,7 +374,6 @@ export class BaseApp extends Component
                 .nav-item.selected::before {
                     left: 50%;
                     top: 125%;
-                    /*top: auto;*/
                     transform: translateX(-50%);
                     width: 24px;
                     height: 4px;
@@ -401,7 +394,12 @@ export class BaseApp extends Component
                     height: 90%;
                 }
             }
+
+            @media (max-width: 450px) {
+                :host {
+                    padding: 0 !important;
+                }
+            }
         `
     }
-
 }
