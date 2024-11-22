@@ -1,60 +1,59 @@
-
 import { backendGateway } from "../../../core/config.js";
 import { Component } from "../../../core/component.js";
 import { Http } from "../../../tools/http.js";
-import _ from "../../../tools/utils.js";
+import  _ from "../../../tools/utils.js";
+import { Alert } from "../alert_component.js";
 
 /* *************************************************************************** #
 #   * SignUp Component Class :                                                 #
 # *************************************************************************** */
-export class SignUp extends Component
+export class SignIn extends Component
 {
-
     /* === template : ======================================================= */
+
     get template()
     {
         return /* html */ `
-            <p class="title"> - Choose One way - </p>
-            <div class="container-form">
-                <button id="google" class="container-google">
-                    <img src="/static/assets/imgs/google_icon.svg" alt="Google Icon">
-                    <span>SIGN UP WITH GOOGLE</span>
-                </button>
+        <p class="title"> - Choose One way - </p>
+        <div class="container-form">
+            <button id="google" class="container-google">
+                <img src="/static/assets/imgs/google_icon.svg" alt="Google Icon">
+                <span>SIGN IN WITH GOOGLE</span>
+            </button>
 
-                <button id="intra" class="intra">
-                    <img src="/static/assets/imgs/42_icon.svg" alt="Intra Icon">
-                    <span>SIGN UP WITH INTRA</span>
-                </button>
+            <button id="intra" class="intra">
+                <img src="/static/assets/imgs/42_icon.svg" alt="Intra Icon">
+                <span>SIGN IN WITH INTRA</span>
+            </button>
 
-                <p class="title"> - Or - </p>
+            <p class="title"> - Or - </p>
 
-                <div class="input-container">
-                    <img src="/static/assets/imgs/email_icon.svg" alt="Email Icon">
-                    <input id="email_input" type="email" class="input-field"
-                        placeholder="Email" required>
-                </div>
-
-                <button id="submit_button" class="container-email" disabled>
-                    SIGN UP WITH EMAIL
-                </button>
+            <div class="input-container">
+                <img src="/static/assets/imgs/email_icon.svg" alt="Email Icon">
+                <input id="email_input" type="email" class="input-field"
+                    placeholder="Email" required>
             </div>
 
-            <div class="container-help">
-                <p>Already have an account?
-                    <a href="#">Sign in here.</a>
-                </p>
+            <div class="input-container">
+                <img src="/static/assets/imgs/email_icon.svg" alt="Password Icon">
+                <input id="password_input" type="password" class="input-field"
+                    placeholder="password" required>
             </div>
 
-
-            <!-- Custom Alert Modal -->
-            <div id="customAlert" class="alert-modal">
-                <div class="alert-content">
-                    <p id="alertMessage" class="alert-message"></p>
-                    <button id="closeAlert" class="close-button">OK</button>
-                </div>
-            </div>
-        `;
-    }
+            
+            <button id="submit_button" class="container-email" disabled>
+            SIGN IN WITH EMAIL
+            </button>
+        </div>
+            
+        <div class="container-help">
+            <p>Don't have an account?
+            <a href="#">Sign up here.</a>
+            </p>
+            <p><a href="#">Forgot password?</a></p>
+        </div>
+        `
+    };
 
     /* === styles : ========================================================= */
     get styles()
@@ -194,51 +193,6 @@ export class SignUp extends Component
                     cursor: pointer;
                 }
 
-                .alert-modal {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 50%;
-                    background-color: rgb(1 22 39 / 85%);
-                    display: none;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 1000;
-                }
-
-                .alert-content {
-                    background-color: white;
-                    padding: 20px;
-                    border-radius: 48px;
-                    text-align: center;
-                    max-width: 90%;
-                    width: 600px;
-                }
-
-                .alert-message {
-                    margin-bottom: 20px;
-                    font-size: 1.2em;
-                    color: black;
-                }
-
-                .close-button {
-                    background-color: #007088;
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    border-radius: 25px;
-                    cursor: pointer;
-                    font-size: 1em;
-                    font-weight: bold;
-                    transition: background-color 0.3s;
-                }
-
-                .close-button:hover {
-                    background-color: #005f74;
-                }
-
                 /* Media Queries for Responsiveness */
                 @media (max-width: 768px) {
                     :host {
@@ -260,14 +214,6 @@ export class SignUp extends Component
 
                     .container-help {
                         margin-bottom: 50px;
-                    }
-
-                    .alert-modal {
-                        border-radius: 0;
-                    }
-
-                    .alert-content {
-                        border-radius: 5px;
                     }
                 }
 
@@ -304,87 +250,74 @@ export class SignUp extends Component
         `;
     }
 
+
     /* === onConnected : ==================================================== */
     onConnected()
     {
+        this.alert = new Alert();
         const googleButton = this.shadowRoot.getElementById('google');
         const intraButton = this.shadowRoot.getElementById('intra');
         const emailInput = this.shadowRoot.getElementById('email_input');
-        const submitButton = this.shadowRoot.getElementById('submit_button');
-        const closeButton = this.shadowRoot.getElementById('closeAlert');
-
-        this.addEventListener(googleButton,'click', this.googleCallback);
-        this.addEventListener(intraButton,'click', this.intraCallback);
-        this.addEventListener(emailInput,'input', this.updateButtonState.bind(this));
-        this.addEventListener(submitButton,'click', this.emailCallback.bind(this));
-        this.addEventListener(closeButton,'click', this.closeAlert.bind(this));
-    }
-
-    /* === alert : ========================================================== */
-    alert(message)
-    {
-        const alertModal = this.shadowRoot.getElementById('customAlert');
-        const alertMessage = this.shadowRoot.getElementById('alertMessage');
-        alertMessage.textContent = message;
-        alertModal.style.display = 'flex';
-    }
-
-    /* *********************************************************************** #
-    #   * Event callbacks :                                                    #
-    # *********************************************************************** */
-
-    /* === googleCallback : ================================================== */
-    googleCallback(event)
-    {
-        event.preventDefault();
-        window.location.href = backendGateway.googleAuthUrl;
-    }
-
-    /* === intraCallback : ================================================== */
-    intraCallback(event)
-    {
-        event.preventDefault();
-        window.location.href = backendGateway.intraAuthUrl;
-    }
-
-    /* === updateButtonState : =============================================== */
-    updateButtonState(event)
-    {
-        event.preventDefault();
-        const emailInput = this.shadowRoot.getElementById('email_input');
+        const PasswordInput = this.shadowRoot.getElementById('password_input');
         const submitButton = this.shadowRoot.getElementById('submit_button');
 
-        submitButton.disabled = !_.validateEmail(emailInput.value);
+        this.addEventListener(googleButton,'click', googleCallback);
+        this.addEventListener(intraButton,'click', intraCallback);
+        this.addEventListener(emailInput,'input', updateButtonState.bind(this));
+        this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
+        this.addEventListener(submitButton,'click', emailCallback.bind(this));
     }
+}
 
-    /* === emailCallback : ================================================== */
-    async emailCallback(event)
-    {
+/* *********************************************************************** #
+#   * Event callbacks :                                                    #
+# *********************************************************************** */
+
+/* === googleCallback : ================================================== */
+function googleCallback(event)
+{
+    event.preventDefault();
+    window.location.href = backendGateway.googleAuthUrl;
+}
+
+/* === intraCallback : ================================================== */
+function intraCallback(event)
+{
+    event.preventDefault();
+    window.location.href = backendGateway.intraAuthUrl;
+}
+
+/* === updateButtonState : =============================================== */
+function updateButtonState(event)
+{
+    event.preventDefault();
+    const emailInput = this.shadowRoot.getElementById('email_input');
+    const passwordInput = this.shadowRoot.getElementById('password_input');
+    const submitButton = this.shadowRoot.getElementById('submit_button');
+
+    submitButton.disabled = !_.validateEmail(emailInput.value) 
+                            || passwordInput.value.length < 8;
+}
+
+
+/* === emailCallback : ================================================== */
+async function emailCallback(event)
+{
         event.preventDefault();
+
         const emailInput = this.shadowRoot.getElementById('email_input');
+        const passwordInput = this.shadowRoot.getElementById('password_input');
         const email = emailInput.value.trim();
+        const password = passwordInput.value;
 
-        if (!_.validateEmail(email))
-            return this.alert("Please enter a valid email address.");
 
-        const url = backendGateway.emailSignUpUrl;
+        const url = backendGateway.emailSignInUrl;
         const headers = { 'Content-Type': 'application/json' };
-        const data = JSON.stringify({ email });
+        const data = JSON.stringify({ email, password });
 
         const response = await Http.post(url, headers, data);
 
         console.log("Response", response);
-        if (!response.ok)
-            return this.alert(response["message"]);
-
-        this.alert("Email sent");
-    }
-
-    /* === closeAlert : ====================================================== */
-    closeAlert(event)
-    {
-        event.preventDefault();
-        const alertModal = this.shadowRoot.getElementById('customAlert');
-        alertModal.style.display = 'none';
-    }
+        this.alert.setMessage(!response.ok ? response["error"] : "Successfully signed in");
+        this.alert.modalInstance.show();
 }
