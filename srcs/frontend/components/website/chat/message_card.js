@@ -1,3 +1,4 @@
+
 import { Component } from "../../../core/component.js";
 
 /* *************************************************************************** #
@@ -7,11 +8,11 @@ import { Component } from "../../../core/component.js";
 export class MessageCard extends Component {
 
     /* === constructor : ==================================================== */
-    constructor()
+    constructor(time, type)
     {
         super();
-        this.time = this.getAttribute('time') || "00:00";
-        this.isSentByUser = this.getAttribute('type') === 'sent' || false;
+        this.time = time || "00:00";
+        this.isSentByUser = type === 'sent' || false;
     }
 
     /* === Template : ====================================================== */

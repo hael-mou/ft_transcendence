@@ -1,8 +1,18 @@
 
 // 1. get the data from the server: room and users info
+/*
+    {
+        tracking_no: "M1173228438130728",
+        type: "chat"
+        sender_id: "1",
+        recipient_id: "2",
+        content_type: "txt",
+        sent_at: 1732284381307,
+        body: "hellow world"
+    }
+*/
 const data = [
     {
-        id: "1",
         user: {
             id: "1",
             username: 'jamal',
@@ -10,42 +20,41 @@ const data = [
         },
         messages: [
             {
-                time: '00:00',
-                type: 'received',
-                content: 'hello !'
-            },
-            {
-                time: '00:00',
-                type: 'received',
-                content: 'how are you ?'
-            },
-            {
-                time: '00:00',
                 type: 'sent',
-                content: 'hello !'
-            }
+                tracking_no: "M1173228438130728",
+                time: 1732284381307,
+                status: 'read',
+                body: 'hay !'
+            },
+            {
+                type: 'received',
+                tracking_no: "M1173228438130710",
+                time: 1732284381307,
+                body: 'hello !'
+            },
+            {
+                type: 'received',
+                tracking_no: "M1173228438130701",
+                time: 1732284381307,
+                body: 'how are you ?'
+            },
         ]
     },
 
     {
-        id: "2",
         user: {
-            id: "3",
+            id: "2",
             username: 'nassima',
             avatar: '/static/assets/imgs/google_icon.svg',
         },
-        messages: [
-            {
-                time: '00:00',
-                type: 'received',
-                content: 'hello !'
-            },
-        ]
+        messages: []
     }
 ];
+
 //===============================================================================
 
 import { Component } from "../../../core/component.js";
+import { wsm } from "../../../core/wsManager.js";
 import { UserCard } from "./user_card.js";
 
 /* *************************************************************************** #
@@ -54,8 +63,7 @@ import { UserCard } from "./user_card.js";
 export class ChatApp extends Component
 {
     /* === Template : ====================================================== */
-    get template()
-    {
+    get template() {
         return /* html */ `
             <div class="main-container">
                 <button id="toggle-sidebar"aria-label="Toggle Sidebar">
@@ -77,9 +85,14 @@ export class ChatApp extends Component
                 </aside>
 
                 <main class="chat-area">
-                    <chat-window id="chat-window"></chat-window>
+                    <div id="placeholder" class="placeholder" >
+                        <img src="/static/assets/imgs/chat_icon.svg"
+                             alt="Placeholder">
+                    </div>
 
-                    <div class="input-area">
+                    <chat-window id="chat-window" class="d-none"></chat-window>
+
+                    <div id="input-area" class="input-area d-none">
                         <input id="message-input" type="text" maxlength="200"
                                class="message-input"
                                placeholder="Type your message...">
@@ -94,8 +107,7 @@ export class ChatApp extends Component
     }
 
     /* === styles : ======================================================== */
-    get styles()
-    {
+    get styles() {
         return /* css */ `
             * {
                 box-sizing: border-box;
@@ -202,13 +214,26 @@ export class ChatApp extends Component
                 margin-right: 10px;
             }
 
-            #chat-window {
+            #chat-window, .placeholder {
                 flex: 1;
                 overflow-y: auto;
                 background-color: #2c2c2c;
                 border-radius: 0 30px 0 0;
                 margin-bottom: 20px;
             }
+
+            .placeholder {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0;
+            }
+
+            .placeholder img {
+                width: 100px;
+                filter: invert(40%) sepia(73%) saturate(393%) hue-rotate(174deg) brightness(98%) contrast(89%);
+            }
+
 
             .input-area {
                 display: flex;
@@ -233,6 +258,10 @@ export class ChatApp extends Component
                 border: none;
                 border-radius: 5px 5px 30px;
                 cursor: pointer;
+            }
+
+            .d-none {
+                display: none;
             }
 
             #toggle-sidebar {
@@ -297,20 +326,18 @@ export class ChatApp extends Component
     }
 
     /* === Initialize : ==================================================== */
-    async init()
-    {
-        this.data = data; //data from the backend
+    async init() {
+        this.data = data; //data from the #backend
     }
 
     /* === Render : ======================================================== */
-    render()
-    {
+    render() {
         super.render();
         const sidebar = this.shadowRoot.getElementById('chat-list');
 
         this.data.map(data => {
             const userCard = new UserCard(data.user, data.messages);
-            userCard.id = data.id;
+            userCard.id = data.user.id;
             sidebar.appendChild(userCard);
         });
 
@@ -318,8 +345,7 @@ export class ChatApp extends Component
     }
 
     /* === On Connected : ================================================== */
-    onConnected()
-    {
+    onConnected() {
         const toggleButton = this.shadowRoot.getElementById('toggle-sidebar');
         const rooms = this.shadowRoot.getElementById('chat-list');
         const sendButton = this.shadowRoot.getElementById('send-button');
@@ -333,6 +359,16 @@ export class ChatApp extends Component
                 sendMessage.call(this);
             }
         })
+
+        //wsm.removeListener('message', 'chat', notifyMessage.bind(this));
+        wsm.addListener('message', 'chat', receiveMessage.bind(this));
+
+    }
+
+    /* === On Disconnected : =============================================== */
+    onDisconnected() {
+        wsm.removeListener('message', 'chat', this.receiveMessage.bind(this));
+        //wsm.addListener('message', 'chat', notifyMessage.bind(this));
     }
 
 }
@@ -342,8 +378,8 @@ export class ChatApp extends Component
 # *************************************************************************** */
 
 /* === Toggle sidebar : ===================================================== */
-function toggleSidebar(event)
-{
+function toggleSidebar(event) {
+
     if (event) event.preventDefault();
     const sidebar = this.shadowRoot.getElementById('sidebar');
     const toggleButton = this.shadowRoot.getElementById('toggle-sidebar');
@@ -354,47 +390,110 @@ function toggleSidebar(event)
 }
 
 /* === Select room : ======================================================== */
-function selectRoom(event)
-{
+function selectRoom(event) {
     event.preventDefault();
-    if (event.target && event.target.tagName === 'USER-CARD')
-    {
+    if (event.target && event.target.tagName === 'USER-CARD') {
+        const chatWindow = this.shadowRoot.getElementById('chat-window');
         toggleSidebar.call(this);
+
+        if (!this.selectedRoom) {
+            const inputArea = this.shadowRoot.getElementById('input-area');
+            const placeholder = this.shadowRoot.getElementById('placeholder');
+
+            placeholder.remove();
+            inputArea.classList.remove('d-none');
+            chatWindow.classList.remove('d-none');
+        }
+
         this.selectedRoom = event.target;
+        const { messages, user } = this.selectedRoom;
 
         const userCards = this.shadowRoot.getElementById('chat-list').children;
-        for (let i = 0; i < userCards.length; i++) {
-            userCards[i].classList.remove('activeRoom');
+        for (const userCard of userCards) {
+            userCard.classList.remove('activeRoom');
+            if (this.selectedRoom !== userCard && userCard.messages.length === 0)
+            {
+                userCard.remove()
+            };
         }
         this.selectedRoom.classList.add('activeRoom');
 
-
-        const chatWindow = this.shadowRoot.getElementById('chat-window');
-        const messages   = this.selectedRoom.messages;
-        const user_info  = this.selectedRoom.user
-        chatWindow.update(user_info, messages);
+        chatWindow.update(user, messages);
     }
 }
 
 /* === Send message : ======================================================= */
-function sendMessage(event)
-{
+function sendMessage(event) {
+
     if (event) event.preventDefault();
     const messageInput = this.shadowRoot.getElementById('message-input');
     const chat_window = this.shadowRoot.getElementById('chat-window');
     const message = messageInput.value.trim();
     if (message)
     {
+        const time = new Date().getTime();
+        const random = Math.floor(Math.random() * 1000);
+        const trackingNumber = `MSG-${this.selectedRoom.id}${time}${random}`;
+
         const massage = {
-            time: "00:00",
             type: 'sent',
-            content: message
+            tracking_no: trackingNumber,
+            time: new Date().getTime(),
+            status: 'waiting',
+            body: message
         }
 
         this.selectedRoom.messages.push(massage);
         chat_window.addMessage(massage);
 
+        wsm.send(JSON.stringify({
+            tracking_no: trackingNumber,
+            type: "chat",
+            recipient_id: this.selectedRoom.id,
+            content_type: "txt",
+            body: message
+        }));
+
         messageInput.value = '';
         messageInput.focus();
     }
+}
+
+/* === Receive message : ===================================================== */
+async function receiveMessage(event) {
+
+    event.preventDefault();
+    const data = JSON.parse(event.data);
+    const RoomList = this.shadowRoot.getElementById('chat-list');
+    let targetRoom = RoomList.querySelector(`[id="${data.sender_id}"]`);
+
+    if (!targetRoom) {
+        // #backend : create user card
+        const user = {
+            id: data.sender_id,
+            username: 'youssef',
+            avatar: '/static/assets/imgs/logo.svg',
+        };
+
+        targetRoom = new UserCard(user);
+        targetRoom.id = data.sender_id;
+        RoomList.prepend(targetRoom);
+    }
+
+    const message = {
+        type: 'received',
+        trackingNo: data.tracking_no,
+        time: data.sent_at,
+        contentType: data.content_type,
+        body: data.body
+    };
+
+    targetRoom.newMessage(message);
+    RoomList.prepend(targetRoom);
+
+    if (this.selectedRoom === targetRoom) {
+        const chatWindow = this.shadowRoot.getElementById('chat-window');
+        chatWindow.addMessage(message);
+    }
+
 }

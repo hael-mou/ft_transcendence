@@ -1,5 +1,6 @@
 
 import { Component } from "../../../core/component.js";
+import { MessageCard } from "./message_card.js";
 
 /* *************************************************************************** #
 #   * AuthApp Component Class :                                                #
@@ -73,6 +74,15 @@ export class ChatWindow extends Component {
                 align-items: center;
             }
 
+            .day-card {
+                text-align: center;
+                margin: 10px 0;
+                color: #fff;
+                font-family: "cursive" , "sans-serif";
+                font-size: 0.8em;
+                text-shadow: var(--color-primary) 1px 0 10px;
+            }
+
             .messages {
                 flex: 1;
                 overflow-y: auto;
@@ -116,44 +126,76 @@ export class ChatWindow extends Component {
         `;
     }
 
+    /* === Get Date String : ==================================================== */
+    getDateString(time) {
+        const date = new Date(time);
+        const msgDay = date.toLocaleDateString('en-GB', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        });
+        const msgTime = date.toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+        });
+
+        return { msgDay, msgTime };
+    }
+
+    /* === New Day Card : =================================================== */
+    newDayCard(dateString) {
+        const dayCard = document.createElement('div');
+        dayCard.classList.add('day-card');
+        dayCard.textContent = '- ' + dateString + ' -';
+        return dayCard;
+    }
+
     /* === Update : ========================================================= */
-    update(user, new_messages)
-    {
-        const messages = this.shadowRoot.getElementById('messages');
-        const avatar = this.shadowRoot.getElementById('avatar');
-        const username = this.shadowRoot.getElementById('username');
-        // const block = this.shadowRoot.getElementById('block');
-        // const invite = this.shadowRoot.getElementById('invite');
+    update(user, messages) {
+        const messagesElement = this.shadowRoot.getElementById('messages');
+        const avatarElement = this.shadowRoot.getElementById('avatar');
+        const usernameElement = this.shadowRoot.getElementById('username');
 
-        username.textContent = user.username;
-        avatar.src = user.avatar;
-        avatar.alt = user.username;
+        usernameElement.textContent = user.username;
+        avatarElement.src = user.avatar;
+        avatarElement.alt = user.username;
+        this.previousDay = "01 Jan 1900";
 
-        while (messages.firstChild){
-            messages.removeChild(messages.firstChild);
+        while (messagesElement.firstChild){
+            messagesElement.removeChild(messagesElement.firstChild);
         }
 
-        new_messages.forEach(message => {
-            const messageCard = `
-                <message-card time="${message.time}" type="${message.type}">
-                    ${message.content}
-                </message-card>
-            `;
-            messages.innerHTML += messageCard;
+        messages.forEach(message => {
+
+            const { msgDay, msgTime } = this.getDateString(message.time);
+            if (msgDay !== this.previousDay) {
+                messagesElement.appendChild(this.newDayCard(msgDay));
+                this.previousDay = msgDay;
+            }
+
+            const messageCard = new MessageCard(msgTime, message.type);
+            messageCard.textContent = message.body;
+            messagesElement.appendChild(messageCard);
         });
-        messages.scrollTop = messages.scrollHeight;
+
+        messagesElement.scrollTop = messagesElement.scrollHeight;
     }
 
     /* === add Message : ==================================================== */
-    addMessage(message)
-    {
-        const messages = this.shadowRoot.getElementById('messages');
-        const messageCard = `
-            <message-card time="${message.time}" type="${message.type}">
-                ${message.content}
-            </message-card>
-        `;
-        messages.innerHTML += messageCard;
-        messages.scrollTop = messages.scrollHeight;
+    addMessage(message) {
+        const messagesElement = this.shadowRoot.getElementById('messages');
+        const { msgDay, msgTime } = this.getDateString(message.time);
+
+        if (msgDay !== this.previousDay) {
+            messagesElement.appendChild(this.newDayCard(msgDay));
+            this.previousDay = msgDay;
+        }
+
+        const messageCard = new MessageCard(msgTime, message.type);
+            messageCard.textContent = message.body;
+            messagesElement.appendChild(messageCard);
+
+        messagesElement.scrollTop = messagesElement.scrollHeight;
     }
 }
