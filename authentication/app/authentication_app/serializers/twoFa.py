@@ -27,7 +27,6 @@ class TwoFASerializer(serializers.Serializer):
             'instance': user,
             'toEnable': to_enable
         }
-
         if choice not in ["email", "totp"]:
             raise serializers.ValidationError({'error': 'Invalid choice'})
         if not user.check_password(password):

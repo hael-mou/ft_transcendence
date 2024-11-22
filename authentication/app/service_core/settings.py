@@ -63,7 +63,6 @@ DATABASES = {
 
 CORS_ORIGIN_WHITELIST = [
     'http://127.0.0.1',
-    # other origins...
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -73,7 +72,7 @@ CORS_ALLOW_METHODS = [
     'PUT',
     'DELETE',
     'OPTIONS',
-    # to remove what's need to be removed
+    'PATCH',
 ]
 
 

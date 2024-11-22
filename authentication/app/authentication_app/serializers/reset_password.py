@@ -41,22 +41,25 @@ class SetNewPasswordSerializer(serializers.Serializer):
         fields = ['password', 'token', 'uidb64']
 
     def validate(self, attrs):
-        try:
-            password = attrs.get('password')
-            token = attrs.get('token')
-            uidb64 = attrs.get('uidb64')
-            user_id = force_str(urlsafe_base64_decode(uidb64))
 
-            PASSWORD_POLICY.test(password)
-            user = CustomUser.objects.get(id=user_id)
-            if not PasswordResetTokenGenerator().check_token(user, token):
-                raise AuthenticationFailed({'error': 'The reset link is invalid'}, 401)
-            attrs['user'] = user
-            return (attrs)
-        except PASSWORD_POLICY.PasswordPolicyError as e:
-            raise serializers.ValidationError({'error': str(e)})
-        except Exception as e:
-            raise AuthenticationFailed({'error': 'The reset link is invalid'}, 401)
+        password   = attrs.get('password')
+        token      = attrs.get('token')
+        uidb64     = attrs.get('uidb64')
+        user_id    = force_str(urlsafe_base64_decode(uidb64))
+
+        user = CustomUser.objects.filter(id=user_id).first()
+        if user is None:
+            raise serializers.ValidationError({'error': 'The reset link is invalid'}, 401)
+
+        if not PasswordResetTokenGenerator().check_token(user, token):
+            raise serializers.ValidationError({'error': 'The reset link is invalid'}, 401)
+            
+        errors = PASSWORD_POLICY.test(password)
+        if len(errors) > 0:
+            raise serializers.ValidationError({'error': 'Password does not meet the requirements.'})
+
+        attrs['user'] = user
+        return attrs
     
 
     def create(self, validated_data):

@@ -11,6 +11,7 @@ constantly==23.10.4
 cryptography==43.0.3
 Django==4.2.16
 django-authlib==0.17.1
+django-cors-headers==4.6.0
 django-formtools==2.5.1
 django-otp==1.5.4
 django-phonenumber-field==8.0.0
@@ -24,7 +25,7 @@ idna==3.10
 incremental==24.7.2
 oauthlib==3.2.2
 packaging==24.2
-password-strength==0.0.3.post2
+password-strength==0.0.3.post1
 pyasn1==0.6.1
 pyasn1_modules==0.4.1
 pycparser==2.22

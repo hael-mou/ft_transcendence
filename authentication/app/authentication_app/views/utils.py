@@ -28,7 +28,7 @@ class Util:
         subject = "Verify your email"
         html_message = render_to_string('email.html', {'verification_link': verification_link})
         plain_message = strip_tags(html_message)
-        from_email = 'Micros <' + os.environ.get("EMAIL_USER") + '>'
+        from_email = 'Pingo <' + os.environ.get("EMAIL_USER") + '>'
         to = email
         email = EmailMultiAlternatives(subject, plain_message, from_email, [to])
         email.attach_alternative(html_message, "text/html")
@@ -135,7 +135,7 @@ class Util:
         subject = "Reset your password"
         html_message = render_to_string('reset_password.html', {'reset_link': reset_link})
         plain_message = strip_tags(html_message)
-        from_email = 'Micros <' + os.environ.get("EMAIL_USER") + '>'
+        from_email = 'Pingo <' + os.environ.get("EMAIL_USER") + '>'
         to = email
         email = EmailMultiAlternatives(subject, plain_message, from_email, [to])
         email.attach_alternative(html_message, "text/html")
