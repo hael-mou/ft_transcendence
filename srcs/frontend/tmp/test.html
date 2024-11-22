@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Pagination and Scroll</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            width: 400px;
+            height: 600px;
+            background-color: white;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #fafafa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .username {
+            font-weight: bold;
+        }
+
+        .message-container {
+            flex-grow: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .message-list {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .message-bubble.sent {
+            background-color: #dcf8c6;
+            align-self: flex-end;
+        }
+
+        .message-bubble.received {
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+
+        .input-container {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background-color: #fafafa;
+        }
+
+        #messageInput {
+            flex-grow: 1;
+            padding: 10px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            outline: none;
+        }
+
+        #sendBtn {
+            padding: 10px;
+            background-color: #3897f0;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        #sendBtn:hover {
+            background-color: #0077c8;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <div class="profile">
+                <img src="https://via.placeholder.com/40" alt="User" class="profile-img">
+                <span class="username">John Doe</span>
+            </div>
+        </div>
+        <div class="message-container">
+            <div id="messageList" class="message-list">
+                <!-- Messages will be loaded here -->
+            </div>
+            <div id="loading" class="loading">Loading...</div>
+        </div>
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="Type a message..." />
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sendBtn = document.getElementById('sendBtn');
+            const messageInput = document.getElementById('messageInput');
+            const messageList = document.getElementById('messageList');
+            const loadingIndicator = document.getElementById('loading');
+
+            // Simulated messages array (most recent messages at the end)
+            const allMessages = [
+                "Message 1", "Message 2", "Message 3", "Message 4", "Message 5",
+                "Message 6", "Message 7", "Message 8", "Message 9", "Message 10",
+                "Message 11", "Message 12", "Message 13", "Message 14", "Message 15"
+            ];
+            let currentIndex = allMessages.length - 5;  // Start from the last 5 messages
+
+            // Function to append a message to the list
+            function appendMessage(messageText, isSent) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-bubble', isSent ? 'sent' : 'received');
+                messageDiv.textContent = messageText;
+                messageList.appendChild(messageDiv);
+            }
+
+            function appendinTop(messageText, isSent) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-bubble', isSent ? 'sent' : 'received');
+                messageDiv.textContent = messageText;
+                messageList.prepend(messageDiv);
+            }
+
+            // Function to load the last 5 messages
+            function loadMessages() {
+                // for (let i = currentIndex; i < Math.min(currentIndex + 5, allMessages.length); i++) {
+                for(let i = Math.min(currentIndex + 5, allMessages.length) - 1; i >= currentIndex; i--) {
+                    // appendMessage(allMessages[i], false); // Display received messages
+                    appendinTop(allMessages[i], false);
+                }
+                currentIndex -= 5;
+            }
+
+
+            // Function to handle scroll events and load older messages
+            function handleScroll() {
+                if (messageList.scrollTop === 0 && currentIndex >= 0) {
+                    // Show the loading indicator when user scrolls to the top
+                    loadingIndicator.style.display = 'block';
+                    setTimeout(() => {
+                        loadMessages(); // Load more messages
+                        loadingIndicator.style.display = 'none'; // Hide loading indicator
+                    }, 1000); // Simulate a delay in loading messages
+                }
+            }
+
+            // Load initial messages (last 5)
+            loadMessages();
+
+            // Listen for scroll events
+            messageList.addEventListener('scroll', handleScroll);
+
+            // Handle sending new messages
+            sendBtn.addEventListener('click', () => {
+                const messageText = messageInput.value.trim();
+                if (messageText) {
+                    appendMessage(messageText, true); // Sent message
+                    messageInput.value = ''; // Clear input
+                }
+            });
+
+            // Allow pressing Enter to send a message
+            messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    sendBtn.click();
+                }
+            });
+
+            // Automatically scroll to the bottom (to show most recent messages)
+            messageList.scrollTop = messageList.scrollHeight;
+        });
+
+    </script>
+</body>
+
+</html>

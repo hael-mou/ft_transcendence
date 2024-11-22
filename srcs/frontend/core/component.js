@@ -15,8 +15,9 @@ export class Component extends HTMLElement
 
 
     /* === connectedCallback : ============================================== */
-    connectedCallback()
+    async connectedCallback()
     {
+        if (this.init) await this.init();
         this.render();
         if (this.onConnected) this.onConnected();
     }
