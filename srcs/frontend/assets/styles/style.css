@@ -22,7 +22,7 @@
     font-style: normal;
 }
 
-body {
+body{
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -33,12 +33,53 @@ body {
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-<<<<<<< HEAD:srcs/frontend/assets/styles/style.css
-    background-color: var(--color-bg);
-    overflow-x: hidden;
-=======
     background-color: #011627;
     overflow: hidden;
->>>>>>> merge:frontend/app/assets/styles/style.css
+    font-family: 'Exo2', sans-serif;
 }
 
+app-root {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* === loading : ========================================================= */
+.loading-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid transparent;
+    border-top: 8px solid var(--color-primary);
+    /* Neon Green color */
+    border-radius: 50%;
+    animation: lead 1.5s linear infinite;
+}
+
+/* The leading animation */
+@keyframes lead {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    background-color: var(--color-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: opacity 0.5s ease-out, visibility 0s 0.5s;
+    z-index: 2222;
+    opacity: 1;
+    transition: opacity 1s ease-out;
+}

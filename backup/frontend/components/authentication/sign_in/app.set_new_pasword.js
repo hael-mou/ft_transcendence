@@ -1,14 +1,18 @@
-
+import { backendGateway } from "../../../core/config.js";
 import { Component } from "../../../core/component.js";
+import { Http } from "../../../tools/http.js";
+import  _ from "../../../tools/utils.js";
+import { Alert } from "../alert_component.js";
 
 /* *************************************************************************** #
-#   * SetNewPassword Component Class :                                         #
+#   * SetNewPassword Component Class :                                                 #
 # *************************************************************************** */
 export class SetNewPassword extends Component
 {
     /* === template : ======================================================= */
 
-    get template() {
+    get template()
+    {
         return /* html */ `
         <p class="title"> - Set New Password - </p>
         <div class="container-form">
@@ -31,7 +35,8 @@ export class SetNewPassword extends Component
     };
 
     /* === styles : ========================================================= */
-    get styles() {
+    get styles()
+    {
         return /*css*/`
                 :host {
                     width: 75%;
@@ -53,7 +58,6 @@ export class SetNewPassword extends Component
                     justify-content: center;
                     align-items: center;
                     color: white;
-                    margin-bottom: 79px;
                 }
 
                 .container-form button, .input-container {
@@ -176,23 +180,24 @@ export class SetNewPassword extends Component
 
 
     /* === onConnected : ==================================================== */
-    // onConnected() {
-    //     this.alert = new Alert();
-    //     const urlParams = new URLSearchParams(window.location.search);
+    onConnected()
+    {
+        this.alert = new Alert();
+        const urlParams = new URLSearchParams(window.location.search);
 
-    //     this.token = urlParams.get('token');
-    //     this.uidb64 = urlParams.get('uidb64');
+        this.token = urlParams.get('token');
+        this.uidb64 = urlParams.get('uidb64');
 
-    //     console.log("token", this.token, "uidb64", this.uidb64);
+        console.log("token", this.token, "uidb64", this.uidb64);
 
-    //     const PasswordInput = this.shadowRoot.getElementById('password_input');
-    //     const PasswordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
-    //     const submitButton = this.shadowRoot.getElementById('submit_button');
+        const PasswordInput = this.shadowRoot.getElementById('password_input');
+        const PasswordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
+        const submitButton = this.shadowRoot.getElementById('submit_button');
 
-    //     this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
-    //     this.addEventListener(PasswordInputConfirm,'input', updateButtonState.bind(this));
-    //     this.addEventListener(submitButton,'click', SetNewPasswordCallBack.bind(this));
-    // }
+        this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
+        this.addEventListener(PasswordInputConfirm,'input', updateButtonState.bind(this));
+        this.addEventListener(submitButton,'click', SetNewPasswordCallBack.bind(this));
+    }
 }
 
 /* *********************************************************************** #
@@ -200,31 +205,31 @@ export class SetNewPassword extends Component
 # *********************************************************************** */
 
 /* === updateButtonState : =============================================== */
-// function updateButtonState(event)
-// {
-//     event.preventDefault();
-//     const passwordInput = this.shadowRoot.getElementById('password_input');
-//     const submitButton = this.shadowRoot.getElementById('submit_button');
-//     const passwordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
+function updateButtonState(event)
+{
+    event.preventDefault();
+    const passwordInput = this.shadowRoot.getElementById('password_input');
+    const submitButton = this.shadowRoot.getElementById('submit_button');
+    const passwordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
 
-//     submitButton.disabled = !_.validatePassword(passwordInput.value)
-//                             || passwordInput.value !== passwordInputConfirm.value;
-// }
+    submitButton.disabled = !_.validatePassword(passwordInput.value)
+                            || passwordInput.value !== passwordInputConfirm.value;
+}
 
 
-// /* === CompleteCallback : ================================================== */
-// async function SetNewPasswordCallBack(event)
-// {
-//     event.preventDefault();
+/* === CompleteCallback : ================================================== */
+async function SetNewPasswordCallBack(event)
+{
+    event.preventDefault();
 
-//     const passwordInput = this.shadowRoot.getElementById('password_input');
-//     const password = passwordInput.value;
+    const passwordInput = this.shadowRoot.getElementById('password_input');
+    const password = passwordInput.value;
 
-//     const url = backendGateway.setNewPasswordUrl;
-//     const headers = { 'Content-Type': 'application/json' };
-//     const data = JSON.stringify({ password, token: this.token, uidb64: this.uidb64 });
+    const url = backendGateway.setNewPasswordUrl;
+    const headers = { 'Content-Type': 'application/json' };
+    const data = JSON.stringify({ password, token: this.token, uidb64: this.uidb64 });
 
-//     const response = await Http.patch(url, headers, data);
-//     this.alert.setMessage(response["error"] !== undefined ? response["error"] : "Successfuly set new password");
-//     this.alert.modalInstance.show();
-// }
+    const response = await Http.patch(url, headers, data);
+    this.alert.setMessage(response["error"] !== undefined ? response["error"] : "Successfuly set new password");
+    this.alert.modalInstance.show();
+}

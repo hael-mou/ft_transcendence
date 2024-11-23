@@ -1,8 +1,6 @@
-import { backendGateway } from "../../../core/config.js";
+
 import { Component } from "../../../core/component.js";
-import { Http } from "../../../tools/http.js";
-import  _ from "../../../tools/utils.js";
-import { Alert } from "../alert_component.js";
+
 
 /* *************************************************************************** #
 #   * SignUp Component Class :                                                 #
@@ -10,9 +8,7 @@ import { Alert } from "../alert_component.js";
 export class CompleteSignUp extends Component
 {
     /* === template : ======================================================= */
-
-    get template()
-    {
+    get template() {
         return /* html */ `
         <p class="title"> - Complete Sign Up - </p>
         <div class="container-form">
@@ -41,8 +37,8 @@ export class CompleteSignUp extends Component
     };
 
     /* === styles : ========================================================= */
-    get styles()
-    {
+    get styles() {
+
         return /*css*/`
                 :host {
                     width: 75%;
@@ -64,6 +60,7 @@ export class CompleteSignUp extends Component
                     justify-content: center;
                     align-items: center;
                     color: white;
+                    margin-bottom: 73px;
                 }
 
                 .container-form button, .input-container {
@@ -186,56 +183,56 @@ export class CompleteSignUp extends Component
 
 
     /* === onConnected : ==================================================== */
-    onConnected()
-    {
-        this.alert = new Alert();
+    // onConnected()
+    // {
+    //     this.alert = new Alert();
 
-        const usernameInput = this.shadowRoot.getElementById('username_input');
-        const PasswordInput = this.shadowRoot.getElementById('password_input');
-        const PasswordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
-        const submitButton = this.shadowRoot.getElementById('submit_button');
+    //     const usernameInput = this.shadowRoot.getElementById('username_input');
+    //     const PasswordInput = this.shadowRoot.getElementById('password_input');
+    //     const PasswordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
+    //     const submitButton = this.shadowRoot.getElementById('submit_button');
 
-        this.addEventListener(usernameInput,'input', updateButtonState.bind(this));
-        this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
-        this.addEventListener(PasswordInputConfirm,'input', updateButtonState.bind(this));
-        this.addEventListener(submitButton,'click', completCallBack.bind(this));
-    }
+    //     this.addEventListener(usernameInput,'input', updateButtonState.bind(this));
+    //     this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
+    //     this.addEventListener(PasswordInputConfirm,'input', updateButtonState.bind(this));
+    //     this.addEventListener(submitButton,'click', completCallBack.bind(this));
+    // }
 }
 
 /* *********************************************************************** #
 #   * Event callbacks :                                                    #
 # *********************************************************************** */
 
-/* === updateButtonState : =============================================== */
-function updateButtonState(event)
-{
-    event.preventDefault();
-    const usernamaeInput = this.shadowRoot.getElementById('username_input');
-    const passwordInput = this.shadowRoot.getElementById('password_input');
-    const submitButton = this.shadowRoot.getElementById('submit_button');
-    const passwordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
+// /* === updateButtonState : =============================================== */
+// function updateButtonState(event)
+// {
+//     event.preventDefault();
+//     const usernamaeInput = this.shadowRoot.getElementById('username_input');
+//     const passwordInput = this.shadowRoot.getElementById('password_input');
+//     const submitButton = this.shadowRoot.getElementById('submit_button');
+//     const passwordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
 
-    submitButton.disabled = usernamaeInput.value.length < 3 
-                            || !_.validatePassword(passwordInput.value)
-                            || passwordInput.value !== passwordInputConfirm.value;
-}
+//     submitButton.disabled = usernamaeInput.value.length < 3
+//                             || !_.validatePassword(passwordInput.value)
+//                             || passwordInput.value !== passwordInputConfirm.value;
+// }
 
 
-/* === CompleteCallback : ================================================== */
-async function completCallBack(event)
-{
-    event.preventDefault();
+// /* === CompleteCallback : ================================================== */
+// async function completCallBack(event)
+// {
+//     event.preventDefault();
 
-    const username = this.shadowRoot.getElementById('username_input').value;
-    const passwordInput = this.shadowRoot.getElementById('password_input');
-    const password = passwordInput.value;
+//     const username = this.shadowRoot.getElementById('username_input').value;
+//     const passwordInput = this.shadowRoot.getElementById('password_input');
+//     const password = passwordInput.value;
 
-    const url = backendGateway.completeSignUpUrl;
-    const headers = { 'Content-Type': 'application/json' };
-    const data = JSON.stringify({ username, password });
+//     const url = backendGateway.completeSignUpUrl;
+//     const headers = { 'Content-Type': 'application/json' };
+//     const data = JSON.stringify({ username, password });
 
-    const response = await Http.post(url, headers, data);
+//     const response = await Http.post(url, headers, data);
 
-    this.alert.setMessage(!response.ok ? response["error"][0] : "Successfully signed up");
-    this.alert.modalInstance.show();
-}
+//     this.alert.setMessage(!response.ok ? response["error"][0] : "Successfully signed up");
+//     this.alert.modalInstance.show();
+// }

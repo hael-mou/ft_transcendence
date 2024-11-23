@@ -10,6 +10,8 @@ services:
             dockerfile: api-gateway/Dockerfile
         ports:
             - "80:80"
+            - "8000:8000"
+
         restart: always
 
         volumes:

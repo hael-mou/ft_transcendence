@@ -1,6 +1,8 @@
 
+import { backendGateway } from "../../../core/config.js";
 import { Component } from "../../../core/component.js";
-import { utils as _ } from "../../../tools/utils.js";
+import { Http } from "../../../tools/http.js";
+import _ from "../../../tools/utils.js";
 
 /* *************************************************************************** #
 #   * SignUp Component Class :                                                 #
@@ -9,7 +11,8 @@ export class SignUp extends Component
 {
 
     /* === template : ======================================================= */
-    get template() {
+    get template()
+    {
         return /* html */ `
             <p class="title"> - Choose One way - </p>
             <div class="container-form">
@@ -54,7 +57,8 @@ export class SignUp extends Component
     }
 
     /* === styles : ========================================================= */
-    get styles() {
+    get styles()
+    {
         return /*css*/`
                 :host {
                     width: 75%;
@@ -299,89 +303,88 @@ export class SignUp extends Component
                 }
         `;
     }
+
+    /* === onConnected : ==================================================== */
+    onConnected()
+    {
+        const googleButton = this.shadowRoot.getElementById('google');
+        const intraButton = this.shadowRoot.getElementById('intra');
+        const emailInput = this.shadowRoot.getElementById('email_input');
+        const submitButton = this.shadowRoot.getElementById('submit_button');
+        const closeButton = this.shadowRoot.getElementById('closeAlert');
+
+        this.addEventListener(googleButton,'click', this.googleCallback);
+        this.addEventListener(intraButton,'click', this.intraCallback);
+        this.addEventListener(emailInput,'input', this.updateButtonState.bind(this));
+        this.addEventListener(submitButton,'click', this.emailCallback.bind(this));
+        this.addEventListener(closeButton,'click', this.closeAlert.bind(this));
+    }
+
+    /* === alert : ========================================================== */
+    alert(message)
+    {
+        const alertModal = this.shadowRoot.getElementById('customAlert');
+        const alertMessage = this.shadowRoot.getElementById('alertMessage');
+        alertMessage.textContent = message;
+        alertModal.style.display = 'flex';
+    }
+
+    /* *********************************************************************** #
+    #   * Event callbacks :                                                    #
+    # *********************************************************************** */
+
+    /* === googleCallback : ================================================== */
+    googleCallback(event)
+    {
+        event.preventDefault();
+        window.location.href = backendGateway.googleAuthUrl;
+    }
+
+    /* === intraCallback : ================================================== */
+    intraCallback(event)
+    {
+        event.preventDefault();
+        window.location.href = backendGateway.intraAuthUrl;
+    }
+
+    /* === updateButtonState : =============================================== */
+    updateButtonState(event)
+    {
+        event.preventDefault();
+        const emailInput = this.shadowRoot.getElementById('email_input');
+        const submitButton = this.shadowRoot.getElementById('submit_button');
+
+        submitButton.disabled = !_.validateEmail(emailInput.value);
+    }
+
+    /* === emailCallback : ================================================== */
+    async emailCallback(event)
+    {
+        event.preventDefault();
+        const emailInput = this.shadowRoot.getElementById('email_input');
+        const email = emailInput.value.trim();
+
+        if (!_.validateEmail(email))
+            return this.alert("Please enter a valid email address.");
+
+        const url = backendGateway.emailSignUpUrl;
+        const headers = { 'Content-Type': 'application/json' };
+        const data = JSON.stringify({ email });
+
+        const response = await Http.post(url, headers, data);
+
+        console.log("Response", response);
+        if (!response.ok)
+            return this.alert(response["message"]);
+
+        this.alert("Email sent");
+    }
+
+    /* === closeAlert : ====================================================== */
+    closeAlert(event)
+    {
+        event.preventDefault();
+        const alertModal = this.shadowRoot.getElementById('customAlert');
+        alertModal.style.display = 'none';
+    }
 }
-
-    // /* === onConnected : ==================================================== */
-    // onConnected()
-    // {
-    //     const googleButton = this.shadowRoot.getElementById('google');
-    //     const intraButton = this.shadowRoot.getElementById('intra');
-    //     const emailInput = this.shadowRoot.getElementById('email_input');
-    //     const submitButton = this.shadowRoot.getElementById('submit_button');
-    //     const closeButton = this.shadowRoot.getElementById('closeAlert');
-
-    //     this.addEventListener(googleButton,'click', this.googleCallback);
-    //     this.addEventListener(intraButton,'click', this.intraCallback);
-    //     this.addEventListener(emailInput,'input', this.updateButtonState.bind(this));
-    //     this.addEventListener(submitButton,'click', this.emailCallback.bind(this));
-    //     this.addEventListener(closeButton,'click', this.closeAlert.bind(this));
-    // }
-
-    // /* === alert : ========================================================== */
-    // alert(message)
-    // {
-    //     const alertModal = this.shadowRoot.getElementById('customAlert');
-    //     const alertMessage = this.shadowRoot.getElementById('alertMessage');
-    //     alertMessage.textContent = message;
-    //     alertModal.style.display = 'flex';
-    // }
-
-//     /* *********************************************************************** #
-//     #   * Event callbacks :                                                    #
-//     # *********************************************************************** */
-
-//     /* === googleCallback : ================================================== */
-//     googleCallback(event)
-//     {
-//         event.preventDefault();
-//         window.location.href = backendGateway.googleAuthUrl;
-//     }
-
-//     /* === intraCallback : ================================================== */
-//     intraCallback(event)
-//     {
-//         event.preventDefault();
-//         window.location.href = backendGateway.intraAuthUrl;
-//     }
-
-//     /* === updateButtonState : =============================================== */
-//     updateButtonState(event)
-//     {
-//         event.preventDefault();
-//         const emailInput = this.shadowRoot.getElementById('email_input');
-//         const submitButton = this.shadowRoot.getElementById('submit_button');
-
-//         submitButton.disabled = !_.validateEmail(emailInput.value);
-//     }
-
-//     /* === emailCallback : ================================================== */
-//     async emailCallback(event)
-//     {
-//         event.preventDefault();
-//         const emailInput = this.shadowRoot.getElementById('email_input');
-//         const email = emailInput.value.trim();
-
-//         if (!_.validateEmail(email))
-//             return this.alert("Please enter a valid email address.");
-
-//         const url = backendGateway.emailSignUpUrl;
-//         const headers = { 'Content-Type': 'application/json' };
-//         const data = JSON.stringify({ email });
-
-//         const response = await Http.post(url, headers, data);
-
-//         console.log("Response", response);
-//         if (!response.ok)
-//             return this.alert(response["message"]);
-
-//         this.alert("Email sent");
-//     }
-
-//     /* === closeAlert : ====================================================== */
-//     closeAlert(event)
-//     {
-//         event.preventDefault();
-//         const alertModal = this.shadowRoot.getElementById('customAlert');
-//         alertModal.style.display = 'none';
-//     }
-// }

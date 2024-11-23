@@ -57,7 +57,7 @@ async function loadRoute()
     const bestMatch = routeMatches.find(match => match.isMatch);
     const routeToLoad = bestMatch ? bestMatch.route : Router.routes[0];
 
-    if (routeToLoad?.view === undefined) {
+    if (routeToLoad.view === undefined) {
        console.error("No view associated with the route");
        return ;
     }

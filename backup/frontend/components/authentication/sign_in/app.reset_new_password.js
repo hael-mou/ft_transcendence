@@ -1,37 +1,44 @@
-
+import { backendGateway } from "../../../core/config.js";
 import { Component } from "../../../core/component.js";
+import { Http } from "../../../tools/http.js";
+import  _ from "../../../tools/utils.js";
+import { Alert } from "../alert_component.js";
 
 /* *************************************************************************** #
-#   * SetNewPassword Component Class :                                         #
+#   * ResetPassword Component Class :                                                 #
 # *************************************************************************** */
-export class SetNewPassword extends Component
+export class ResetPassword extends Component
 {
     /* === template : ======================================================= */
 
-    get template() {
+    get template()
+    {
         return /* html */ `
-        <p class="title"> - Set New Password - </p>
         <div class="container-form">
-            <div class="input-container">
-                <img src="/static/assets/imgs/email_icon.svg" alt="Password Icon">
-                <input id="password_input" type="password" class="input-field"
-                    placeholder="password" required>
-            </div>
+            <p class="title"> Enter Your Email</p>
 
             <div class="input-container">
-                <img src="/static/assets/imgs/email_icon.svg" alt="Password Icon">
-                <input id="password_input_confirm" type="password" class="input-field"
-                    placeholder="confirm password" required>
+                <img src="/static/assets/imgs/email_icon.svg" alt="Email Icon">
+                <input id="email_input" type="email" class="input-field"
+                    placeholder="Email" required>
             </div>
+
             <button id="submit_button" class="container-email" disabled>
-            Set New Password
+            SEND RESET LINK
             </button>
+        </div>
+            
+        <div class="container-help">
+            <p>Don't have an account?
+            <a href="#">Sign up here.</a>
+            </p>
         </div>
         `
     };
 
     /* === styles : ========================================================= */
-    get styles() {
+    get styles()
+    {
         return /*css*/`
                 :host {
                     width: 75%;
@@ -53,7 +60,6 @@ export class SetNewPassword extends Component
                     justify-content: center;
                     align-items: center;
                     color: white;
-                    margin-bottom: 79px;
                 }
 
                 .container-form button, .input-container {
@@ -111,6 +117,7 @@ export class SetNewPassword extends Component
                     margin-right: 0.5rem;
                 }
 
+
                 .container-email {
                     background-color: #007088;
                     color: var(--color-text);
@@ -119,6 +126,23 @@ export class SetNewPassword extends Component
 
                 .container-email:hover {
                     background-color: var(--color-primary);
+                }
+
+                .container-help {
+                    color: white;
+                    margin-top: 30px;
+                    margin-bottom: 100px;
+                    text-align: center;
+                }
+
+                .container-help a {
+                    text-decoration: none;
+                    color: var(--color-primary);
+                }
+
+                .container-help span {
+                    text-decoration: underline;
+                    cursor: pointer;
                 }
 
                 /* Media Queries for Responsiveness */
@@ -138,6 +162,10 @@ export class SetNewPassword extends Component
 
                     .input-field {
                         font-size: 0.9rem;
+                    }
+
+                    .container-help {
+                        margin-bottom: 50px;
                     }
                 }
 
@@ -176,55 +204,50 @@ export class SetNewPassword extends Component
 
 
     /* === onConnected : ==================================================== */
-    // onConnected() {
-    //     this.alert = new Alert();
-    //     const urlParams = new URLSearchParams(window.location.search);
+    onConnected()
+    {
+        this.alert = new Alert();
 
-    //     this.token = urlParams.get('token');
-    //     this.uidb64 = urlParams.get('uidb64');
+        const emailInput = this.shadowRoot.getElementById('email_input');
+        const submitButton = this.shadowRoot.getElementById('submit_button');
 
-    //     console.log("token", this.token, "uidb64", this.uidb64);
 
-    //     const PasswordInput = this.shadowRoot.getElementById('password_input');
-    //     const PasswordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
-    //     const submitButton = this.shadowRoot.getElementById('submit_button');
-
-    //     this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
-    //     this.addEventListener(PasswordInputConfirm,'input', updateButtonState.bind(this));
-    //     this.addEventListener(submitButton,'click', SetNewPasswordCallBack.bind(this));
-    // }
+        this.addEventListener(emailInput,'input', updateButtonState.bind(this));
+        this.addEventListener(submitButton,'click', resetCallback.bind(this));
+    }
 }
 
 /* *********************************************************************** #
 #   * Event callbacks :                                                    #
 # *********************************************************************** */
 
+
 /* === updateButtonState : =============================================== */
-// function updateButtonState(event)
-// {
-//     event.preventDefault();
-//     const passwordInput = this.shadowRoot.getElementById('password_input');
-//     const submitButton = this.shadowRoot.getElementById('submit_button');
-//     const passwordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
+function updateButtonState(event)
+{
+    event.preventDefault();
+    const emailInput = this.shadowRoot.getElementById('email_input');
+    const submitButton = this.shadowRoot.getElementById('submit_button');
 
-//     submitButton.disabled = !_.validatePassword(passwordInput.value)
-//                             || passwordInput.value !== passwordInputConfirm.value;
-// }
+    submitButton.disabled = !_.validateEmail(emailInput.value) 
+}
 
 
-// /* === CompleteCallback : ================================================== */
-// async function SetNewPasswordCallBack(event)
-// {
-//     event.preventDefault();
+/* === emailCallback : ================================================== */
+async function resetCallback(event)
+{
+        event.preventDefault();
 
-//     const passwordInput = this.shadowRoot.getElementById('password_input');
-//     const password = passwordInput.value;
+        const emailInput = this.shadowRoot.getElementById('email_input');
+        const email = emailInput.value.trim();
 
-//     const url = backendGateway.setNewPasswordUrl;
-//     const headers = { 'Content-Type': 'application/json' };
-//     const data = JSON.stringify({ password, token: this.token, uidb64: this.uidb64 });
 
-//     const response = await Http.patch(url, headers, data);
-//     this.alert.setMessage(response["error"] !== undefined ? response["error"] : "Successfuly set new password");
-//     this.alert.modalInstance.show();
-// }
+        const url = backendGateway.resetPasswordUrl;
+        const headers = { 'Content-Type': 'application/json' };
+        const data = JSON.stringify({ email });
+
+        const response = await Http.post(url, headers, data);
+        
+        this.alert.setMessage(response["error"] !== undefined ? response["error"] : "Reset email sent");
+        this.alert.modalInstance.show();
+}

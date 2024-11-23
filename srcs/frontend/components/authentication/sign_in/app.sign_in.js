@@ -1,8 +1,5 @@
-import { backendGateway } from "../../../core/config.js";
+
 import { Component } from "../../../core/component.js";
-import { Http } from "../../../tools/http.js";
-import  _ from "../../../tools/utils.js";
-import { Alert } from "../alert_component.js";
 
 /* *************************************************************************** #
 #   * SignUp Component Class :                                                 #
@@ -11,8 +8,8 @@ export class SignIn extends Component
 {
     /* === template : ======================================================= */
 
-    get template()
-    {
+    get template() {
+
         return /* html */ `
         <p class="title"> - Choose One way - </p>
         <div class="container-form">
@@ -40,12 +37,12 @@ export class SignIn extends Component
                     placeholder="password" required>
             </div>
 
-            
+
             <button id="submit_button" class="container-email" disabled>
             SIGN IN WITH EMAIL
             </button>
         </div>
-            
+
         <div class="container-help">
             <p>Don't have an account?
             <a href="#">Sign up here.</a>
@@ -56,8 +53,7 @@ export class SignIn extends Component
     };
 
     /* === styles : ========================================================= */
-    get styles()
-    {
+    get styles() {
         return /*css*/`
                 :host {
                     width: 75%;
@@ -252,72 +248,72 @@ export class SignIn extends Component
 
 
     /* === onConnected : ==================================================== */
-    onConnected()
-    {
-        this.alert = new Alert();
-        const googleButton = this.shadowRoot.getElementById('google');
-        const intraButton = this.shadowRoot.getElementById('intra');
-        const emailInput = this.shadowRoot.getElementById('email_input');
-        const PasswordInput = this.shadowRoot.getElementById('password_input');
-        const submitButton = this.shadowRoot.getElementById('submit_button');
+    // onConnected()
+    // {
+    //     this.alert = new Alert();
+    //     const googleButton = this.shadowRoot.getElementById('google');
+    //     const intraButton = this.shadowRoot.getElementById('intra');
+    //     const emailInput = this.shadowRoot.getElementById('email_input');
+    //     const PasswordInput = this.shadowRoot.getElementById('password_input');
+    //     const submitButton = this.shadowRoot.getElementById('submit_button');
 
-        this.addEventListener(googleButton,'click', googleCallback);
-        this.addEventListener(intraButton,'click', intraCallback);
-        this.addEventListener(emailInput,'input', updateButtonState.bind(this));
-        this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
-        this.addEventListener(submitButton,'click', emailCallback.bind(this));
-    }
+    //     this.addEventListener(googleButton,'click', googleCallback);
+    //     this.addEventListener(intraButton,'click', intraCallback);
+    //     this.addEventListener(emailInput,'input', updateButtonState.bind(this));
+    //     this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
+    //     this.addEventListener(submitButton,'click', emailCallback.bind(this));
+    // }
 }
 
-/* *********************************************************************** #
-#   * Event callbacks :                                                    #
-# *********************************************************************** */
+// /* *********************************************************************** #
+// #   * Event callbacks :                                                    #
+// # *********************************************************************** */
 
-/* === googleCallback : ================================================== */
-function googleCallback(event)
-{
-    event.preventDefault();
-    window.location.href = backendGateway.googleAuthUrl;
-}
+// /* === googleCallback : ================================================== */
+// function googleCallback(event)
+// {
+//     event.preventDefault();
+//     window.location.href = backendGateway.googleAuthUrl;
+// }
 
-/* === intraCallback : ================================================== */
-function intraCallback(event)
-{
-    event.preventDefault();
-    window.location.href = backendGateway.intraAuthUrl;
-}
+// /* === intraCallback : ================================================== */
+// function intraCallback(event)
+// {
+//     event.preventDefault();
+//     window.location.href = backendGateway.intraAuthUrl;
+// }
 
-/* === updateButtonState : =============================================== */
-function updateButtonState(event)
-{
-    event.preventDefault();
-    const emailInput = this.shadowRoot.getElementById('email_input');
-    const passwordInput = this.shadowRoot.getElementById('password_input');
-    const submitButton = this.shadowRoot.getElementById('submit_button');
+// /* === updateButtonState : =============================================== */
+// function updateButtonState(event)
+// {
+//     event.preventDefault();
+//     const emailInput = this.shadowRoot.getElementById('email_input');
+//     const passwordInput = this.shadowRoot.getElementById('password_input');
+//     const submitButton = this.shadowRoot.getElementById('submit_button');
 
-    submitButton.disabled = !_.validateEmail(emailInput.value) 
-                            || passwordInput.value.length < 8;
-}
-
-
-/* === emailCallback : ================================================== */
-async function emailCallback(event)
-{
-        event.preventDefault();
-
-        const emailInput = this.shadowRoot.getElementById('email_input');
-        const passwordInput = this.shadowRoot.getElementById('password_input');
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
+//     submitButton.disabled = !_.validateEmail(emailInput.value)
+//                             || passwordInput.value.length < 8;
+// }
 
 
-        const url = backendGateway.emailSignInUrl;
-        const headers = { 'Content-Type': 'application/json' };
-        const data = JSON.stringify({ email, password });
+// /* === emailCallback : ================================================== */
+// async function emailCallback(event)
+// {
+//         event.preventDefault();
 
-        const response = await Http.post(url, headers, data);
+//         const emailInput = this.shadowRoot.getElementById('email_input');
+//         const passwordInput = this.shadowRoot.getElementById('password_input');
+//         const email = emailInput.value.trim();
+//         const password = passwordInput.value;
 
-        console.log("Response", response);
-        this.alert.setMessage(!response.ok ? response["error"] : "Successfully signed in");
-        this.alert.modalInstance.show();
-}
+
+//         const url = backendGateway.emailSignInUrl;
+//         const headers = { 'Content-Type': 'application/json' };
+//         const data = JSON.stringify({ email, password });
+
+//         const response = await Http.post(url, headers, data);
+
+//         console.log("Response", response);
+//         this.alert.setMessage(!response.ok ? response["error"] : "Successfully signed in");
+//         this.alert.modalInstance.show();
+// }

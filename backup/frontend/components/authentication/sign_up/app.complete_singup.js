@@ -1,17 +1,27 @@
-
+import { backendGateway } from "../../../core/config.js";
 import { Component } from "../../../core/component.js";
+import { Http } from "../../../tools/http.js";
+import  _ from "../../../tools/utils.js";
+import { Alert } from "../alert_component.js";
 
 /* *************************************************************************** #
-#   * SetNewPassword Component Class :                                         #
+#   * SignUp Component Class :                                                 #
 # *************************************************************************** */
-export class SetNewPassword extends Component
+export class CompleteSignUp extends Component
 {
     /* === template : ======================================================= */
 
-    get template() {
+    get template()
+    {
         return /* html */ `
-        <p class="title"> - Set New Password - </p>
+        <p class="title"> - Complete Sign Up - </p>
         <div class="container-form">
+            <div class="input-container">
+                <img src="/static/assets/imgs/email_icon.svg" alt="Username Icon">
+                <input id="username_input" type="text" class="input-field"
+                    placeholder="Username" required>
+            </div>
+
             <div class="input-container">
                 <img src="/static/assets/imgs/email_icon.svg" alt="Password Icon">
                 <input id="password_input" type="password" class="input-field"
@@ -24,14 +34,15 @@ export class SetNewPassword extends Component
                     placeholder="confirm password" required>
             </div>
             <button id="submit_button" class="container-email" disabled>
-            Set New Password
+            COMPLETE SIGN UP
             </button>
         </div>
         `
     };
 
     /* === styles : ========================================================= */
-    get styles() {
+    get styles()
+    {
         return /*css*/`
                 :host {
                     width: 75%;
@@ -53,7 +64,6 @@ export class SetNewPassword extends Component
                     justify-content: center;
                     align-items: center;
                     color: white;
-                    margin-bottom: 79px;
                 }
 
                 .container-form button, .input-container {
@@ -151,7 +161,7 @@ export class SetNewPassword extends Component
                         padding: 0.7rem 0.3rem;
                     }
 
-                    .container-email {
+                    .container-google, .intra, .container-email {
                         padding: 1rem 0.5rem;
                     }
 
@@ -176,23 +186,20 @@ export class SetNewPassword extends Component
 
 
     /* === onConnected : ==================================================== */
-    // onConnected() {
-    //     this.alert = new Alert();
-    //     const urlParams = new URLSearchParams(window.location.search);
+    onConnected()
+    {
+        this.alert = new Alert();
 
-    //     this.token = urlParams.get('token');
-    //     this.uidb64 = urlParams.get('uidb64');
+        const usernameInput = this.shadowRoot.getElementById('username_input');
+        const PasswordInput = this.shadowRoot.getElementById('password_input');
+        const PasswordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
+        const submitButton = this.shadowRoot.getElementById('submit_button');
 
-    //     console.log("token", this.token, "uidb64", this.uidb64);
-
-    //     const PasswordInput = this.shadowRoot.getElementById('password_input');
-    //     const PasswordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
-    //     const submitButton = this.shadowRoot.getElementById('submit_button');
-
-    //     this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
-    //     this.addEventListener(PasswordInputConfirm,'input', updateButtonState.bind(this));
-    //     this.addEventListener(submitButton,'click', SetNewPasswordCallBack.bind(this));
-    // }
+        this.addEventListener(usernameInput,'input', updateButtonState.bind(this));
+        this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
+        this.addEventListener(PasswordInputConfirm,'input', updateButtonState.bind(this));
+        this.addEventListener(submitButton,'click', completCallBack.bind(this));
+    }
 }
 
 /* *********************************************************************** #
@@ -200,31 +207,35 @@ export class SetNewPassword extends Component
 # *********************************************************************** */
 
 /* === updateButtonState : =============================================== */
-// function updateButtonState(event)
-// {
-//     event.preventDefault();
-//     const passwordInput = this.shadowRoot.getElementById('password_input');
-//     const submitButton = this.shadowRoot.getElementById('submit_button');
-//     const passwordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
+function updateButtonState(event)
+{
+    event.preventDefault();
+    const usernamaeInput = this.shadowRoot.getElementById('username_input');
+    const passwordInput = this.shadowRoot.getElementById('password_input');
+    const submitButton = this.shadowRoot.getElementById('submit_button');
+    const passwordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
 
-//     submitButton.disabled = !_.validatePassword(passwordInput.value)
-//                             || passwordInput.value !== passwordInputConfirm.value;
-// }
+    submitButton.disabled = usernamaeInput.value.length < 3 
+                            || !_.validatePassword(passwordInput.value)
+                            || passwordInput.value !== passwordInputConfirm.value;
+}
 
 
-// /* === CompleteCallback : ================================================== */
-// async function SetNewPasswordCallBack(event)
-// {
-//     event.preventDefault();
+/* === CompleteCallback : ================================================== */
+async function completCallBack(event)
+{
+    event.preventDefault();
 
-//     const passwordInput = this.shadowRoot.getElementById('password_input');
-//     const password = passwordInput.value;
+    const username = this.shadowRoot.getElementById('username_input').value;
+    const passwordInput = this.shadowRoot.getElementById('password_input');
+    const password = passwordInput.value;
 
-//     const url = backendGateway.setNewPasswordUrl;
-//     const headers = { 'Content-Type': 'application/json' };
-//     const data = JSON.stringify({ password, token: this.token, uidb64: this.uidb64 });
+    const url = backendGateway.completeSignUpUrl;
+    const headers = { 'Content-Type': 'application/json' };
+    const data = JSON.stringify({ username, password });
 
-//     const response = await Http.patch(url, headers, data);
-//     this.alert.setMessage(response["error"] !== undefined ? response["error"] : "Successfuly set new password");
-//     this.alert.modalInstance.show();
-// }
+    const response = await Http.post(url, headers, data);
+
+    this.alert.setMessage(!response.ok ? response["error"][0] : "Successfully signed up");
+    this.alert.modalInstance.show();
+}
