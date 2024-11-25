@@ -31,6 +31,10 @@ export class AuthApp extends Component
                 overflow: hidden;
             }
 
+            img {
+                pointer-events: none;
+            }
+
             .container-auth {
                 width: 100%;
                 max-width: 550px;

@@ -6,6 +6,7 @@
 export class Router
 {
     static routes = [];
+    static isRedirect = false;
 
     /* === constructor : ==================================================== */
     static setRoutes(routes)
@@ -16,9 +17,9 @@ export class Router
     /* === initialize : ===================================================== */
     static async initialize()
     {
-        window.addEventListener('click', this.handleRouting);
+        // window.addEventListener('click', this.handleRouting);
         window.addEventListener('popstate', loadRoute);
-        await loadRoute();
+        window.addEventListener('pageshow', loadRoute);
     }
 
     /* === handle Routing Event : =========================================== */
@@ -38,6 +39,7 @@ export class Router
     {
         if (url === location.href) return;
         history.replaceState(null, null, url);
+        this.isRedirect = true;
         await loadRoute();
     }
 }
@@ -49,6 +51,7 @@ export class Router
 /* === load Route component : =============================================== */
 async function loadRoute()
 {
+    console.log("loadRoute");
     const routeMatches = Router.routes.map(route => ({
         route: route,
         isMatch: route.path === location.pathname,
@@ -57,9 +60,10 @@ async function loadRoute()
     const bestMatch = routeMatches.find(match => match.isMatch);
     const routeToLoad = bestMatch ? bestMatch.route : Router.routes[0];
 
-    if (routeToLoad?.view === undefined) {
+    if (routeToLoad.view === undefined) {
        console.error("No view associated with the route");
        return ;
     }
     await routeToLoad.view();
+    Router.isRedirect = false;
 }

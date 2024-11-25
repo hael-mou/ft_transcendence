@@ -1,5 +1,8 @@
 
 import { Component } from "../../../core/component.js";
+import { authGateway } from "../../../core/config.js";
+import { utils as _ } from "../../../tools/utils.js";
+import { Http } from "../../../tools/http.js";
 
 
 /* *************************************************************************** #
@@ -13,20 +16,20 @@ export class CompleteSignUp extends Component
         <p class="title"> - Complete Sign Up - </p>
         <div class="container-form">
             <div class="input-container">
-                <img src="/static/assets/imgs/email_icon.svg" alt="Username Icon">
+                <img src="/static/assets/imgs/user_icon.svg" alt="Username Icon">
                 <input id="username_input" type="text" class="input-field"
-                    placeholder="Username" required>
+                    placeholder="Username" maxlength="10" required>
             </div>
 
             <div class="input-container">
-                <img src="/static/assets/imgs/email_icon.svg" alt="Password Icon">
+                <img src="/static/assets/imgs/pwd_icon.svg" alt="Password Icon">
                 <input id="password_input" type="password" class="input-field"
                     placeholder="password" required>
             </div>
 
             <div class="input-container">
-                <img src="/static/assets/imgs/email_icon.svg" alt="Password Icon">
-                <input id="password_input_confirm" type="password" class="input-field"
+                <img src="/static/assets/imgs/pwd_icon.svg" alt="Password Icon">
+                <input id="pwd_input_confirm" type="password" class="input-field"
                     placeholder="confirm password" required>
             </div>
             <button id="submit_button" class="container-email" disabled>
@@ -61,6 +64,7 @@ export class CompleteSignUp extends Component
                     align-items: center;
                     color: white;
                     margin-bottom: 73px;
+
                 }
 
                 .container-form button, .input-container {
@@ -183,56 +187,59 @@ export class CompleteSignUp extends Component
 
 
     /* === onConnected : ==================================================== */
-    // onConnected()
-    // {
-    //     this.alert = new Alert();
+    onConnected() {
 
-    //     const usernameInput = this.shadowRoot.getElementById('username_input');
-    //     const PasswordInput = this.shadowRoot.getElementById('password_input');
-    //     const PasswordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
-    //     const submitButton = this.shadowRoot.getElementById('submit_button');
+        const usernameInput  = this.shadowRoot.getElementById('username_input');
+        const PasswordInput  = this.shadowRoot.getElementById('password_input');
+        const pwdInputConfirm = this.shadowRoot.getElementById('pwd_input_confirm');
+        const submitButton   = this.shadowRoot.getElementById('submit_button');
 
-    //     this.addEventListener(usernameInput,'input', updateButtonState.bind(this));
-    //     this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
-    //     this.addEventListener(PasswordInputConfirm,'input', updateButtonState.bind(this));
-    //     this.addEventListener(submitButton,'click', completCallBack.bind(this));
-    // }
+        this.addEventListener(usernameInput,'input', updateButtonState.bind(this));
+        this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
+        this.addEventListener(pwdInputConfirm,'input', updateButtonState.bind(this));
+        this.addEventListener(submitButton,'click', completCallBack.bind(this));
+    }
 }
 
-/* *********************************************************************** #
+/* *************************************************************************** #
 #   * Event callbacks :                                                    #
 # *********************************************************************** */
 
-// /* === updateButtonState : =============================================== */
-// function updateButtonState(event)
-// {
-//     event.preventDefault();
-//     const usernamaeInput = this.shadowRoot.getElementById('username_input');
-//     const passwordInput = this.shadowRoot.getElementById('password_input');
-//     const submitButton = this.shadowRoot.getElementById('submit_button');
-//     const passwordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
+/* === updateButtonState : =============================================== */
+function updateButtonState(event) {
 
-//     submitButton.disabled = usernamaeInput.value.length < 3
-//                             || !_.validatePassword(passwordInput.value)
-//                             || passwordInput.value !== passwordInputConfirm.value;
-// }
+    event.preventDefault();
+    const usernamaeInput = this.shadowRoot.getElementById('username_input');
+    const passwordInput  = this.shadowRoot.getElementById('password_input');
+    const submitButton   = this.shadowRoot.getElementById('submit_button');
+    const pwdInputConfirm = this.shadowRoot.getElementById('pwd_input_confirm');
+
+    submitButton.disabled = usernamaeInput.value.length < 3
+                            || !_.validatePassword(passwordInput.value)
+                            || passwordInput.value !== pwdInputConfirm.value;
+
+}
 
 
-// /* === CompleteCallback : ================================================== */
-// async function completCallBack(event)
-// {
-//     event.preventDefault();
+/* === CompleteCallback : ================================================== */
+async function completCallBack(event) {
 
-//     const username = this.shadowRoot.getElementById('username_input').value;
-//     const passwordInput = this.shadowRoot.getElementById('password_input');
-//     const password = passwordInput.value;
+    event.preventDefault();
 
-//     const url = backendGateway.completeSignUpUrl;
-//     const headers = { 'Content-Type': 'application/json' };
-//     const data = JSON.stringify({ username, password });
+    const username = this.shadowRoot.getElementById('username_input').value;
+    const passwordInput = this.shadowRoot.getElementById('password_input');
+    const password = passwordInput.value;
 
-//     const response = await Http.post(url, headers, data);
+    const headers = { 'Content-Type': 'application/json' };
+    const data = JSON.stringify({ username, password });
 
-//     this.alert.setMessage(!response.ok ? response["error"][0] : "Successfully signed up");
-//     this.alert.modalInstance.show();
-// }
+    const response = await Http.post(authGateway.compliteSignUpUrl, headers, data);
+
+    if (!response.info.ok) {
+        const alert = document.createElement('custom-alert');
+        alert.setMessage("user or password is not valid or already exist");
+        return alert.modalInstance.show();
+    }
+
+    console.log("sign up Done"); // be redirect to home page
+}

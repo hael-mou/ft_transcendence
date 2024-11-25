@@ -38,6 +38,10 @@ body{
     font-family: 'Exo2', sans-serif;
 }
 
+img {
+    pointer-events: none;
+}
+
 app-root {
     flex: 1;
     display: flex;
@@ -83,3 +87,18 @@ app-root {
     opacity: 1;
     transition: opacity 1s ease-out;
 }
+
+@keyframes fadeInSlideUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in-slide-up {
+    animation: fadeInSlideUp 0.5s ease-out;
+  }

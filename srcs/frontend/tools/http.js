@@ -1,7 +1,49 @@
 
-/*=== global variables : =====================================================*/
-let accessToken = null;
+import { authGateway } from "../core/config.js";
 
+/* ************************************************************************** */
+/*    * variables :                                                           */
+/* ************************************************************************** */
+let accessToken = null;
+let userId = null;
+
+/* ************************************************************************** */
+/*    * functions :                                                           */
+/* ************************************************************************** */
+
+/* === get User Id : ======================================================== */
+export function getUserId() {
+    return userId;
+}
+
+/* === getAccessToken : ===================================================== */
+export async function getAccessToken() {
+
+    const response = await Http.get(authGateway.getTokenUrl);
+
+    if (!response.info.ok) return false;
+
+    accessToken = response.json.access;
+    console.log(accessToken);
+    userId = jwt_decode(accessToken).user_id;
+    return true;
+}
+
+/* === isConnected : ======================================================= */
+export async function isConnected() {
+
+    if (!accessToken)
+        return await getAccessToken();
+
+    const decoded = jwt_decode(accessToken);
+    if (decoded.exp < Date.now() / 1000) {
+        accessToken = null;
+        userId = null;
+        return false;
+    }
+
+    return true;
+}
 
 /* ************************************************************************** */
 /*    * Http utils :                                                          */
@@ -36,14 +78,22 @@ export class Http
 /* ************************************************************************** */
 /*    * private functions :                                                   */
 /* ************************************************************************** */
-async function request(method, url, headers = {}, data = {})
-{
-    const response = await fetch(url, {
-        method: method,
-        headers: headers,
-        body: data,
-        credentials: 'include',
-    });
+async function request(method, url, headers = {}, data) {
+    try {
+        const response = await fetch(url, {
+            method,
+            headers,
+            body: data,
+            credentials: 'include',
+        });
 
-    return await response.json();
+        if (!response.ok) {
+            return { json: null, info: response };
+        }
+
+        return { json: await response.json(), info: response };
+
+    } catch (error) {
+        return { json: null, info: error };
+    }
 }

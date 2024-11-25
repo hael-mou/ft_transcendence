@@ -1,18 +1,14 @@
-import { backendGateway } from "../../../core/config.js";
+
 import { Component } from "../../../core/component.js";
-import { Http } from "../../../tools/http.js";
-import  _ from "../../../tools/utils.js";
-import { Alert } from "../alert_component.js";
 
 /* *************************************************************************** #
-#   * ResetPassword Component Class :                                                 #
+#   * ResetPassword Component Class :                                          #
 # *************************************************************************** */
 export class ResetPassword extends Component
 {
     /* === template : ======================================================= */
 
-    get template()
-    {
+    get template() {
         return /* html */ `
         <div class="container-form">
             <p class="title"> Enter Your Email</p>
@@ -27,7 +23,7 @@ export class ResetPassword extends Component
             SEND RESET LINK
             </button>
         </div>
-            
+
         <div class="container-help">
             <p>Don't have an account?
             <a href="#">Sign up here.</a>
@@ -37,8 +33,8 @@ export class ResetPassword extends Component
     };
 
     /* === styles : ========================================================= */
-    get styles()
-    {
+    get styles() {
+
         return /*css*/`
                 :host {
                     width: 75%;
@@ -204,17 +200,17 @@ export class ResetPassword extends Component
 
 
     /* === onConnected : ==================================================== */
-    onConnected()
-    {
-        this.alert = new Alert();
+    // onConnected()
+    // {
+    //     this.alert = new Alert();
 
-        const emailInput = this.shadowRoot.getElementById('email_input');
-        const submitButton = this.shadowRoot.getElementById('submit_button');
+    //     const emailInput = this.shadowRoot.getElementById('email_input');
+    //     const submitButton = this.shadowRoot.getElementById('submit_button');
 
 
-        this.addEventListener(emailInput,'input', updateButtonState.bind(this));
-        this.addEventListener(submitButton,'click', resetCallback.bind(this));
-    }
+    //     this.addEventListener(emailInput,'input', updateButtonState.bind(this));
+    //     this.addEventListener(submitButton,'click', resetCallback.bind(this));
+    // }
 }
 
 /* *********************************************************************** #
@@ -222,32 +218,32 @@ export class ResetPassword extends Component
 # *********************************************************************** */
 
 
-/* === updateButtonState : =============================================== */
-function updateButtonState(event)
-{
-    event.preventDefault();
-    const emailInput = this.shadowRoot.getElementById('email_input');
-    const submitButton = this.shadowRoot.getElementById('submit_button');
+// /* === updateButtonState : =============================================== */
+// function updateButtonState(event)
+// {
+//     event.preventDefault();
+//     const emailInput = this.shadowRoot.getElementById('email_input');
+//     const submitButton = this.shadowRoot.getElementById('submit_button');
 
-    submitButton.disabled = !_.validateEmail(emailInput.value) 
-}
-
-
-/* === emailCallback : ================================================== */
-async function resetCallback(event)
-{
-        event.preventDefault();
-
-        const emailInput = this.shadowRoot.getElementById('email_input');
-        const email = emailInput.value.trim();
+//     submitButton.disabled = !_.validateEmail(emailInput.value)
+// }
 
 
-        const url = backendGateway.resetPasswordUrl;
-        const headers = { 'Content-Type': 'application/json' };
-        const data = JSON.stringify({ email });
+// /* === emailCallback : ================================================== */
+// async function resetCallback(event)
+// {
+//         event.preventDefault();
 
-        const response = await Http.post(url, headers, data);
-        
-        this.alert.setMessage(response["error"] !== undefined ? response["error"] : "Reset email sent");
-        this.alert.modalInstance.show();
-}
+//         const emailInput = this.shadowRoot.getElementById('email_input');
+//         const email = emailInput.value.trim();
+
+
+//         const url = backendGateway.resetPasswordUrl;
+//         const headers = { 'Content-Type': 'application/json' };
+//         const data = JSON.stringify({ email });
+
+//         const response = await Http.post(url, headers, data);
+
+//         this.alert.setMessage(response["error"] !== undefined ? response["error"] : "Reset email sent");
+//         this.alert.modalInstance.show();
+// }

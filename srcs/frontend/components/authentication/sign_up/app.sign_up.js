@@ -1,6 +1,9 @@
 
 import { Component } from "../../../core/component.js";
 import { utils as _ } from "../../../tools/utils.js";
+import { authGateway } from "../../../core/config.js";
+import { Http } from "../../../tools/http.js";
+import { Router } from "../../../core/routing.js";
 
 /* *************************************************************************** #
 #   * SignUp Component Class :                                                 #
@@ -11,7 +14,7 @@ export class SignUp extends Component
     /* === template : ======================================================= */
     get template() {
         return /* html */ `
-            <p class="title"> - Choose One way - </p>
+            <p class="title"> - Sign Up - </p>
             <div class="container-form">
                 <button id="google" class="container-google">
                     <img src="/static/assets/imgs/google_icon.svg" alt="Google Icon">
@@ -23,7 +26,7 @@ export class SignUp extends Component
                     <span>SIGN UP WITH INTRA</span>
                 </button>
 
-                <p class="title"> - Or - </p>
+                <p class="title"></p>
 
                 <div class="input-container">
                     <img src="/static/assets/imgs/email_icon.svg" alt="Email Icon">
@@ -38,17 +41,10 @@ export class SignUp extends Component
 
             <div class="container-help">
                 <p>Already have an account?
-                    <a href="#">Sign in here.</a>
+                    <a id="sign_in_link" href="/sign-in" data-link>
+                        Sign in here.
+                    </a>
                 </p>
-            </div>
-
-
-            <!-- Custom Alert Modal -->
-            <div id="customAlert" class="alert-modal">
-                <div class="alert-content">
-                    <p id="alertMessage" class="alert-message"></p>
-                    <button id="closeAlert" class="close-button">OK</button>
-                </div>
             </div>
         `;
     }
@@ -299,89 +295,74 @@ export class SignUp extends Component
                 }
         `;
     }
+
+    /* === onConnected : ==================================================== */
+    onConnected() {
+
+        const googleButton = this.shadowRoot.getElementById('google');
+        const intraButton = this.shadowRoot.getElementById('intra');
+        const emailInput = this.shadowRoot.getElementById('email_input');
+        const submitButton = this.shadowRoot.getElementById('submit_button');
+        const signInLink = this.shadowRoot.getElementById('sign_in_link');
+
+        this.addEventListener(signInLink,'click', Router.handleRouting.bind(this));
+        this.addEventListener(googleButton,'click', googleCallback);
+        this.addEventListener(intraButton,'click', intraCallback);
+        this.addEventListener(submitButton,'click', emailCallback.bind(this));
+        this.addEventListener(emailInput,'input', updateButtonState.bind(this));
+        this.addEventListener(emailInput,'keypress', async (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                await emailCallback.call(this, event);
+            }
+        });
+    }
 }
 
-    // /* === onConnected : ==================================================== */
-    // onConnected()
-    // {
-    //     const googleButton = this.shadowRoot.getElementById('google');
-    //     const intraButton = this.shadowRoot.getElementById('intra');
-    //     const emailInput = this.shadowRoot.getElementById('email_input');
-    //     const submitButton = this.shadowRoot.getElementById('submit_button');
-    //     const closeButton = this.shadowRoot.getElementById('closeAlert');
+    /* *********************************************************************** #
+    #   * Event callbacks :                                                    #
+    # *********************************************************************** */
 
-    //     this.addEventListener(googleButton,'click', this.googleCallback);
-    //     this.addEventListener(intraButton,'click', this.intraCallback);
-    //     this.addEventListener(emailInput,'input', this.updateButtonState.bind(this));
-    //     this.addEventListener(submitButton,'click', this.emailCallback.bind(this));
-    //     this.addEventListener(closeButton,'click', this.closeAlert.bind(this));
-    // }
+    /* === googleCallback : ================================================= */
+    function googleCallback(event) {
+        event.preventDefault();
+        window.location.href = authGateway.googleUrl;
+    }
 
-    // /* === alert : ========================================================== */
-    // alert(message)
-    // {
-    //     const alertModal = this.shadowRoot.getElementById('customAlert');
-    //     const alertMessage = this.shadowRoot.getElementById('alertMessage');
-    //     alertMessage.textContent = message;
-    //     alertModal.style.display = 'flex';
-    // }
+    /* === intraCallback : ================================================== */
+    function intraCallback(event) {
 
-//     /* *********************************************************************** #
-//     #   * Event callbacks :                                                    #
-//     # *********************************************************************** */
+        event.preventDefault();
+        window.location.href = authGateway.intraUrl;
+    }
 
-//     /* === googleCallback : ================================================== */
-//     googleCallback(event)
-//     {
-//         event.preventDefault();
-//         window.location.href = backendGateway.googleAuthUrl;
-//     }
+    /* === updateButtonState : ============================================== */
+    function updateButtonState(event) {
 
-//     /* === intraCallback : ================================================== */
-//     intraCallback(event)
-//     {
-//         event.preventDefault();
-//         window.location.href = backendGateway.intraAuthUrl;
-//     }
+        event.preventDefault();
+        const emailInput = this.shadowRoot.getElementById('email_input');
+        const submitButton = this.shadowRoot.getElementById('submit_button');
 
-//     /* === updateButtonState : =============================================== */
-//     updateButtonState(event)
-//     {
-//         event.preventDefault();
-//         const emailInput = this.shadowRoot.getElementById('email_input');
-//         const submitButton = this.shadowRoot.getElementById('submit_button');
+        submitButton.disabled = !_.validateEmail(emailInput.value);
+    }
 
-//         submitButton.disabled = !_.validateEmail(emailInput.value);
-//     }
+    /* === emailCallback : ================================================== */
+    async function emailCallback(event) {
 
-//     /* === emailCallback : ================================================== */
-//     async emailCallback(event)
-//     {
-//         event.preventDefault();
-//         const emailInput = this.shadowRoot.getElementById('email_input');
-//         const email = emailInput.value.trim();
+        event.preventDefault();
+        const alert = document.createElement('custom-alert');
+        const emailInput = this.shadowRoot.getElementById('email_input');
+        const email = emailInput.value.trim();
+        const headers = { 'Content-Type': 'application/json' };
+        const data = JSON.stringify({ email });
 
-//         if (!_.validateEmail(email))
-//             return this.alert("Please enter a valid email address.");
+        const response = await Http.post(authGateway.signUpUrl, headers, data);
 
-//         const url = backendGateway.emailSignUpUrl;
-//         const headers = { 'Content-Type': 'application/json' };
-//         const data = JSON.stringify({ email });
+        if (!response.info.ok) {
+            alert.setMessage(response.json["message"]);
+            return alert.modalInstance.show();
+        }
 
-//         const response = await Http.post(url, headers, data);
-
-//         console.log("Response", response);
-//         if (!response.ok)
-//             return this.alert(response["message"]);
-
-//         this.alert("Email sent");
-//     }
-
-//     /* === closeAlert : ====================================================== */
-//     closeAlert(event)
-//     {
-//         event.preventDefault();
-//         const alertModal = this.shadowRoot.getElementById('customAlert');
-//         alertModal.style.display = 'none';
-//     }
-// }
+        alert.setMessage("Successfully sent email");
+        alert.modalInstance.show();
+    }
