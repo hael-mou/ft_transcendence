@@ -15,18 +15,20 @@ services:
         volumes:
             - "./secrets/certs:/etc/nginx/certs:ro"
             # to remove later:
-            - "/Volumes/EL\ MOUDDEN/Project/ft_transcendence/srcs/frontend/:/usr/share/nginx/html"
+            # - "/Volumes/EL\ MOUDDEN/Project/ft_transcendence/srcs/frontend/:/usr/share/nginx/html"
+            - "/Users/ndahib/Desktop/ft_transcendence_final/srcs/frontend/:/usr/share/nginx/html"
 
     auth_service:
         container_name: auth_service
         image: auth-service:ft_transcendence
         build: authentication
         env_file:
-            - ./secrets/.auth_service.env
+            - ./secrets/auth_service.env
 
         # restart: always
 
         # to remove later:
         command: python3 manage.py runserver 0.0.0.0:8000
         volumes:
-          - "/Volumes/EL\ MOUDDEN/Project/ft_transcendence/srcs/authentication/app:/app"
+        #   - "/Volumes/EL\ MOUDDEN/Project/ft_transcendence/srcs/authentication/app:/app"
+            - "/Users/ndahib/Desktop/ft_transcendence_final/srcs/frontend/:/usr/share/nginx/html"
