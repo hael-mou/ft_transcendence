@@ -14,13 +14,13 @@ export class Profile extends Component
 	/* === Constructor : ===================================================================================== */
 	constructor(){
 		super();
-		this.id = 2;
-		this.defaultProfile = {
-			first_name: "Si",
-			last_name: "Brahim",
-			username: "AllezSiBrahim",
-			avatar: "https://i.pravatar.cc/150?img=69",
-		}
+		this.user_id = 2;
+		// this.defaultProfile = {
+		// 	first_name: "Si",
+		// 	last_name: "Brahim",
+		// 	username: "AllezSiBrahim",
+		// 	avatar: "https://i.pravatar.cc/150?img=69",
+		// }
 		// this.buttonStatus = {
 		// 	"Add friend": {
 		// 		classToAdd:  "add-friend",
@@ -45,13 +45,14 @@ export class Profile extends Component
 		// 	},
 		// }
 	}
+
 	/* === Init : ============================================================================================ */
 	async init() {
 		this.friendRequests = [];
 		this.SentFriendRequests = [];
 
 		const friendsUrl = profileGateway.getFriendsUrl;
-		const profileUrl = `${profileGateway.getProfileUrl}?id=${this.id}`;
+		const profileUrl = `${profileGateway.getProfileUrl}?id=${this.user_id}`;
 		const receivedRequestsUrl = profileGateway.getReceivedRequestsUrl;
 		const matchesHistoryUrl = profileGateway.getMatchesHistoryUrl;
 
@@ -121,7 +122,7 @@ export class Profile extends Component
 		if (isAlreadySentRequest) {
 			this.updateButtonStatus("Cancel");
 		}
-	}	
+	}
 
 	/* === UpdateButtonStatus : ============================================================================== */
 	// updateButtonStatus(status)
@@ -165,7 +166,7 @@ export class Profile extends Component
 						</div>
 					</div>
 				</div>
-				<div class="row mt-4 p-0"> 
+				<div class="row mt-4 p-0">
 					<div class="profile-info col-12 col-md-9">
 						<div class="row p-0 ">
 							<div class="col-14  mb-3">
@@ -199,11 +200,11 @@ export class Profile extends Component
 							</div>
 						</div>
 					</div>
-					<div class="friends-list col-12 col-md-3"> 
+					<div class="friends-list col-12 col-md-3">
 						<div class="card mb-3">
 							<div class="card-header">
 								<h5>Friends</h5>
-							</div> 
+							</div>
 							<ul id="friends-cards" class="list-group list-group-flush"></ul>
 						</div> <!--Friend ENd-->
 						<div class="card mb-3">
@@ -213,7 +214,7 @@ export class Profile extends Component
 						</div>
 						<ul id="request-cards" class="list-group list-group-flush"></ul>
 					</div>
-				</div> <!---- END of Main Content---->  
+				</div> <!---- END of Main Content---->
 		</div> <!---- END of Profile ---->
 	`;
 	}
@@ -326,12 +327,12 @@ export class Profile extends Component
 				margin-right: 0.5rem;
 			}
 			.name {
-				font-size: 1.6rem; 
+				font-size: 1.6rem;
 				font-weight: bold;
 				color: #fff;
 				margin-bottom: 5px;
 			}
-			
+
 			.username {
 				font-size: 1.2rem;
 				color: #999;
@@ -355,7 +356,7 @@ export class Profile extends Component
 				  display: flex;
 				  flex-direction: column;
 				}
-			  
+
 				.profile-info .col-md-4, .profile-info .col-md-8 {
 				  flex: 1 1 100%;
 				}
@@ -408,8 +409,8 @@ export class Profile extends Component
 				  },
 				  {
 					label: 'Wins',
-					data: this.wins, 
-					borderColor: '#4287f5', 
+					data: this.wins,
+					borderColor: '#4287f5',
 					backgroundColor: 'rgba(66, 135, 245, 0.2)',
 					borderWidth: 3,
 					tension: 0.4,
@@ -418,7 +419,7 @@ export class Profile extends Component
 				]
 			  };
 			 return data;
-	}	
+	}
 	/* ==== ChartCOnfig : ====================================================================================== */
 	get configData() {
 			const config = {
@@ -461,7 +462,7 @@ export class Profile extends Component
 						}
 					  },
 					  grid: {
-						color: 'rgba(255, 255, 255, 0.1)', 
+						color: 'rgba(255, 255, 255, 0.1)',
 					  },
 					  beginAtZero: true,
 					}
@@ -555,7 +556,7 @@ export class Profile extends Component
 // 		} else {
 // 			this.updateButtonStatus("Add friend");
 // 		}
-// 	} catch (error) { 
+// 	} catch (error) {
 // 		console.error(error);
 // 	}
 // }

@@ -10,7 +10,7 @@ import { SetNewPassword } from "./components/authentication/sign_in/app.set_new_
 import { CompleteSignUp } from "./components/authentication/sign_up/app.complete_singup.js";
 import { SignUp } from "./components/authentication/sign_up/app.sign_up.js";
 import { SignIn } from "./components/authentication/sign_in/app.sign_in.js";
-import { AuthApp } from "./components/authentication/base_page.js";
+import { AuthApp } from "./components/authentication/auth_page.js";
 
 import { Profile } from "./components/profile/app.pofile.js";
 import { FriendCard } from "./components/profile/friend_card.js";
