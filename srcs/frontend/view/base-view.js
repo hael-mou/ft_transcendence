@@ -29,7 +29,7 @@ export async function renderContentPage(formTagName) {
 
     if (!baseApp.querySelector(formTagName)) {
         _.clear(baseApp);
-        // baseApp.appendChild(document.createElement(formTagName));
+        baseApp.appendChild(document.createElement("profile-app"));
         appRoot.appendChild(baseApp);
     }
 }
