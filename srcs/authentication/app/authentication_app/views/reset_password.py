@@ -1,6 +1,7 @@
-##################################### Include ####################################################################
+##################################### Include ######################################################################
 from .utils import Util
 from ..models import CustomUser
+import os
 from rest_framework.views import APIView
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -19,7 +20,10 @@ class PasswordResetView(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         reset_link = serializer.save()
-        Util.send_reset_password_email(serializer.validated_data["email"], reset_link=reset_link)
+        try:
+            Util.send_reset_password_email(serializer.validated_data["email"], reset_link=reset_link)
+        except:
+            return Response({"message": "Email not sent"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response({"message": "Password reset email sent successfully"}, status=status.HTTP_200_OK)
 
 
@@ -30,21 +34,27 @@ class PasswordResetConfirmView(APIView):
     def get(self, request, uidb64, token):
         try:
             user_id = force_str(urlsafe_base64_decode(uidb64))
-            user = CustomUser.objects.get(id=user_id)
-
+            user = CustomUser.objects.filter(id=user_id).first()
+            if not user:
+                return Response(
+                    {"error": "User does not exist"},
+                    status=status.HTTP_404_NOT_FOUND)
             if not PasswordResetTokenGenerator().check_token(user, token):
                 return Response(
                     {"error": "Token is not valid, please request a new one"},
                     status=status.HTTP_401_UNAUTHORIZED
                 )
-            response = Response("success", status=status.HTTP_302_FOUND)
-            response["Location"] = "https://127.0.0.1/reset-password?uidb64="+uidb64+"&token=" + token
+            # response = Response("success", status=status.HTTP_302_FOUND)
+            # response["Location"] = "https://127.0.0.1/reset-password?uidb64="+uidb64+"&token=" + token
+            response = Response(status=status.HTTP_302_FOUND)
+            response["Location"] = (
+                f"{os.environ.get('SET_NEW_PASSWORD_URL')}?uidb64={uidb64}&token={token}"
+            )
             return response
         except DjangoUnicodeDecodeError:
             return Response(
                 {"error": "Token is not valid, please request a new one"},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+                status=status.HTTP_401_UNAUTHORIZED)
 
 ############################################ Password Reset Set New Password View ########################################
 class SetNewPasswordView(generics.GenericAPIView):
@@ -60,5 +70,4 @@ class SetNewPasswordView(generics.GenericAPIView):
             serializer.save()
             return Response(
                 {"success": True, "message": "Password reset success"},
-                status=status.HTTP_200_OK
-            )
+                status=status.HTTP_200_OK)

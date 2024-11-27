@@ -359,7 +359,7 @@ export class SignUp extends Component
         const response = await Http.post(authGateway.signUpUrl, headers, data);
 
         if (!response.info.ok) {
-            alert.setMessage(response.json["message"]);
+            alert.setMessage(response.json["error"]);
             return alert.modalInstance.show();
         }
 

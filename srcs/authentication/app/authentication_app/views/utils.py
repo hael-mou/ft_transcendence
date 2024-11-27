@@ -23,8 +23,7 @@ class Util:
     def create_email_data(request, email, token):
         current_site = get_current_site(request)
         relativeLink = reverse("email-verify")
-        port = ":"+str(request.META.get('SERVER_PORT'))
-        absoluteLink = "http://"+current_site.domain+relativeLink+"?token="+str(token)
+        absoluteLink = "https://"+current_site.domain+"/auth"+relativeLink+"?token="+str(token)
         verification_link = absoluteLink
         subject = "Verify your email"
         html_message = render_to_string('email.html', {'verification_link': verification_link})
