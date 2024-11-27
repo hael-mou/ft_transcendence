@@ -44,17 +44,16 @@ class PasswordResetConfirmView(APIView):
                     {"error": "Token is not valid, please request a new one"},
                     status=status.HTTP_401_UNAUTHORIZED
                 )
-            # response = Response("success", status=status.HTTP_302_FOUND)
-            # response["Location"] = "https://127.0.0.1/reset-password?uidb64="+uidb64+"&token=" + token
+
             response = Response(status=status.HTTP_302_FOUND)
             response["Location"] = (
                 f"{os.environ.get('SET_NEW_PASSWORD_URL')}?uidb64={uidb64}&token={token}"
             )
-            return response
         except DjangoUnicodeDecodeError:
             return Response(
                 {"error": "Token is not valid, please request a new one"},
                 status=status.HTTP_401_UNAUTHORIZED)
+        return response
 
 ############################################ Password Reset Set New Password View ########################################
 class SetNewPasswordView(generics.GenericAPIView):

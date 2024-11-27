@@ -1,5 +1,9 @@
 
 import { Component } from "../../../core/component.js";
+import { authGateway } from "../../../core/config.js";
+import { utils  as _ } from "../../../tools/utils.js";
+import { Http } from "../../../tools/http.js";
+import { Router } from "../../../core/routing.js";
 
 /* *************************************************************************** #
 #   * SetNewPassword Component Class :                                         #
@@ -176,55 +180,56 @@ export class SetNewPassword extends Component
 
 
     /* === onConnected : ==================================================== */
-    // onConnected() {
+    onConnected(){
+        const urlParams = new URLSearchParams(window.location.search);
 
-    //     const urlParams = new URLSearchParams(window.location.search);
+        this.token = urlParams.get('token');
+        this.uidb64 = urlParams.get('uidb64');
 
-    //     this.token = urlParams.get('token');
-    //     this.uidb64 = urlParams.get('uidb64');
+        const PasswordInput = this.shadowRoot.getElementById('password_input');
+        const PasswordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
+        const submitButton = this.shadowRoot.getElementById('submit_button');
 
-    //     console.log("token", this.token, "uidb64", this.uidb64);
-
-    //     const PasswordInput = this.shadowRoot.getElementById('password_input');
-    //     const PasswordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
-    //     const submitButton = this.shadowRoot.getElementById('submit_button');
-
-    //     this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
-    //     this.addEventListener(PasswordInputConfirm,'input', updateButtonState.bind(this));
-    //     this.addEventListener(submitButton,'click', SetNewPasswordCallBack.bind(this));
-    // }
+        this.addEventListener(PasswordInput,'input', updateButtonState.bind(this));
+        this.addEventListener(PasswordInputConfirm,'input', updateButtonState.bind(this));
+        this.addEventListener(submitButton,'click', SetNewPasswordCallBack.bind(this));
+    }
 }
 
 /* *********************************************************************** #
 #   * Event callbacks :                                                    #
-# *********************************************************************** */
+# ************************************************************************ */
 
-/* === updateButtonState : =============================================== */
-// function updateButtonState(event)
-// {
-//     event.preventDefault();
-//     const passwordInput = this.shadowRoot.getElementById('password_input');
-//     const submitButton = this.shadowRoot.getElementById('submit_button');
-//     const passwordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
+    /* === updateButtonState : =============================================== */
+    function updateButtonState(event)
+    {
+        event.preventDefault();
+        const passwordInput = this.shadowRoot.getElementById('password_input');
+        const submitButton = this.shadowRoot.getElementById('submit_button');
+        const passwordInputConfirm = this.shadowRoot.getElementById('password_input_confirm');
 
-//     submitButton.disabled = !_.validatePassword(passwordInput.value)
-//                             || passwordInput.value !== passwordInputConfirm.value;
-// }
+        submitButton.disabled = !_.validatePassword(passwordInput.value)
+                                || passwordInput.value !== passwordInputConfirm.value;
+    }
 
 
-// /* === CompleteCallback : ================================================== */
-// async function SetNewPasswordCallBack(event)
-// {
-//     event.preventDefault();
+    /* === CompleteCallback : ================================================== */
+    async function SetNewPasswordCallBack(event){
+        event.preventDefault();
 
-//     const passwordInput = this.shadowRoot.getElementById('password_input');
-//     const password = passwordInput.value;
+        const passwordInput = this.shadowRoot.getElementById('password_input');
+        const password = passwordInput.value;
 
-//     const url = backendGateway.setNewPasswordUrl;
-//     const headers = { 'Content-Type': 'application/json' };
-//     const data = JSON.stringify({ password, token: this.token, uidb64: this.uidb64 });
+        const url = authGateway.setNewPasswordUrl;
+        const headers = { 'Content-Type': 'application/json' };
+        const data = JSON.stringify({ password, token: this.token, uidb64: this.uidb64 });
 
-//     const response = await Http.patch(url, headers, data);
-//     this.alert.setMessage(response["error"] !== undefined ? response["error"] : "Successfuly set new password");
-//     this.alert.modalInstance.show();
-// }
+        const response = await Http.patch(url, headers, data);
+
+        if (!response.info.ok) {
+            const alert = document.createElement('custom-alert');
+            alert.setMessage(response.json["error"]);
+            return alert.modalInstance.show();
+        }
+        Router.redirect('/sign-in');
+    }

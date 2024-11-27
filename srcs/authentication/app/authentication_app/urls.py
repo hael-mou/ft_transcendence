@@ -51,4 +51,6 @@ urlpatterns = [
 
 
     # path('test/', Test, name='test'),
+    # add change username
+    # add remove account
 ]

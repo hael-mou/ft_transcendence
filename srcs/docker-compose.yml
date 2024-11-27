@@ -32,3 +32,14 @@ services:
         volumes:
             # - "/Users/ndahib/Desktop/ft_transcendence_final/srcs/authentication/app:/app"
           - "/Volumes/EL\ MOUDDEN/Project/ft_transcendence/srcs/authentication/app:/app"
+
+    profile_management:
+        container_name: profile_management
+        image: profile-management:ft_transcendence
+        build: profile-management
+        env_file:
+            - ./secrets/profile_management.env
+        command: python3 manage.py runserver 0.0.0.0:7070
+        volumes:
+            # - "/Users/ndahib/Desktop/ft_transcendence_final/srcs/profile-management/app:/app"
+          - "/Volumes/EL\ MOUDDEN/Project/ft_transcendence/srcs/profile-management/app:/app"

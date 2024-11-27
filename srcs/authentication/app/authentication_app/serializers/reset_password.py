@@ -25,9 +25,8 @@ class PasswordResetSerializer(serializers.ModelSerializer):
         uidb64 = urlsafe_base64_encode(force_bytes(user.id))
         token = PasswordResetTokenGenerator().make_token(user)
         relativeLink = reverse('password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
-        port=":"+str(self.context["request"].META.get('SERVER_PORT'))
         current_site = get_current_site(self.context["request"]).domain
-        resetLink = "https://"+current_site+relativeLink+"?token="+str(token)
+        resetLink = "https://"+current_site+"/auth"+relativeLink+"?token="+str(token)
         return resetLink
     
 
@@ -63,3 +62,9 @@ class SetNewPasswordSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+    
+    def create(self, validated_data):
+        user = validated_data['user']
+        user.set_password(validated_data['password'])
+        user.save()
+        return user

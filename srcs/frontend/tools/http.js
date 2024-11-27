@@ -62,6 +62,12 @@ export class Http
         return await request('POST', url, headers, data);
     }
 
+    /* === patch : =========================================================== */
+    static async patch(url, headers = {}, data = {})
+    {
+        return await request('PATCH', url, headers, data);
+    }
+
     /* === getWithAuth : ==================================================== */
     static async getWithAuth(url, headers = {})
     {

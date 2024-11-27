@@ -47,3 +47,8 @@ export async function setNewPasswordView() {
 export async function resetPasswordView() {
     await renderAuthView('reset-password');
 }
+
+/* === ProfileView : ======================================================== */
+export async function ProfileView() {
+    await renderAuthView('profile');
+}
