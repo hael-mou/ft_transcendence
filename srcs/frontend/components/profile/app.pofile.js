@@ -1,12 +1,13 @@
-import { Component } from "../../core/component.js";
 import { profileGateway } from "../../core/config.js";
+import { Component } from "../../core/component.js";
 import { utils as _ } from "../../tools/utils.js";
-import { Http } from "../../tools/http.js";
-import { MatchCard } from "./match_card.js";
 import { FriendCard } from "./friend_card.js";
+import { Alert } from "../alert_component.js";
+import { MatchCard } from "./match_card.js";
+import { Http } from "../../tools/http.js";
 
 /* *************************************************************************** #
-#   * Profile Component Class :                                               #
+#   * Profile Component Class :                                                #
 # *************************************************************************** */
 export class Profile extends Component
 {
@@ -46,14 +47,15 @@ export class Profile extends Component
 	}
 	/* === Init : ============================================================================================ */
 	async init() {
+		this.friendRequests = [];
+		this.SentFriendRequests = [];
+
 		const friendsUrl = profileGateway.getFriendsUrl;
 		const profileUrl = `${profileGateway.getProfileUrl}?id=${this.id}`;
 		const receivedRequestsUrl = profileGateway.getReceivedRequestsUrl;
 		const matchesHistoryUrl = profileGateway.getMatchesHistoryUrl;
 
 		const sentRequestsUrl = profileGateway.getSentRequestsUrl;
-		this.friendRequests = [];
-		this.SentFriendRequests = [];
 
 		this.profile = (await Http.get(profileUrl)).json[0] || this.defaultProfile;
 		this.friends = (await Http.get(friendsUrl)).json["friends"] || [];
@@ -64,7 +66,6 @@ export class Profile extends Component
 		});
 
 		this.matches = (await Http.get(matchesHistoryUrl)).json || {};
-		console.log("---------->>", this.matches);
 		const response = (await Http.get(sentRequestsUrl)).json;
 		response.forEach(request => {
 			this.SentFriendRequests.push(request.receiver_profile);
@@ -470,14 +471,13 @@ export class Profile extends Component
 			  return config;
 	}
 	/* === connected: ========================================================================================== */
-// 	onConnected()
-// 	{
-// 		this.alert = new Alert();
-// 		const ctx = this.shadowRoot.getElementById('myChart').getContext('2d');
-// 		const myLineChart = new Chart(ctx, this.configData);
-// 		const friendButton = this.shadowRoot.getElementById('friend-button');
-// 		this.addEventListener(friendButton, 'click', handleFriendButton.bind(this));
-// 	}
+	onConnected()
+	{
+		const ctx = this.shadowRoot.getElementById('myChart').getContext('2d');
+		const myLineChart = new Chart(ctx, this.configData);
+		const friendButton = this.shadowRoot.getElementById('friend-button');
+		// this.addEventListener(friendButton, 'click', handleFriendButton.bind(this));
+	}
 }
 
 

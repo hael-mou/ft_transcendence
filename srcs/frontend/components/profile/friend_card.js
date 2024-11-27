@@ -1,7 +1,8 @@
 import { Component } from "../../core/component.js";
-// import { Alert } from "../alert_component.js";
-// import { profileGateway } from "./../../core/config.js";
-// import { Http } from "../../tools/http.js";
+import { Router } from "../../core/routing.js";
+import { profileGateway } from "../../core/config.js";
+import { Alert } from "../alert_component.js";
+import { Http } from "../../tools/http.js";
 import  { utils as _  } from "../../tools/utils.js";
 
 /* ***************************************************************************#
@@ -86,40 +87,38 @@ export class FriendCard extends Component
             }
   `}
     /* === onConnected : ===================================================== */
-    // onConnected()
-    // {
-    //     this.alert = new Alert();
-    //     const acceptButton = this.shadowRoot.getElementById('accept-button');
-    //     const rejectButton = this.shadowRoot.getElementById('reject-button');
-    //     this.addEventListener(acceptButton, 'click', handleAcceptButton.bind(this));
-    //     this.addEventListener(rejectButton, 'click', handleRejectButton.bind(this));
-    // }
+    onConnected()
+    {
+        const acceptButton = this.shadowRoot.getElementById('accept-button');
+        const rejectButton = this.shadowRoot.getElementById('reject-button');
+        this.addEventListener(acceptButton, 'click', handleAcceptButton.bind(this));
+        // this.addEventListener(rejectButton, 'click', handleRejectButton.bind(this));
+    }
 }
 
     /* ==== Handle Accept Button : =============================================== */
-    // async function handleAcceptButton()
-    // {
-    //     const friend_card = this.shadowRoot.getElementById('friend-card');
-    //     const url = backendGateway.acceptFriendRequestUrl;
-    //     const headers = { 'Content-Type': 'application/json' };
-    //     const data = JSON.stringify({ sender_id: this.friend.id });
+    async function handleAcceptButton()
+    {
+        const friend_card = this.shadowRoot.getElementById('friend-card');
+        const url = profileGateway.acceptFriendRequestUrl;
+        const headers = { 'Content-Type': 'application/json' };
+        const data = JSON.stringify({ sender_id: this.friend.id });
 
-    //     try {
-    //         const response = await Http.post(url, headers, data); // post with auth
-    //         console.log("Response", response);
-    //         if (response["error"])
-    //             return (this.alert.setMessage(response["error"]), this.alert.modalInstance.show());
-
-    //         friend_card.remove();
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
+        const alert = new Alert();
+        try {
+            const response = await Http.post(url, headers, data); // post with auth
+            if (response["error"])
+                return (alert.setMessage(response["error"]), alert.modalInstance.show());
+            friend_card.remove();
+        } catch (error) {
+            console.error(error); // for debugin purpose 
+        }
+    }
 
     // async function handleRejectButton()
     // {
     //     const friend_card = this.shadowRoot.getElementById('friend-card');
-    //     const url = backendGateway.rejectFriendRequestUrl;
+    //     const url = profileGateway.rejectFriendRequestUrl;
     //     const headers = { 'Content-Type': 'application/json' };
     //     const data = JSON.stringify({ sender_id: this.friend.id });
 

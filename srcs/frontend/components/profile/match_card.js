@@ -9,7 +9,6 @@ export class MatchCard extends Component
     constructor(date, match, profile)
     {
         super();
-        console.log("MatchCard", date, match, profile);
         this.matchData = match;
         this.dateString = date;
         this.profileData = profile;
