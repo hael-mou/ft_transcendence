@@ -9,10 +9,11 @@ import { SetNewPassword } from "./components/authentication/sign_in/app.set_new_
 import { CompleteSignUp } from "./components/authentication/sign_up/app.complete_singup.js";
 import { SignUp } from "./components/authentication/sign_up/app.sign_up.js";
 import { SignIn } from "./components/authentication/sign_in/app.sign_in.js";
-import { AuthApp } from "./components/authentication/base_page.js";
+import { AuthApp } from "./components/authentication/auth_page.js";
+
+import { BaseApp } from "./components/base_page.js";
 
 /* === Custom Auth Elements : =============================================== */
-customElements.define('custom-alert', Alert);
 
 customElements.define('set-new-password', SetNewPassword);
 customElements.define('reset-password', ResetPassword);
@@ -20,6 +21,9 @@ customElements.define('complete-form', CompleteSignUp);
 customElements.define('sign-up-form', SignUp);
 customElements.define('sign-in-form', SignIn);
 customElements.define('auth-app', AuthApp);
+
+customElements.define('custom-alert', Alert);
+customElements.define('base-app', BaseApp);
 
 /* === DOMContentLoaded : =================================================== */
 document.addEventListener('DOMContentLoaded', async () => {

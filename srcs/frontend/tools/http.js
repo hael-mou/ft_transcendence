@@ -79,14 +79,14 @@ export class Http
 /*    * private functions :                                                   */
 /* ************************************************************************** */
 async function request(method, url, headers = {}, data) {
-    
+
     const response = await fetch(url, {
         method,
         headers,
         body: data,
         credentials: 'include',
     });
-    
+
     try {
         return { json: await response.json(), info: response };
 

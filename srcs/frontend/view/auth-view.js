@@ -1,11 +1,12 @@
 
 import { utils as _ } from "../tools/utils.js";
 import { Router } from "../core/routing.js";
+import { getUserId } from "../tools/http.js";
 
 /* === renderAuthView : ====================================================== */
 async function renderAuthView(formTagName) {
 
-    if (!Router.isRedirect) _.redirectIfConnected('/')
+    if (!Router.isRedirect) _.redirectIfConnected(`/profile`);
 
     const appRoot = document.querySelector('app-root');
     const authApp = appRoot?.querySelector('auth-app')
@@ -16,13 +17,6 @@ async function renderAuthView(formTagName) {
     _.clear(authApp);
     authApp.appendChild(document.createElement(formTagName));
     appRoot.appendChild(authApp);
-}
-
-/* === rootView : =========================================================== */
-export async function rootView() {
-    _.redirectIfNotConnected('/sign-in');
-    const rootapp = document.querySelector('app-root');
-    _.clear(rootapp);
 }
 
 /* === signUpView : ========================================================= */

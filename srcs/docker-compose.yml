@@ -14,9 +14,9 @@ services:
 
         volumes:
             - "./secrets/certs:/etc/nginx/certs:ro"
-            - "/Users/ndahib/Desktop/ft_transcendence_final/srcs/frontend/:/usr/share/nginx/html"
+            # - "/Users/ndahib/Desktop/ft_transcendence_final/srcs/frontend/:/usr/share/nginx/html"
             # to remove later:
-            # - "/Volumes/EL\ MOUDDEN/Project/ft_transcendence/srcs/frontend/:/usr/share/nginx/html"
+            - "/Volumes/EL\ MOUDDEN/Project/ft_transcendence/srcs/frontend/:/usr/share/nginx/html"
 
     auth_service:
         container_name: auth_service
@@ -30,5 +30,5 @@ services:
         # to remove later:
         command: python3 manage.py runserver 0.0.0.0:8000
         volumes:
-            - "/Users/ndahib/Desktop/ft_transcendence_final/srcs/authentication/app:/app"
-        #   - "/Volumes/EL\ MOUDDEN/Project/ft_transcendence/srcs/authentication/app:/app"
+            # - "/Users/ndahib/Desktop/ft_transcendence_final/srcs/authentication/app:/app"
+          - "/Volumes/EL\ MOUDDEN/Project/ft_transcendence/srcs/authentication/app:/app"

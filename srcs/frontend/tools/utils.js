@@ -16,7 +16,6 @@ export const utils = {
     /* === redirectIfConnected : ============================================ */
     async redirectIfConnected(path) {
         const is_connected = await isConnected();
-        console.log(is_connected);
         if (is_connected) Router.redirect(path);
     },
 

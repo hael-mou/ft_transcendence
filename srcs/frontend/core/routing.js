@@ -17,7 +17,6 @@ export class Router
     /* === initialize : ===================================================== */
     static async initialize()
     {
-        // window.addEventListener('click', this.handleRouting);
         window.addEventListener('popstate', loadRoute);
         window.addEventListener('pageshow', loadRoute);
     }
@@ -51,7 +50,6 @@ export class Router
 /* === load Route component : =============================================== */
 async function loadRoute()
 {
-    console.log("loadRoute");
     const routeMatches = Router.routes.map(route => ({
         route: route,
         isMatch: route.path === location.pathname,
