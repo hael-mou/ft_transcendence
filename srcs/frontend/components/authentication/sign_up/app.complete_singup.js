@@ -4,7 +4,6 @@ import { authGateway } from "../../../core/config.js";
 import { utils as _ } from "../../../tools/utils.js";
 import { Http } from "../../../tools/http.js";
 
-
 /* *************************************************************************** #
 #   * SignUp Component Class :                                                 #
 # *************************************************************************** */

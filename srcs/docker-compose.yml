@@ -22,7 +22,7 @@ services:
         image: auth-service:ft_transcendence
         build: authentication
         env_file:
-            - ./secrets/.auth_service.env
+            - ./secrets/auth_service.env
 
         # restart: always
 
