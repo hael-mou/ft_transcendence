@@ -4,19 +4,23 @@ import { Router } from "../core/routing.js";
 import { getUserId } from "../tools/http.js";
 
 /* === renderAuthView : ====================================================== */
-async function renderAuthView(formTagName) {
+async function renderAuthView(formName) {
 
-    if (!Router.isRedirect) _.redirectIfConnected(`/profile`);
+    if (!Router.isRedirect) _.redirectIfConnected('/profile');
 
     const appRoot = document.querySelector('app-root');
-    const authApp = appRoot?.querySelector('auth-app')
-                    ?? document.createElement('auth-app');
-    const existingForm = authApp.querySelector(formTagName);
+    let   authApp = appRoot.querySelector('auth-app');
 
-    if (existingForm) return;
-    _.clear(authApp);
-    authApp.appendChild(document.createElement(formTagName));
-    appRoot.appendChild(authApp);
+    if (!authApp) {
+        _.clear(appRoot);
+        authApp = document.createElement('auth-app');
+    }
+
+    if (!authApp.querySelector(formName)) {
+        _.clear(authApp);
+        authApp.appendChild(document.createElement(formName));
+        appRoot.appendChild(authApp);
+    }
 }
 
 /* === signUpView : ========================================================= */

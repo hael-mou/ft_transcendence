@@ -20,12 +20,16 @@ export async function renderContentPage(formTagName) {
     if (!Router.isRedirect) _.redirectIfNotConnected(`/sign-in`);
 
     const appRoot = document.querySelector('app-root');
-    const baseApp = appRoot?.querySelector('base-app')
-                    ?? document.createElement('base-app');
-    // const existingForm = authApp.querySelector(formTagName);
+    let   baseApp = appRoot.querySelector('base-app');
 
-    // if (existingForm) return;
-    _.clear(baseApp);
-    // baseApp.appendChild(document.createElement(formTagName));
-    appRoot.appendChild(baseApp);
+    if (!baseApp) {
+        _.clear(appRoot);
+        baseApp = document.createElement('base-app');
+    }
+
+    if (!baseApp.querySelector(formTagName)) {
+        _.clear(baseApp);
+        // baseApp.appendChild(document.createElement(formTagName));
+        appRoot.appendChild(baseApp);
+    }
 }
