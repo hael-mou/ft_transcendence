@@ -16,4 +16,6 @@ export const authGateway = {
 
     compliteSignUpUrl : `${authUrl}/signup/complete`,
     signUpUrl  : `${authUrl}/signup`,
+
+    resetPasswordUrl : `${authUrl}/reset`,
 }

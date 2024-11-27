@@ -1,5 +1,9 @@
 
 import { Component } from "../../../core/component.js";
+import { Http } from "../../../tools/http.js";
+import { utils as _ } from "../../../tools/utils.js";
+import { authGateway } from "../../../core/config.js";
+import { Router } from "../../../core/routing.js";
 
 /* *************************************************************************** #
 #   * ResetPassword Component Class :                                          #
@@ -26,7 +30,7 @@ export class ResetPassword extends Component
 
         <div class="container-help">
             <p>Don't have an account?
-            <a href="#">Sign up here.</a>
+            <a id="sign_up_link" href="/sign-up" data-link>Sign up here.</a>
             </p>
         </div>
         `
@@ -200,17 +204,17 @@ export class ResetPassword extends Component
 
 
     /* === onConnected : ==================================================== */
-    // onConnected()
-    // {
-    //     this.alert = new Alert();
+    onConnected()
+    {
+        const emailInput = this.shadowRoot.getElementById('email_input');
+        const submitButton = this.shadowRoot.getElementById('submit_button');
+        const signUpLink = this.shadowRoot.getElementById('sign_up_link');
 
-    //     const emailInput = this.shadowRoot.getElementById('email_input');
-    //     const submitButton = this.shadowRoot.getElementById('submit_button');
 
-
-    //     this.addEventListener(emailInput,'input', updateButtonState.bind(this));
-    //     this.addEventListener(submitButton,'click', resetCallback.bind(this));
-    // }
+        this.addEventListener(emailInput,'input', updateButtonState.bind(this));
+        this.addEventListener(submitButton,'click', resetCallback.bind(this));
+        this.addEventListener(signUpLink,'click', Router.handleRouting.bind(this));
+    }
 }
 
 /* *********************************************************************** #
@@ -218,32 +222,34 @@ export class ResetPassword extends Component
 # *********************************************************************** */
 
 
-// /* === updateButtonState : =============================================== */
-// function updateButtonState(event)
-// {
-//     event.preventDefault();
-//     const emailInput = this.shadowRoot.getElementById('email_input');
-//     const submitButton = this.shadowRoot.getElementById('submit_button');
+    /* === updateButtonState : =============================================== */
+    function updateButtonState(event)
+    {
+        event.preventDefault();
+        const emailInput = this.shadowRoot.getElementById('email_input');
+        const submitButton = this.shadowRoot.getElementById('submit_button');
 
-//     submitButton.disabled = !_.validateEmail(emailInput.value)
-// }
-
-
-// /* === emailCallback : ================================================== */
-// async function resetCallback(event)
-// {
-//         event.preventDefault();
-
-//         const emailInput = this.shadowRoot.getElementById('email_input');
-//         const email = emailInput.value.trim();
+        submitButton.disabled = !_.validateEmail(emailInput.value)
+    }
 
 
-//         const url = backendGateway.resetPasswordUrl;
-//         const headers = { 'Content-Type': 'application/json' };
-//         const data = JSON.stringify({ email });
+    /* === emailCallback : ================================================== */
+    async function resetCallback(event)
+    {
+        event.preventDefault();
 
-//         const response = await Http.post(url, headers, data);
+        const alert = document.createElement('custom-alert');
+        const emailInput = this.shadowRoot.getElementById('email_input');
+        const email = emailInput.value.trim();
+        const headers = { 'Content-Type': 'application/json' };
+        const data = JSON.stringify({ email });
 
-//         this.alert.setMessage(response["error"] !== undefined ? response["error"] : "Reset email sent");
-//         this.alert.modalInstance.show();
-// }
+        const response = await Http.post(authGateway.resetPasswordUrl, headers, data);
+
+        if (!response.info.ok) {
+            alert.setMessage(response.json["error"]);
+            return alert.modalInstance.show();
+        }
+        alert.setMessage("Successfully sent email");
+        alert.modalInstance.show();
+    }
