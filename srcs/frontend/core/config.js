@@ -18,5 +18,30 @@ export const authGateway = {
     signUpUrl  : `${authUrl}/signup`,
 
     resetPasswordUrl : `${authUrl}/reset`,
-    setNewPasswordUrl : `${authUrl}/set-new-password`
+    setNewPasswordUrl : `${authUrl}/set-new-password`,
+
+}
+
+/* === Profile : =========================================================== */
+const profileUrl = `${backendUrl}/profile`;
+
+export const profileGateway = {
+
+    // Friends
+    getFriendsUrl           : `${profileUrl}/me?friends`,
+    getReceivedRequestsUrl  : `${profileUrl}/me/friends/request?received`,
+    getSentRequestsUrl      : `${profileUrl}/me/friends/request?sent`,
+    addFriendRequestUrl     : `${profileUrl}/me/friends/request/`,
+    acceptFriendRequestUrl  : `${profileUrl}/me/friends/accept/`,
+    rejectFriendRequestUrl  : `${profileUrl}/me/friends/reject/`,
+    cancelFriendRequestUrl  : `${profileUrl}/me/friends/cancel/`,
+    removeFriendUrl         : `${profileUrl}/me/friends/delete/`,
+    
+    // profile 
+    getProfileUrl           : `${profileUrl}`,
+    updateProfileUrl        : `${profileUrl}/me`,
+
+    // matches :
+    getMatchesHistoryUrl    : `${profileUrl}/matches`,
+
 }

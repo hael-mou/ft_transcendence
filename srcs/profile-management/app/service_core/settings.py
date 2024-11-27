@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-zvw0u)4-a%$479btjxma2e1(n&3%1#9%h)us-xrd!u-h+rcuoa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework',
     'corsheaders',
+    'rest_framework',
     'service_app',
 ]
 
@@ -48,13 +48,13 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'service_core.urls'
@@ -108,9 +108,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CORS_ORIGIN_WHITELIST = [
-    'http://127.0.0.1',
+    'https://127.0.0.1',
     # other origins...
 ]
+
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
@@ -120,14 +121,8 @@ CORS_ALLOW_METHODS = [
     'DELETE',
     'OPTIONS',
     'PATCH',
-    # to remove what's need to be removed
 ]
 
-CORS_ALLOW_HEADERS = [
-    'content-type',
-    'authorization',
-    'x-requested-with',
-]
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 

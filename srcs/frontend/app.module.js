@@ -10,7 +10,9 @@ import { CompleteSignUp } from "./components/authentication/sign_up/app.complete
 import { SignUp } from "./components/authentication/sign_up/app.sign_up.js";
 import { SignIn } from "./components/authentication/sign_in/app.sign_in.js";
 import { AuthApp } from "./components/authentication/base_page.js";
-
+import { Profile } from "./components/profile/app.pofile.js";
+import { FriendCard } from "./components/profile/friend_card.js";
+import { MatchCard } from "./components/profile/match_card.js";
 /* === Custom Auth Elements : =============================================== */
 customElements.define('custom-alert', Alert);
 
@@ -20,6 +22,10 @@ customElements.define('complete-form', CompleteSignUp);
 customElements.define('sign-up-form', SignUp);
 customElements.define('sign-in-form', SignIn);
 customElements.define('auth-app', AuthApp);
+
+customElements.define('profile-app', Profile);
+customElements.define('friend-card', FriendCard);
+customElements.define('match-card', MatchCard);
 
 /* === DOMContentLoaded : =================================================== */
 document.addEventListener('DOMContentLoaded', async () => {
