@@ -17,7 +17,7 @@ def handle_oauth_callback(request, user_info, serializer_class):
             max_age=api_settings.REFRESH_TOKEN_LIFETIME.total_seconds(),
             path=os.environ.get("REFRESH_TOKEN_PATH"),
         )
-        response["Location"] = 'http://127.0.0.1/'
+        response["Location"] = 'https://127.0.0.1/'
         request.session.flush()
         return response
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

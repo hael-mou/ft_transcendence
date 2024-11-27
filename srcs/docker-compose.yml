@@ -9,13 +9,12 @@ services:
             context: .
             dockerfile: api-gateway/Dockerfile
         ports:
-            - "80:80"
+            - "443:443"
             - "8080:8080"
 
-        restart: always
-
-        # to remove later:
         volumes:
+            - "./secrets/certs:/etc/nginx/certs:ro"
+            # to remove later:
             - "/Volumes/EL\ MOUDDEN/Project/ft_transcendence/srcs/frontend/:/usr/share/nginx/html"
 
     auth_service:
@@ -25,7 +24,7 @@ services:
         env_file:
             - ./secrets/.auth_service.env
 
-        restart: always
+        # restart: always
 
         # to remove later:
         command: python3 manage.py runserver 0.0.0.0:8000

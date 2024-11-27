@@ -10,12 +10,11 @@ class MessageView(generics.ListAPIView):
     def get_queryset(self):
         self.room_id = self.request.query_params.get('room')
         return Message.objects.filter(chat_id=self.room_id).order_by('-sent_at')
-    
+
     def filter_queryset(self, queryset):
         filters = {}
         query_params = self.request.query_params
         for key, value in query_params.items():
-            print("key", key, "value", value)
             if hasattr(Message, key):
                 filters[key] = value
             elif key == 'start_id':
@@ -30,4 +29,3 @@ class UnreadMessage(MessageView):
         self.room_id = self.request.query_params.get('room')
         return Message.objects.filter(chat__id=self.room_id).exclude(
                         status=Message.Status.READ).order_by('-sent_at')
-        

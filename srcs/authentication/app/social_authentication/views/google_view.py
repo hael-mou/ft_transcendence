@@ -34,7 +34,6 @@ class GoogleSocialAuthCallback(APIView):
             authorization_code = request.GET.get("code")
             session_state = request.GET.get("state")
             code_verifier = request.session.get("code_verifier")
-            print("code_verifier================>>>", code_verifier)
             if session_state != request.session.get("state"):
                 del request.session["state"]
                 return Response({"message": "Invalid state"}, status=status.HTTP_400_BAD_REQUEST)
@@ -62,7 +61,6 @@ class GoogleOAuth2Registrer(APIView):
             auth_url, state = flow.authorization_url(prompt='consent')
             request.session['state'] = state
             request.session["code_verifier"] = flow.code_verifier
-            print("---------------------->>", flow.code_verifier)
         except Exception as e:
             return Response({"Ooops something went wrong": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return redirect(auth_url)

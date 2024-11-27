@@ -14,7 +14,7 @@ class PasswordResetView(generics.GenericAPIView):
     """View for password reset that takes an email and sends a password reset link"""
 
     serializer_class = PasswordResetSerializer
-    
+
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
@@ -31,14 +31,14 @@ class PasswordResetConfirmView(APIView):
         try:
             user_id = force_str(urlsafe_base64_decode(uidb64))
             user = CustomUser.objects.get(id=user_id)
-            
+
             if not PasswordResetTokenGenerator().check_token(user, token):
                 return Response(
                     {"error": "Token is not valid, please request a new one"},
                     status=status.HTTP_401_UNAUTHORIZED
                 )
             response = Response("success", status=status.HTTP_302_FOUND)
-            response["Location"] = "http://127.0.0.1:80/reset-password?uidb64="+uidb64+"&token=" + token
+            response["Location"] = "https://127.0.0.1/reset-password?uidb64="+uidb64+"&token=" + token
             return response
         except DjangoUnicodeDecodeError:
             return Response(
