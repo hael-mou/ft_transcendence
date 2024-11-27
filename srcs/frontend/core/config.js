@@ -18,4 +18,5 @@ export const authGateway = {
     signUpUrl  : `${authUrl}/signup`,
 
     resetPasswordUrl : `${authUrl}/reset`,
+    setNewPasswordUrl : `${authUrl}/set-new-password`
 }
