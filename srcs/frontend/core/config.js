@@ -36,12 +36,11 @@ export const profileGateway = {
     rejectFriendRequestUrl  : `${profileUrl}/me/friends/reject/`,
     cancelFriendRequestUrl  : `${profileUrl}/me/friends/cancel/`,
     removeFriendUrl         : `${profileUrl}/me/friends/delete/`,
-    
-    // profile 
+
+    // profile
     getProfileUrl           : `${profileUrl}`,
     updateProfileUrl        : `${profileUrl}/me`,
 
     // matches :
     getMatchesHistoryUrl    : `${profileUrl}/matches`,
-
 }

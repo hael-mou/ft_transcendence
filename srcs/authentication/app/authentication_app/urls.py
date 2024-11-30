@@ -49,8 +49,6 @@ urlpatterns = [
     # Verify_token
     path('verify_token/', TokenVerifyView.as_view(), name='verify_token'),
 
-
-    # path('test/', Test, name='test'),
     # add change username
     # add remove account
 ]

@@ -1,12 +1,14 @@
 
 import { utils as _ } from "../tools/utils.js";
+import { isConnected } from "../tools/http.js";
 import { Router } from "../core/routing.js";
-import { getUserId } from "../tools/http.js";
 
 /* === renderAuthView : ====================================================== */
 async function renderAuthView(formName) {
 
-    if (!Router.isRedirect) _.redirectIfConnected('/profile');
+    if (!Router.isRedirect && (await isConnected())) {
+        return Router.redirect('/profile');
+    }
 
     const appRoot = document.querySelector('app-root');
     let   authApp = appRoot.querySelector('auth-app');

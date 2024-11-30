@@ -12,7 +12,16 @@ let userId = null;
 /* ************************************************************************** */
 
 /* === get User Id : ======================================================== */
-export function getUserId() {
+export async function getUserId() {
+
+    if (userId) return userId;
+
+    if (accessToken) {
+        userId = jwt_decode(accessToken).user_id;
+        return userId;
+    }
+
+    await getAccessToken();
     return userId;
 }
 
@@ -21,12 +30,11 @@ export async function getAccessToken() {
 
     const response = await Http.get(authGateway.getTokenUrl);
 
-    if (!response.info.ok) return false;
+    if (!response.info.ok) return undefined;
 
     accessToken = response.json.access;
-    console.log(accessToken);
     userId = jwt_decode(accessToken).user_id;
-    return true;
+    return accessToken;
 }
 
 /* === isConnected : ======================================================= */
@@ -39,7 +47,7 @@ export async function isConnected() {
     if (decoded.exp < Date.now() / 1000) {
         accessToken = null;
         userId = null;
-        return false;
+        return !!(await getAccessToken());
     }
 
     return true;

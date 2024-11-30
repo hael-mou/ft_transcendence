@@ -1,23 +1,8 @@
 
-import { Router } from "../core/routing.js";
-import { isConnected } from "./http.js";
-
 /* ************************************************************************** */
 /*   * utils :                                                                */
 /* ************************************************************************** */
 export const utils = {
-
-    /* === redirectIfNotConnected : ========================================= */
-    async redirectIfNotConnected(path) {
-        const is_connected = await isConnected();
-        if (!is_connected) Router.redirect(path);
-    },
-
-    /* === redirectIfConnected : ============================================ */
-    async redirectIfConnected(path) {
-        const is_connected = await isConnected();
-        if (is_connected) Router.redirect(path);
-    },
 
     /* === clear : ========================================================== */
     clear(element) {
@@ -36,5 +21,11 @@ export const utils = {
     validatePassword(password) {
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
         return passwordRegex.test(password);
+    },
+
+    /* === getQueryParams : ================================================= */
+    getQueryParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return Object.fromEntries(urlParams.entries());
     }
 }

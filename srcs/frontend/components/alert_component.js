@@ -44,6 +44,8 @@ export class Alert extends Component
     get styles() {
         return /*css*/`
 
+            @import url("/static/assets/styles/common-style.css");
+
             .alert-content {
                 background-color: white;
                 padding: 20px;

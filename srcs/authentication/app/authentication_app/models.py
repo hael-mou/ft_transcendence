@@ -11,18 +11,18 @@ class CustomUserManger(BaseUserManager):
     """UserManager Model for Authentication App"""
 
     def create_user(self, username, email, password=None):
-    
+
         """Create and save a User with the given email and password."""
         if username is None:
             raise ValueError("The given username must be set")
         if email is None:
             raise ValueError("The given email must be set")
-        
+
         user = self.model(username=username, email=self.normalize_email(email))
         user.set_password(password)
         user.save()
         return user
-    
+
     def create_superuser(self, username, email, password=None):
         """Create and save a SuperUser with the given email and password."""
         user = self.create_user(username, email, password=password)
@@ -51,7 +51,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
 
     is_2fa_enabled  = models.BooleanField(default=False)
     two_fa_choice = models.CharField(max_length=255, blank=True, choices=TWO_FA_TYPE)
-    
+
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
     objects = CustomUserManger()
@@ -65,12 +65,9 @@ class CustomUser(AbstractUser, PermissionsMixin):
         refresh["username"] = self.username
         refresh["iss"] = "team transcendance"
         refresh["action"] = "login"
-        refresh["exp"] = int((datetime.now() + timedelta(hours=1)).timestamp())
-        refresh["iat"] = int(datetime.now().timestamp())
         refresh["nonce"] = secrets.token_hex(16)
         refresh["scope"] = "login"
         return {
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         }
-

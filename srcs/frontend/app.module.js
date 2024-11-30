@@ -1,4 +1,5 @@
 
+import { utils as _ } from "./tools/utils.js";
 import { appRoutes } from "./app.routes.js";
 import { Router } from "./core/routing.js";
 
@@ -12,9 +13,9 @@ import { SignUp } from "./components/authentication/sign_up/app.sign_up.js";
 import { SignIn } from "./components/authentication/sign_in/app.sign_in.js";
 import { AuthApp } from "./components/authentication/auth_page.js";
 
-import { Profile } from "./components/profile/app.pofile.js";
-import { FriendCard } from "./components/profile/friend_card.js";
-import { MatchCard } from "./components/profile/match_card.js";
+import { Profile } from "./components/profile-s/app.pofile.js";
+import { FriendCard } from "./components/profile-s/friend_card.js";
+import { MatchCard } from "./components/profile-s/match_card.js";
 
 /* === Custom Auth Elements : =============================================== */
 
@@ -34,18 +35,23 @@ customElements.define('base-app', BaseApp);
 
 /* === DOMContentLoaded : =================================================== */
 document.addEventListener('DOMContentLoaded', async () => {
+    const root_app = document.querySelector('app-root');
+    _.clear(root_app);
+
     Router.setRoutes(appRoutes);
     await Router.initialize();
 });
 
 /* === Loading Screen : ===================================================== */
-window.onload = function() {
-    const delay = Math.max(0, 2000 - performance.now());
-    setTimeout(function() {
-        const loadingScreen = document.getElementById('loading-screen');
-        loadingScreen.style.opacity = 0;
+window.addEventListener('load', () => {
+    const loadingDelay = Math.max(0, 2000 - performance.now());
+    setTimeout(() => {
         setTimeout(() => {
-            loadingScreen.style.display = 'none';
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1000);
         }, 1000);
-    }, delay)
-};
+    }, loadingDelay);
+});

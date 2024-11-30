@@ -18,10 +18,10 @@ class MatchSerializer(serializers.ModelSerializer):
         This method wiil format the opponent and scores
         """
 
-        players = [instance.winner, instance.loser]
-        me = self.context["request"].user
+        myId = self.context["request"].user.id
+        id = int(self.context["request"].query_params.get("id", myId))
 
-        if me is instance.winner:
+        if id is instance.winner.id:
             opponent = instance.loser
         else:
             opponent = instance.winner
@@ -29,9 +29,8 @@ class MatchSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['opponent'] = ProfileSerializer(opponent).data
         representation["scores"] = f"{instance.winnerScore}:{instance.loserScore}"
-        representation["status"] = "win" if instance.winner == me else "lose"
-        
+        representation["status"] = "win" if instance.winner.id == id else "lose"
+
         date = representation.pop('date')
 
-        # match_date = instance.date.date()
         return (date, representation)

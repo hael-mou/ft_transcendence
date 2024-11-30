@@ -369,6 +369,6 @@ async function emailCallback(event)
             alert.setMessage(response.json["error"]);
             return alert.modalInstance.show();
         }
-        // check response  2fa is enabled or not to redirect to 2fa page
-        console.log("login Done"); // be redirect to home page
+
+        Router.redirect('/profile');
 }

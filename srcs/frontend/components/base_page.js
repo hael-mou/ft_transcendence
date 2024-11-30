@@ -92,9 +92,11 @@ export class BaseApp extends Component
     {
         return /*css*/`
 
+            @import url("/static/assets/styles/common-style.css");
+
         :host {
-            min-height: 100vh;
-            min-height: 100dvh;
+            height: 100vh;
+            height: 100dvh;
             display: flex;
             justify-content: center;
             flex-direction: column;
@@ -103,7 +105,7 @@ export class BaseApp extends Component
             --gradient-start: rgba(56, 56, 56, 0.5);
             --gradient-end: rgba(44, 44, 44, 0.5);
             overflow: hidden;
-            min-width: min(96%, 2400px);
+            width: min(96%, 1924px);
             gap: 1.5rem;
             font-family: 'Exo2', sans-serif;
             padding: 4rem 0 !important;
@@ -213,7 +215,7 @@ export class BaseApp extends Component
         }
 
         .container-nav {
-            width: 93px;
+            min-width: 93px;
             border-right: 1px solid rgba(255, 255, 255, 0.2);
             display: flex;
             flex-direction: column;
@@ -395,7 +397,7 @@ export class BaseApp extends Component
 
         @media (max-width: 450px) {
             :host {
-                padding: 0 !important;
+                padding: 0.5rem 0 !important;
             }
         }
         `
