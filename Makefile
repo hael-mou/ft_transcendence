@@ -1,3 +1,6 @@
+
+SRCS := sources
+
 all: up
 
 .header:
@@ -21,22 +24,22 @@ help:
 	@echo "  help       - Display this help message"
 
 up: .header
-	@docker-compose -f srcs/docker-compose.yml up -d --build
+	@docker-compose -f ${SRCS}/docker-compose.yml up -d --build
 
 down:
-	@docker-compose -f srcs/docker-compose.yml down --remove-orphans
+	@docker-compose -f ${SRCS}/docker-compose.yml down --remove-orphans
 
 clean: down
-	@docker-compose -f srcs/docker-compose.yml down --volumes --rmi all --remove-orphans
+	@docker-compose -f ${SRCS}/docker-compose.yml down --volumes --rmi all --remove-orphans
 
 logs:
-	@docker-compose -f srcs/docker-compose.yml logs -f -t $(if $(SERVICE),$(SERVICE),)
+	@docker-compose -f ${SRCS}/docker-compose.yml logs -f -t $(if $(SERVICE),$(SERVICE),)
 
 status:
-	@docker-compose -f srcs/docker-compose.yml ps --all $(if $(SERVICE),$(SERVICE),)
+	@docker-compose -f ${SRCS}/docker-compose.yml ps --all $(if $(SERVICE),$(SERVICE),)
 
 restart:
-	@docker-compose -f srcs/docker-compose.yml restart $(if $(SERVICE),$(SERVICE),)
+	@docker-compose -f ${SRCS}/docker-compose.yml restart $(if $(SERVICE),$(SERVICE),)
 
 prune:
 	@docker system prune -f

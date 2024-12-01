@@ -1,0 +1,42 @@
+
+version : '3.8'
+name    : "pingo"
+
+services:
+    api_gateway:
+        image: api-gateway:ft_transcendence
+        container_name: api_gateway
+        build: ./api-gateway
+        restart: always
+        ports:
+            - "443:443"
+            - "8080:8080"
+
+        volumes:
+            - "./front-end/:/usr/share/nginx/html:ro"
+            - "./secrets/certs:/etc/nginx/certs:ro"
+
+    postgres:
+        image: postgres:17.2
+        container_name: postgres
+        restart: always
+        env_file:
+            - ./secrets/postgres.env
+
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+    pgadmin:
+        image: dpage/pgadmin4:8.13.0
+        container_name: pgadmin
+        restart: always
+        env_file:
+            - ./secrets/pgadmin.env
+
+        volumes:
+            - pgadmin_data:/var/lib/pgadmin
+
+
+volumes:
+  postgres_data:
+  pgadmin_data:
