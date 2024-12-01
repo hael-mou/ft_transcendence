@@ -1,6 +1,10 @@
 
-# === Git : ===========================
-.git
+# === ignore headings : ===============
+.*
+!.git
+!.gitignore
+!.dockerignore
+
 
 
 # === Python : ========================
@@ -14,8 +18,14 @@ venv
 
 # === Django : ========================
 *.log
-migrations
+migrations/*
+!migrations/__init__.py
 __pycache__
+
+
+# === sqlite3 : =======================
+*.sqlite3
+*.db
 
 
 # === macOS : =========================
@@ -27,6 +37,9 @@ __pycache__
 *.swp
 *.swo
 *.swx
+
+# === Docker : ========================
+*.sock
 
 
 # === secrets : =======================
