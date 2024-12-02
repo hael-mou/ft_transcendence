@@ -2,9 +2,14 @@
 version : '3.8'
 name    : "pingo"
 
+#* ************************************************************************** *#
+#*     * Services :                                                           *#
+#* ************************************************************************** *#
 services:
+
+    #=== api_gateway : =========================================================
     api_gateway:
-        image: api-gateway:ft_transcendence
+        image: api-gateway:pingo
         container_name: api_gateway
         build: ./api-gateway
         restart: always
@@ -16,6 +21,14 @@ services:
             - "./front-end/:/usr/share/nginx/html:ro"
             - "./secrets/certs:/etc/nginx/certs:ro"
 
+            # for Devlopment
+            - "./api-gateway/config/conf.d:/etc/nginx/conf.d:ro"
+
+        depends_on:
+            - auth_service
+            - pgadmin
+
+    # === postgres : ===========================================================
     postgres:
         image: postgres:17.2
         container_name: postgres
@@ -24,8 +37,11 @@ services:
             - ./secrets/postgres.env
 
         volumes:
+            - ./back-end/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
             - postgres_data:/var/lib/postgresql/data
 
+
+    # === pgadmin : ===========================================================
     pgadmin:
         image: dpage/pgadmin4:8.13.0
         container_name: pgadmin
@@ -37,6 +53,27 @@ services:
             - pgadmin_data:/var/lib/pgadmin
 
 
+    # === auth_service : ======================================================
+    auth_service:
+        image: auth-service:pingo
+        container_name: auth_service
+        build: ./back-end/authentication
+        restart: always
+        env_file:
+            - ./secrets/auth_service.env
+
+        depends_on:
+            - postgres
+
+        # for Devlopment
+        command: python3 manage.py runserver 0.0.0.0:8000
+        volumes:
+            - "./back-end/authentication/app:/app"
+
+
+#* ************************************************************************** *#
+#*     * Volumes :                                                            *#
+#* ************************************************************************** *#
 volumes:
   postgres_data:
   pgadmin_data:
