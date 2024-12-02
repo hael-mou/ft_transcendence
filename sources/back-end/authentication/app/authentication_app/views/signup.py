@@ -78,10 +78,16 @@ class CompleteProfileView(APIView):
         tokens = user.tokens()
         # if Util.create_user_profile(user) is False:
         #     return Response({"message": "Error creating user profile"}, status=status.HTTP_400_BAD_REQUEST) # to change later
-        response = Response({"message": "Profile completed successfully",
-                            "access": tokens["access"],},
-                            status=status.HTTP_200_OK)
-        response.set_cookie("token", "", httponly=True, secure=True, samesite="Lax", max_age=0, expires=0)
+        response = Response({"message": "Profile completed successfully"}, status=status.HTTP_200_OK)
+        response.set_cookie("token",
+                            "",
+                            httponly=True,
+                            secure=True,
+                            samesite="Lax",
+                            max_age=0,
+                            expires=0,
+                            path=os.environ.get("COMPLETE_PATH"))
+
         response.set_cookie("r_token",
                             tokens["refresh"],
                             httponly=True,

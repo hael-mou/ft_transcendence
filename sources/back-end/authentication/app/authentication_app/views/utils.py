@@ -81,7 +81,7 @@ class Util:
             secure=True,
             samesite="Lax",
             max_age=api_settings.REFRESH_TOKEN_LIFETIME.total_seconds(),
-            path=os.environ.get("REFRESH_TOKEN_PATH "),
+            path=os.environ.get("REFRESH_TOKEN_PATH"),
         )
         return response
 

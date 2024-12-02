@@ -3,6 +3,29 @@ import { appRoutes } from "./app.routes.js";
 import { Router } from "./core/routing.js";
 import { utils } from "./tools/utils.js";
 
+import { Alert } from "./components/custem-alert.js";
+import { AuthPage } from "./components/page.auth.js";
+
+import { CompleteSignUp } from "./components/sign-up/complete-form.js";
+import { SignUp } from "./components/sign-up/signup-form.js"
+
+import { SetNewPassword } from "./components/sign-in/setNewPassword-form.js";
+import { ResetPassword } from "./components/sign-in/resetPassword-form.js";
+import { SignIn } from "./components/sign-in/signin-form.js";
+
+
+/* === Custom Auth Elements : =============================================== */
+customElements.define("custom-alert", Alert);
+customElements.define("auth-page", AuthPage);
+
+customElements.define("complete-form", CompleteSignUp);
+customElements.define("sign-up-form", SignUp);
+
+customElements.define("set-new-password-form", SetNewPassword);
+customElements.define("reset-password-form", ResetPassword);
+customElements.define("sign-in-form", SignIn);
+
+
 /* === DOM Content Loaded : ================================================= */
 document.addEventListener("DOMContentLoaded", async () => {
     const rootElement = document.querySelector("app-root");
@@ -11,6 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     Router.setRoutes(appRoutes);
     await Router.initialize();
 });
+
 
 /* === load Route component : =============================================== */
 window.addEventListener("load", () => {
