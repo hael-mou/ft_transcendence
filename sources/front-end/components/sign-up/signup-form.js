@@ -41,7 +41,7 @@ export class SignUp extends Component
 
             <div class="container-help">
                 <p>Already have an account?</p>
-                <a id="sign_in_link" href="/sign-in" data-link>
+                <a id="sign_in_link" data-link="/sign-in">
                     Sign in here.
                 </a>
             </div>

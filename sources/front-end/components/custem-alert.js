@@ -91,6 +91,16 @@ export class Alert extends Component
         `;
     }
 
+    /* === onConnected : ==================================================== */
+    onConnected() {
+
+        this.addEventListener(this.shadowRoot, 'keydown', (event) => {
+            if (event.key === 'Escape' || event.key === 'Enter') {
+                this.modalInstance.hide();
+            }
+        });
+    }
+
     /* === methods : ======================================================== */
     setMessage(message) {
         this.alertElement.querySelector('#errorMessage').textContent = message;

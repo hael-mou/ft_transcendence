@@ -30,7 +30,7 @@ export class ResetPassword extends Component
 
             <div class="container-help">
                 <p>Don't have an account?</p>
-                <a id="sign_up_link" href="/sign-up" data-link>Sign up here.</a>
+                <a id="sign_up_link" data-link="/sign-up" >Sign up here.</a>
             </div>
         `
     };

@@ -53,12 +53,12 @@ export class SignIn extends Component
 
         <div class="container-help">
             <p>Don't have an account?
-                <a id="sign_up_link" href="/sign-up" data-link>
+                <a id="sign_up_link" data-link="/sign-up">
                     Sign up here.
                 </a>
             </p>
             <p>
-                <a id="reset_pwd_link" href="/reset-password" data-link>
+                <a id="reset_pwd_link" data-link="/reset-password">
                     Forgot password?
                 </a>
             </p>

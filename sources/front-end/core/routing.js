@@ -8,33 +8,35 @@ export class Router
     static isRedirect = false;
 
     /* === constructor : ==================================================== */
-    static setRoutes(routes)
-    {
+    static setRoutes(routes) {
+
         this.routes = routes;
     }
 
     /* === initialize : ===================================================== */
-    static async initialize()
-    {
+    static async initialize() {
+
         window.addEventListener('popstate', loadRoute);
         window.addEventListener('pageshow', loadRoute);
     }
 
     /* === handle Routing Event : =========================================== */
-    static async handleRouting(event)
-    {
-        if (event.target.matches("[data-link]"))
-        {
+    static async handleRouting(event) {
+
+        if (event.currentTarget.matches("[data-link]")) {
+
+            const targetLink = event.currentTarget.getAttribute("data-link");
+
             event.preventDefault()
-            if (event.target.href === location.href) return;
-            history.pushState(null, null, event.target.href);
+            if (targetLink === location.href) return;
+            history.pushState(null, null, targetLink);
             await loadRoute();
         }
     }
 
     /* === handle Routing Event : =========================================== */
-    static async redirect(url)
-    {
+    static async redirect(url) {
+
         if (url === location.href) return;
         history.replaceState(null, null, url);
         this.isRedirect = true;

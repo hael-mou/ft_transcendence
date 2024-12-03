@@ -5,6 +5,7 @@ import { utils } from "./tools/utils.js";
 
 import { Alert } from "./components/custem-alert.js";
 import { AuthPage } from "./components/page.auth.js";
+import { BasePage } from "./components/base_page.js";
 
 import { CompleteSignUp } from "./components/sign-up/complete-form.js";
 import { SignUp } from "./components/sign-up/signup-form.js"
@@ -17,6 +18,7 @@ import { SignIn } from "./components/sign-in/signin-form.js";
 /* === Custom Auth Elements : =============================================== */
 customElements.define("custom-alert", Alert);
 customElements.define("auth-page", AuthPage);
+customElements.define("base-page", BasePage);
 
 customElements.define("complete-form", CompleteSignUp);
 customElements.define("sign-up-form", SignUp);
@@ -24,7 +26,6 @@ customElements.define("sign-up-form", SignUp);
 customElements.define("set-new-password-form", SetNewPassword);
 customElements.define("reset-password-form", ResetPassword);
 customElements.define("sign-in-form", SignIn);
-
 
 
 /* === Smooth appendChild : ================================================= */

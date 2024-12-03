@@ -1,7 +1,8 @@
 
 import { signUpView, signInView, completeSignUpView } from "./view/auth-view.js";
 import { resetPasswordView, setNewPasswordView } from "./view/auth-view.js";
-import { profileView } from "./view/profile-view.js";
+import { gameView, chatView, settingsView } from "./view/internal-view.js";
+import { profileView, ternementsView } from "./view/internal-view.js";
 import { rootView } from "./view/base-view.js";
 
 export const appRoutes = [
@@ -13,6 +14,11 @@ export const appRoutes = [
     { path: '/reset-password', view: resetPasswordView },
     { path: '/set-new-password', view: setNewPasswordView },
 
-    /* website path : ======================================================= */
+    /* internal path : ====================================================== */
     { path: '/profile', view: profileView },
+    { path: '/tournaments', view: ternementsView },
+    { path: '/game', view: gameView },
+    { path: '/chat', view: chatView },
+    { path: '/settings', view: settingsView },
+
 ]
