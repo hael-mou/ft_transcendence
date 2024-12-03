@@ -6,14 +6,12 @@ from django.shortcuts import get_object_or_404
 from ..serializers.profile import ProfileSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
-from .authentication import AuthenticationWithID, IsAuthenticated
-
-# from rest_framework.permissions import  IsAuthenticated
-
+from .authentication import AuthenticationWithID
+from rest_framework.permissions import  IsAuthenticated
 
 #########################CRUD OPERATIONS#####################################
 class Profiles(ListCreateAPIView, RetrieveUpdateDestroyAPIView):
-    
+
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     filter_backends = [DjangoFilterBackend]
@@ -32,22 +30,21 @@ class Profiles(ListCreateAPIView, RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         queryset = Profile.objects.all()
         return self.filter_queryset(queryset)
- 
+
 
     def get_object(self):
-        return get_object_or_404(Profile, id=self.request.user.id) 
-        # to change later with username = self.request.user.username (generalize)
+        return get_object_or_404(Profile, id=self.request.user.id)
 
 
     def perform_destroy(self, instance):
         instance.delete()
         # Make API call to delete the account from the authentication db
-        # return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
-        
+
         request_data = request.data
         for field in ["avatar", "username", "last_name", "first_name"]:
             if field not in request_data or not request_data[field]:
@@ -65,8 +62,6 @@ class MyProfile(Profiles):
 
     def get_queryset(self):
         """Return the authenticated user's profile."""
-
-        self.request.user.username = "ndahib"
         return Profile.objects.filter(username=self.request.user.username)
 
 

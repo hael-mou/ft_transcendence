@@ -1,9 +1,11 @@
 from rest_framework import status, generics
 from rest_framework.response import Response
 from ..models import FriendShipRequest, Profile
-from ..serializers.friends import FriendShipSerializer, AcceptFriendSerializer, RejectSerializer, CancelSerializer, RemoveFriendSerializer
+from ..serializers.friends import FriendShipSerializer, AcceptFriendSerializer, RejectSerializer
+from ..serializers.friends import CancelSerializer, RemoveFriendSerializer
 from django.db.models import Q
-from .authentication import AuthenticationWithID, IsAuthenticated
+from .authentication import AuthenticationWithID
+from rest_framework.permissions import IsAuthenticated
 
 class FriendsRequestManager(generics.GenericAPIView):
 
@@ -30,10 +32,10 @@ class FriendsRequestManager(generics.GenericAPIView):
                 filters["status"] = {"pending": 0, "accepted": 1, "rejected": 2}[key]
 
         friend_requests = self.get_queryset().filter(**filters)
-        
+
         serialized_data = self.get_serializer(friend_requests, many=True).data
         return Response(serialized_data, status=status.HTTP_200_OK)
-    
+
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         if not serializer.is_valid(raise_exception=True):
@@ -41,7 +43,7 @@ class FriendsRequestManager(generics.GenericAPIView):
         serializer.save()
         return Response({"message": "Friend request sent"},
                          status=status.HTTP_201_CREATED)
-    
+
 
 class AcceptFriendRequest(generics.CreateAPIView):
 
@@ -80,7 +82,7 @@ class RejectFriendRequest(generics.UpdateAPIView):
 class CancelFriendRequest(generics.DestroyAPIView):
 
     queryset = FriendShipRequest.objects.all()
-    serializer_class = CancelSerializer    
+    serializer_class = CancelSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [AuthenticationWithID]
 
@@ -90,7 +92,7 @@ class CancelFriendRequest(generics.DestroyAPIView):
         instance = serializer.validated_data
         self.perform_destroy(instance)
         return Response({"message": "Friend request canceled"}, status=status.HTTP_200_OK)
-    
+
 class RemoveFriend(generics.GenericAPIView):
 
     queryset = Profile.objects.all()

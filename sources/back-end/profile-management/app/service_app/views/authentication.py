@@ -1,20 +1,20 @@
 from rest_framework import generics
 from service_app.models import Profile
 from rest_framework.authentication import BaseAuthentication
-from rest_framework.permissions import BasePermission
 
 
 class AuthenticationWithID(BaseAuthentication):
-    """class for authenticated users to get user id"""
+    """Class for authenticated users to get user ID."""
 
-    def authenticate(self, request, *args, **kwargs):
-        return (Profile.objects.get(id=1), None)
-    
+    def authenticate(self, request):
+        user_id = request.headers.get('X-User-Id')
+        print("Authenticated ", user_id)
+        if user_id is None:
+            return None
 
-class IsAuthenticated(BasePermission):
-    """
-    Allows access only to authenticated users.
-    """
+        try:
+            user = Profile.objects.get(id=int(user_id))
+        except (ValueError, Profile.DoesNotExist):
+            return None
 
-    def has_permission(self, request, view):
-        return True
+        return user, None

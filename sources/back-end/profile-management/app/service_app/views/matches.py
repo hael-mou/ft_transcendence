@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from ..models import Match
 from ..serializers.mathes import MatchSerializer
 from django.db.models import Q
-from .authentication import AuthenticationWithID, IsAuthenticated
-
+from .authentication import AuthenticationWithID
+from rest_framework.permissions import IsAuthenticated
 
 class Matches(generics.ListAPIView, generics.CreateAPIView):
 
