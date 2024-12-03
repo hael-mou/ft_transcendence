@@ -26,6 +26,29 @@ customElements.define("reset-password-form", ResetPassword);
 customElements.define("sign-in-form", SignIn);
 
 
+
+/* === Smooth appendChild : ================================================= */
+const originalAppendChild = Element.prototype.appendChild;
+
+Element.prototype.appendChild = function (child, time = 1.5) {
+
+    if (child instanceof HTMLElement) {
+
+        child.style.opacity = 0;
+        child.style.transition = `opacity ${time}s`; ;
+
+        const result = originalAppendChild.call(this, child);
+
+        requestAnimationFrame(() => {
+            child.style.opacity = 1;
+        });
+
+        return result;
+    }
+
+    return originalAppendChild.call(this, child);
+};
+
 /* === DOM Content Loaded : ================================================= */
 document.addEventListener("DOMContentLoaded", async () => {
     const rootElement = document.querySelector("app-root");
