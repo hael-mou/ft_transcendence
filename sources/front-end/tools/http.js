@@ -13,10 +13,20 @@ let status = undefined;
 /* ************************************************************************** */
 export class Auth {
 
+    /* === has valid token : ================================================= */
+    static hasValidToken() {
+
+        if (!accessToken) return false;
+        const decoded = jwt_decode(accessToken);
+        if (!decoded || decoded.exp < (Date.now() / 1000) + 10) return false;
+        return true;
+    }
+
+
     /* === get AccessToken : ================================================ */
     static async getAccessToken() {
 
-        if (accessToken) return accessToken;
+        if (Auth.hasValidToken()) return accessToken;
 
         const response = await Http.get(authGateway.getTokenUrl);
         if (!response.info.ok) {
@@ -35,32 +45,18 @@ export class Auth {
     /* === get UserId : ===================================================== */
     static async getUserId() {
 
-        if (userId) return userId;
-
-        if (accessToken) {
-            userId = jwt_decode(accessToken).user_id;
-            return userId;
-        }
-
-        await Auth.getAccessToken();
+        if (status === 'loggedOut') return undefined;
+        if (!Auth.hasValidToken()) await Auth.getAccessToken();
         return userId;
     }
 
     /* === isConnected : ==================================================== */
     static async isConnected() {
 
-        if (!accessToken && status === 'loggedOut') return false;
-        if (!accessToken) return !!(await Auth.getAccessToken());
-
-        const decoded = jwt_decode(accessToken);
-        if (decoded?.exp < Date.now() / 1000)
-        {
-            return !!(await Auth.getAccessToken());
-        }
-
+        if (status === 'loggedOut') return false;
+        if (!Auth.hasValidToken()) return !!(await Auth.getAccessToken());
         return true;
     }
-
 }
 
 /* ************************************************************************** */
@@ -77,7 +73,7 @@ export class Http {
     /* === getwithAuth : ==================================================== */
     static async getwithAuth(url, headers = {}) {
 
-        accessToken = await getAccessToken();
+        accessToken = await Auth.getAccessToken();
         headers['Authorization'] = `Bearer ${accessToken}`;
         return await request('GET', url, headers);
     }
@@ -91,7 +87,7 @@ export class Http {
     /* === postwithAuth : =================================================== */
     static async postwithAuth(url, headers = {}, data) {
 
-        accessToken = await getAccessToken();
+        accessToken = await Auth.getAccessToken();
         headers['Authorization'] = `Bearer ${accessToken}`;
         return await request('POST', url, headers, data);
     }
@@ -105,7 +101,7 @@ export class Http {
     /* === putwithAuth : ==================================================== */
     static async putwithAuth(url, headers = {}, data) {
 
-        accessToken = await getAccessToken();
+        accessToken = await Auth.getAccessToken();
         headers['Authorization'] = `Bearer ${accessToken}`;
         return await request('PUT', url, headers, data);
     }
