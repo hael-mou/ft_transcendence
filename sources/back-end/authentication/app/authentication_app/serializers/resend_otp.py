@@ -18,9 +18,9 @@ class ResendOtpSerializer(serializers.Serializer):
                 raise serializers.ValidationError({'error': 'Invalid email in the token.'})
             user = CustomUser.objects.get(email=email)
             if user.two_fa_choice != "email":
-                raise serializers.ValidationError({'error': 'user not enabled 2fa'})
+                raise serializers.ValidationError({'error': 'user not enabled 2fa with email'})
         except CustomUser.DoesNotExist:
-            raise serializers.ValidationError({'error': 'Invalid credentials'})
+            raise serializers.ValidationError({'error': 'User not found'})
         except jwt.ExpiredSignatureError:
             raise serializers.ValidationError({'error': 'Token expired'})
         except jwt.DecodeError as e:

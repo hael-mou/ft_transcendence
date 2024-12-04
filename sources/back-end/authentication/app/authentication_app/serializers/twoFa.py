@@ -51,7 +51,7 @@ class TwoFASerializer(serializers.Serializer):
         instance.save()
         return instance
 
-
+# to test if verified and change later the secrets of jwt token
 class Verify2faSerializer(serializers.Serializer):
     """OTP Serializer for OTP verification"""
 
@@ -61,7 +61,7 @@ class Verify2faSerializer(serializers.Serializer):
         otp = attrs.get('otp')
         jwt_token = self.context['request'].COOKIES.get('token')
         try:
-            decoded_token  = jwt.decode(jwt_token, key=os.environ.get("JWT_SECRET"), algorithms="HS256")
+            decoded_token  = jwt.decode(jwt_token, key=os.environ.get("JWT_2FA_SECRET"), algorithms="HS256")
             email = decoded_token.get('sub')
             if not email:
                 raise serializers.ValidationError({'error': 'Invalid email in the token.'})

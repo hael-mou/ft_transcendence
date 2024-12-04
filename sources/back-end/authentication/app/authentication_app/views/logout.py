@@ -6,6 +6,7 @@ from ..serializers.logout import TokenSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 ####################################Logout###################################
 
 class LogoutView(generics.GenericAPIView):
@@ -13,6 +14,7 @@ class LogoutView(generics.GenericAPIView):
     """ View for logout for revoking tokens"""
 
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = TokenSerializer
 
     def post(self, request):
