@@ -20,6 +20,8 @@ export const authGateway = {
     resetPasswordUrl    : `${authUrl}/reset`,
     setNewPasswordUrl   : `${authUrl}/set-new-password`,
 
+    changePasswordUrl   : `${authUrl}/change-password`
+
 }
 
 /* === Profile : ============================================================ */

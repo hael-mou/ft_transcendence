@@ -77,7 +77,7 @@ export class Http {
     /* === getwithAuth : ==================================================== */
     static async getwithAuth(url, headers = {}) {
 
-        accessToken = await getAccessToken();
+        accessToken = await Auth.getAccessToken();
         headers['Authorization'] = `Bearer ${accessToken}`;
         return await request('GET', url, headers);
     }
@@ -91,9 +91,16 @@ export class Http {
     /* === postwithAuth : =================================================== */
     static async postwithAuth(url, headers = {}, data) {
 
-        accessToken = await getAccessToken();
+        accessToken = await Auth.getAccessToken();
         headers['Authorization'] = `Bearer ${accessToken}`;
         return await request('POST', url, headers, data);
+    }
+    /* === patchwithAuth : ================================================== */
+    static async patchwithAuth(url, headers = {}, data) {
+
+        accessToken = await Auth.getAccessToken();
+        headers['Authorization'] = `Bearer ${accessToken}`;
+        return await request('PATCH', url, headers, data);
     }
 
     /* === put : ============================================================ */
@@ -105,7 +112,7 @@ export class Http {
     /* === putwithAuth : ==================================================== */
     static async putwithAuth(url, headers = {}, data) {
 
-        accessToken = await getAccessToken();
+        accessToken = await Auth.getAccessToken();
         headers['Authorization'] = `Bearer ${accessToken}`;
         return await request('PUT', url, headers, data);
     }

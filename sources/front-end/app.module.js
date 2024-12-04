@@ -13,6 +13,8 @@ import { SignUp } from "./components/sign-up/signup-form.js"
 import { SetNewPassword } from "./components/sign-in/setNewPassword-form.js";
 import { ResetPassword } from "./components/sign-in/resetPassword-form.js";
 import { SignIn } from "./components/sign-in/signin-form.js";
+import { Settings } from "./components/settings/settings.js";
+import { SecuritySettings } from "./components/settings/security_settings.js"
 
 
 /* === Custom Auth Elements : =============================================== */
@@ -27,7 +29,8 @@ customElements.define("set-new-password-form", SetNewPassword);
 customElements.define("reset-password-form", ResetPassword);
 customElements.define("sign-in-form", SignIn);
 
-
+customElements.define("settings-app", Settings);
+customElements.define("security-settings", SecuritySettings);
 /* === Smooth appendChild : ================================================= */
 const originalAppendChild = Element.prototype.appendChild;
 
