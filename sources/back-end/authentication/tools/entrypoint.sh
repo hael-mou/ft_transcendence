@@ -2,6 +2,7 @@
 
 set -e
 
+sleep 4
 echo "===============================>>> Start Setup <<<==============================="
 . /venv/bin/activate
 export  SSL_CERT_FILE=$(python -m certifi)

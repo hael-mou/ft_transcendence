@@ -4,13 +4,11 @@ from ..models import Match
 from ..serializers.mathes import MatchSerializer
 from django.db.models import Q
 from .authentication import AuthenticationWithID
-from rest_framework.permissions import IsAuthenticated
 
 class Matches(generics.ListAPIView, generics.CreateAPIView):
 
     """Class for matches to get list of mathces and add new matches"""
     serializer_class = MatchSerializer
-    permission_classes = [IsAuthenticated]
     authentication_classes = [AuthenticationWithID]
 
     def get_queryset(self):
@@ -38,12 +36,6 @@ class Matches(generics.ListAPIView, generics.CreateAPIView):
             grouped_matches[match_date].append(match_data)
         return Response(grouped_matches, status=status.HTTP_200_OK)
 
-
-    # def get(self, request):
-    #     id = request.query_params.get('id', request.user.id)
-    #     matches = Match.objects.filter(Q(winner=id) | Q(loser=id)).order_by('date')
-    #     serialized_data = self.get_serializer(matches, many=True).data
-    #     return Response(serialized_data, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)

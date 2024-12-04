@@ -5,12 +5,10 @@ from ..serializers.friends import FriendShipSerializer, AcceptFriendSerializer, 
 from ..serializers.friends import CancelSerializer, RemoveFriendSerializer
 from django.db.models import Q
 from .authentication import AuthenticationWithID
-from rest_framework.permissions import IsAuthenticated
 
 class FriendsRequestManager(generics.GenericAPIView):
 
     serializer_class = FriendShipSerializer
-    permission_classes = [IsAuthenticated]
     authentication_classes = [AuthenticationWithID]
 
     def get_queryset(self):
@@ -49,7 +47,6 @@ class AcceptFriendRequest(generics.CreateAPIView):
 
     queryset = FriendShipRequest.objects.all()
     serializer_class = AcceptFriendSerializer
-    permission_classes = [IsAuthenticated]
     authentication_classes = [AuthenticationWithID]
 
     def create(self, request, *args, **kwargs):
@@ -67,7 +64,6 @@ class RejectFriendRequest(generics.UpdateAPIView):
 
     queryset = FriendShipRequest.objects.all()
     serializer_class = RejectSerializer
-    permission_classes = [IsAuthenticated]
     authentication_classes = [AuthenticationWithID]
 
     def post(self, request, *args, **kwargs):
@@ -83,7 +79,6 @@ class CancelFriendRequest(generics.DestroyAPIView):
 
     queryset = FriendShipRequest.objects.all()
     serializer_class = CancelSerializer
-    permission_classes = [IsAuthenticated]
     authentication_classes = [AuthenticationWithID]
 
     def post(self, request, *args, **kwargs):
@@ -97,7 +92,6 @@ class RemoveFriend(generics.GenericAPIView):
 
     queryset = Profile.objects.all()
     serializer_class = RemoveFriendSerializer
-    permission_classes = [IsAuthenticated]
     authentication_classes = [AuthenticationWithID]
 
     def post(self, request, *args, **kwargs):

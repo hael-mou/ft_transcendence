@@ -1,5 +1,8 @@
 #!/bin/sh
 
+set -e
+
+sleep 4
 echo "===============================>>> Start Setup <<<==============================="
 . /venv/bin/activate
 

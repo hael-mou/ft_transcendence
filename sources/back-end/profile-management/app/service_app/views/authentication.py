@@ -8,7 +8,6 @@ class AuthenticationWithID(BaseAuthentication):
 
     def authenticate(self, request):
         user_id = request.headers.get('X-User-Id')
-        print("Authenticated ", user_id)
         if user_id is None:
             return None
 
