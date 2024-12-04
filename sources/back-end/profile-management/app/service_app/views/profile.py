@@ -5,18 +5,16 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from ..serializers.profile import ProfileSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from .authentication import AuthenticationWithID
-from rest_framework.permissions import  IsAuthenticated
+
 
 #########################CRUD OPERATIONS#####################################
-class Profiles(ListCreateAPIView, RetrieveUpdateDestroyAPIView):
+class Profiles(ListAPIView):
 
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    filter_backends = [DjangoFilterBackend]
     authentication_classes = [AuthenticationWithID]
-    permission_classes = [IsAuthenticated]
 
     def filter_queryset(self, queryset):
         query_params = self.request.query_params
@@ -28,42 +26,18 @@ class Profiles(ListCreateAPIView, RetrieveUpdateDestroyAPIView):
 
 
     def get_queryset(self):
-        queryset = Profile.objects.all()
-        return self.filter_queryset(queryset)
-
-
-    def get_object(self):
-        return get_object_or_404(Profile, id=self.request.user.id)
-
-
-    def perform_destroy(self, instance):
-        instance.delete()
-        # Make API call to delete the account from the authentication db
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-    def partial_update(self, request, *args, **kwargs):
-        kwargs['partial'] = True
-
-        request_data = request.data
-        for field in ["avatar", "username", "last_name", "first_name"]:
-            if field not in request_data or not request_data[field]:
-                request_data[field] = getattr(request.user, field)
-        print(request_data)
-        return super().partial_update(request, *args, **kwargs)
-
+        return self.filter_queryset(self.queryset)
 
 
 ########################## My Profile ##########################
-class MyProfile(Profiles):
+class MyProfile(CreateAPIView, RetrieveUpdateDestroyAPIView):
     """
-    Retrieve or update the authenticated user's profile.
+    crud operation of profile of authenticated user 
     """
 
-    def get_queryset(self):
-        """Return the authenticated user's profile."""
-        return Profile.objects.filter(username=self.request.user.username)
-
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    authentication_classes = [AuthenticationWithID]
 
     def get(self, request, *args, **kwargs):
         """Retrieve the authenticated user's profile."""
@@ -74,7 +48,7 @@ class MyProfile(Profiles):
             key: getattr(instance, key) for key in query_params.keys() if hasattr(instance, key)
         }
         if "friends" in fields_to_retrieve:
-            friends_queryset = Profile.objects.all().filter(friends=instance)
+            friends_queryset = self.queryset.filter(friends=instance)
             friends_serializer = ProfileSerializer(friends_queryset, many=True)
             fields_to_retrieve["friends"] = friends_serializer.data
 
@@ -83,3 +57,25 @@ class MyProfile(Profiles):
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_object(self):
+        return get_object_or_404(Profile, id=self.request.user.id)
+
+
+    def perform_destroy(self, instance):
+        instance.delete()
+        # not tested yet 
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def partial_update(self, request, *args, **kwargs):
+        """Update the authenticated user's profile partially."""
+
+        kwargs["partial"] = True
+        request_data = request.data
+        user = request.user
+        for field in ["avatar", "username", "last_name", "first_name"]:
+            request_data.setdefault(field, getattr(user, field))
+            setattr(user, field, request_data[field])
+        user.save()
+
+        return super().partial_update(request, *args, **kwargs)

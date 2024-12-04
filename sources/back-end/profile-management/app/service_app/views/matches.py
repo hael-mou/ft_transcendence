@@ -4,13 +4,11 @@ from ..models import Match
 from ..serializers.mathes import MatchSerializer
 from django.db.models import Q
 from .authentication import AuthenticationWithID
-from rest_framework.permissions import IsAuthenticated
 
 class Matches(generics.ListAPIView, generics.CreateAPIView):
 
     """Class for matches to get list of mathces and add new matches"""
     serializer_class = MatchSerializer
-    permission_classes = [IsAuthenticated]
     authentication_classes = [AuthenticationWithID]
 
     def get_queryset(self):
