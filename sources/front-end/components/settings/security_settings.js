@@ -66,7 +66,7 @@ export class SecuritySettings extends Component
                         <img id="qr_image" src="" alt="QR Code">
                     </div>
             
-                    <div id="status_message" class="status-message hidden">
+                    <div id="status-message" class="status-message hidden">
                         <p>2FA has been successfully updated!</p>
                     </div>
                 </div>
@@ -421,7 +421,6 @@ async function save_2faSettings(event) {
         return;
     }
     const selectedMethod = selectedQuery?.id === "email_method" ? "email" : "totp";
-
     if (enable2faCheckbox.checked)
         await Enable_2fa.bind(this)(password, selectedMethod);
     else 
@@ -437,27 +436,28 @@ async function Enable_2fa(password, choice) {
     const qrImage = this.shadowRoot.getElementById("qr_image");
     
 
-    const url = authGateway.enable2FAUrl;
+    const url = authGateway.enable2FaUrl;
     const headers = { 'Content-Type': 'application/json' };
     const data = JSON.stringify({ password, choice });
 
-    const response = await Http.postWithAuth(url, headers, data);   
-    console.log("Response", response);
-    if (!response.ok)
-    return alert(response["message"]);
+    const response = await Http.postwithAuth(url, headers, data);   
+    if (!response.info.ok) {
+        alert.setMessage(response.json["error"]);
+        return alert.modalInstance.show();
+    }
 
     statusMessage.classList.remove("hidden");
     if (choice === "totp"){
         const qrUrl = authGateway.getQrCodeUrl;
-        const qrResponse = await Http.getWithAuth(qrUrl);
-        if (qrResponse.ok) {
-            const data = await qrResponse.json();
-            const qr_url = "data:image/png;base64, " + data["qr_code"];
+        const qrResponse = await Http.getwithAuth(qrUrl);
+        if (qrResponse.info.ok) {
+            const qr_url = "data:image/png;base64, " + qrResponse.json["qr_code"];
             qrImage.src = qr_url;
             qrCodeDiv.classList.remove("hidden");
+            return;
         }
-        else
-            alert(qrResponse["An error occurred while saving settings., retry later."]);
+        alert.setMessage("An error occurred while saving settings., retry later.");
+        alert.modalInstance.show();
     }
 }
 
