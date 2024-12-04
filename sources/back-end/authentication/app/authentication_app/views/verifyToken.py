@@ -13,4 +13,5 @@ class TokenVerifyView(TokenViewBase):
     def get(self, request):
         response = Response({"message": "success"}, status=status.HTTP_200_OK)
         response["X-User-Id"] = request.user.id
+        response["X-User-Username"] = request.user.username
         return response

@@ -38,8 +38,8 @@ export const profileGateway = {
     removeFriendUrl         : `${profileUrl}/me/friends/delete/`,
 
     // profile
-    getProfileUrl           : `${profileUrl}`,
-    updateProfileUrl        : `${profileUrl}/me`,
+    getProfileUrl           : `${profileUrl}/`,
+    myProfileUrl            : `${profileUrl}/me`,
 
     // matches :
     getMatchesHistoryUrl    : `${profileUrl}/matches`,
