@@ -105,13 +105,11 @@ class Util:
             key="token",
             value=str(jwt_token),
             httponly=True,
-            secure=True,
+            secure=True, 
             samesite="lax",  
             max_age=timedelta(minutes=10).total_seconds(),
-            path=os.environ.get("2FA_TOKEN_PATH"),
+            path=os.environ.get("TWO_FA_PATH"),
         )
-        print("-------------->>>>", os.environ.get("2FA_TOKEN_PATH"))
-        print("===============>>>", os.environ.get("REFRESH_TOKEN_PATH"))
         return response
     @staticmethod
     def send_reset_password_email(email, reset_link):

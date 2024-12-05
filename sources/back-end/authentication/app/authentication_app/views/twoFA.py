@@ -1,3 +1,4 @@
+import os
 import qrcode
 import base64
 from io import BytesIO
@@ -100,8 +101,9 @@ class Verify2FaView(generics.GenericAPIView):
                 httponly=True,
                 secure=True,
                 samesite="lax",  
-                max_age=0, 
-                expires=0
+                max_age=0,
+                expires=0,
+                path=os.environ.get("TWO_FA_PATH")
             )
             return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

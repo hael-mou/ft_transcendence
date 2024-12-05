@@ -24,7 +24,7 @@ class TwoFASerializer(serializers.Serializer):
         user = self.context['request'].user
         to_enable = self.context['toEnable']
         attrs = {
-            'instance': user,
+            'instance': user, 
             'toEnable': to_enable
         }
         if choice not in ["email", "totp"]:
