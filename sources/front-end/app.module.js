@@ -14,7 +14,9 @@ import { SetNewPassword } from "./components/sign-in/setNewPassword-form.js";
 import { ResetPassword } from "./components/sign-in/resetPassword-form.js";
 import { SignIn } from "./components/sign-in/signin-form.js";
 import { Settings } from "./components/settings/settings.js";
-import { SecuritySettings } from "./components/settings/security_settings.js"
+import { SecuritySettings } from "./components/settings/security_settings.js";
+
+import { OtpVerification } from "./components/sign-in/otp-form.js";
 
 
 /* === Custom Auth Elements : =============================================== */
@@ -25,12 +27,14 @@ customElements.define("base-page", BasePage);
 customElements.define("complete-form", CompleteSignUp);
 customElements.define("sign-up-form", SignUp);
 
+customElements.define("otp-verification-form", OtpVerification);
 customElements.define("set-new-password-form", SetNewPassword);
 customElements.define("reset-password-form", ResetPassword);
 customElements.define("sign-in-form", SignIn);
 
 customElements.define("settings-app", Settings);
 customElements.define("security-settings", SecuritySettings);
+
 /* === Smooth appendChild : ================================================= */
 const originalAppendChild = Element.prototype.appendChild;
 

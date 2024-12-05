@@ -26,7 +26,8 @@ export const authGateway = {
     enable2FaUrl        : `${authUrl}/2fa/enable`,
     disable2FaUrl       : `${authUrl}/2fa/disable`,
     verify2FaUrl        : `${authUrl}/2fa/verify`,
-    getQrCodeUrl        : `${authUrl}/2fa/qr`
+    getQrCodeUrl        : `${authUrl}/2fa/qr`,
+    resendOtpUrl        : `${authUrl}/2fa/resend`,
 }
 
 /* === Profile : ============================================================ */

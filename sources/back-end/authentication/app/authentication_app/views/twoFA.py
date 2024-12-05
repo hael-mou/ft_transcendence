@@ -95,9 +95,13 @@ class Verify2FaView(generics.GenericAPIView):
         if serializer.is_valid(raise_exception=True):
             response = Util.build_response(serializer.validated_data)
             response.set_cookie(
-                key="token", 
-                value="", 
-                max_age=0,
-                expires=0,)
+                key="token",
+                value="",
+                httponly=True,
+                secure=True,
+                samesite="lax",  
+                max_age=0, 
+                expires=0
+            )
             return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

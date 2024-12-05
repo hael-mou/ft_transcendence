@@ -87,7 +87,7 @@ class Util:
 
         response = Response(
             {
-                "message": "Provide OTP code",
+                "2fa_enabled": "true",
                 "email": validated_data["email"],
             },
             status=status.HTTP_200_OK,
@@ -106,10 +106,12 @@ class Util:
             value=str(jwt_token),
             httponly=True,
             secure=True,
-            samesite="Strict",
+            samesite="lax",  
             max_age=timedelta(minutes=10).total_seconds(),
             path=os.environ.get("2FA_TOKEN_PATH"),
         )
+        print("-------------->>>>", os.environ.get("2FA_TOKEN_PATH"))
+        print("===============>>>", os.environ.get("REFRESH_TOKEN_PATH"))
         return response
     @staticmethod
     def send_reset_password_email(email, reset_link):

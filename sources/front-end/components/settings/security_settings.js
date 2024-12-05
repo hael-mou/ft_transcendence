@@ -415,14 +415,21 @@ async function save_2faSettings(event) {
     const password = passwordInput.value;
     
 
-    if (!password || !selectedQuery){
-        alert.setMessage("Please enter your password and choose an authentication method.");
+    if (!password){
+        alert.setMessage("Please enter your password");
         alert.modalInstance.show();
         return;
     }
     const selectedMethod = selectedQuery?.id === "email_method" ? "email" : "totp";
     if (enable2faCheckbox.checked)
+    {
+        if (!selectedQuery) {
+            alert.setMessage("Please choose an authentication method.");
+            alert.modalInstance.show();
+            return;
+        }
         await Enable_2fa.bind(this)(password, selectedMethod);
+    }
     else 
         await Disable_2fa.bind(this)(password, selectedMethod);
 }
@@ -464,14 +471,18 @@ async function Enable_2fa(password, choice) {
 
 async function Disable_2fa(password, choice) {
     const alert = document.createElement('custom-alert');
-    const url = authGateway.disable2FAUrl;
+    const url = authGateway.disable2FaUrl;
     const headers = { 'Content-Type': 'application/json' };
     const data = JSON.stringify({ password, choice });
 
-    const response = await Http.postWithAuth(url, headers, data);
+    const response = await Http.postwithAuth(url, headers, data);
     console.log("Response", response);
-    if (!response.ok)
-        return alert(response["error"]);
+    if (!response.info.ok) {
+        alert.setMessage(response.json["error"]);
+        return alert.modalInstance.show();
+    }
 
-    alert("Successfully disabled 2FA");
+    const statusMessage = this.shadowRoot.getElementById("status-message");
+    statusMessage.textContent = "2fa disabled successfully";
+    statusMessage.classList.remove("hidden");
 }
