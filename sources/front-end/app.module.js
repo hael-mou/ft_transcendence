@@ -14,7 +14,9 @@ import { SetNewPassword } from "./components/sign-in/setNewPassword-form.js";
 import { ResetPassword } from "./components/sign-in/resetPassword-form.js";
 import { SignIn } from "./components/sign-in/signin-form.js";
 
+import { FriendCard } from "./components/profile/friend_card.js";
 import { ProfileApp } from "./components/profile/profile_app.js";
+import { MatchCard } from "./components/profile/match_card.js";
 
 
 /* === Custom Auth Elements : =============================================== */
@@ -29,23 +31,27 @@ customElements.define("set-new-password-form", SetNewPassword);
 customElements.define("reset-password-form", ResetPassword);
 customElements.define("sign-in-form", SignIn);
 
+customElements.define("match-card", MatchCard);
+customElements.define("friend-card", FriendCard);
 customElements.define("profile-app", ProfileApp);
 
 /* === Smooth appendChild : ================================================= */
 const originalAppendChild = Element.prototype.appendChild;
 
-Element.prototype.appendChild = function (child, time = 1.5) {
+Element.prototype.appendChild = function (child, time = 0.5) {
 
     if (child instanceof HTMLElement) {
 
         child.style.opacity = 0;
-        child.style.transition = `opacity ${time}s`; ;
+        child.style.transition = `opacity ${time}s`;
 
         const result = originalAppendChild.call(this, child);
 
-        requestAnimationFrame(() => {
-            child.style.opacity = 1;
-        });
+        setTimeout(() => {
+            requestAnimationFrame(() => {
+                child.style.opacity = 1;
+            });
+        }, 100);
 
         return result;
     }
@@ -65,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 /* === load Route component : =============================================== */
 window.addEventListener("load", () => {
-    const loadingDelay = Math.max(0, 1500 - performance.now());
+    const loadingDelay = Math.max(0, 2000 - performance.now());
     setTimeout(() => {
         setTimeout(() => {
             const loadingScreen = document.getElementById("loading-screen");

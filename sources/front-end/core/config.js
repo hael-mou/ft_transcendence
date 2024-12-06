@@ -29,9 +29,7 @@ export const profileGateway = {
 
     // Friends
     getFriendsUrl           : `${profileUrl}/me?friends`,
-    getReceivedRequestsUrl  : `${profileUrl}/me/friends/request?received`,
-    getSentRequestsUrl      : `${profileUrl}/me/friends/request?sent`,
-    addFriendRequestUrl     : `${profileUrl}/me/friends/request/`,
+    friendRequestUrl        : `${profileUrl}/me/friends/request/`,
     acceptFriendRequestUrl  : `${profileUrl}/me/friends/accept/`,
     rejectFriendRequestUrl  : `${profileUrl}/me/friends/reject/`,
     cancelFriendRequestUrl  : `${profileUrl}/me/friends/cancel/`,

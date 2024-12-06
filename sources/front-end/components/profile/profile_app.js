@@ -2,6 +2,8 @@
 import { profileGateway }  from "../../core/config.js";
 import { Component } from "../../core/component.js";
 import { utils as _ } from "../../tools/utils.js";
+import { FriendCard } from "./friend_card.js";
+import { MatchCard } from "./match_card.js";
 import { Http } from  "../../tools/http.js";
 import { Auth } from "../../tools/http.js";
 
@@ -10,102 +12,133 @@ import { Auth } from "../../tools/http.js";
 # *************************************************************************** */
 export class ProfileApp extends Component {
 
-    /* === variables : ====================================================== */
-    myProfile = undefined;
-    myFriends = undefined;
+    /* === constructor : ==================================================== */
+    constructor() {
+
+        super();
+        this.friendShipStatus = {
+			"none": {
+				classToAdd:  "btn-primary",
+				classToremove: ["btn-secondary"],
+				buttonText: "Follow",
+				callBack: addFriend.bind(this),
+			},
+			"friend": {
+				classToAdd:  "btn-secondary",
+				classToremove: ["btn-primary"],
+				buttonText: "Unfollow",
+				callBack: removeFriend.bind(this),
+			},
+			"sent_request": {
+				classToAdd:  "btn-secondary",
+				classToremove: ["btn-primary"],
+				buttonText: "Cancel",
+				callBack: cancelRequest.bind(this),
+			},
+            "recv_request": {
+                classToAdd:  "btn-primary",
+                classToremove: ["btn-secondary"],
+                buttonText: "Accept",
+                callBack: acceptRequest.bind(this),
+            }
+		}
+    }
 
 
     /* === init : =========================================================== */
     async init() {
 
-        const myId        = await Auth.getUserId();
-        this.userId       = _.getQueryParams().id || myId;
-        this.isMyProfile  = this.userId == myId;
+        try {
+            const myId       = await Auth.getUserId();
+            this.userId      = _.getQueryParams().id || myId;
+            this.isMyProfile = (myId == this.userId);
 
-        await this.initMyProfile();
+            await Promise.all([
+                this.loadProfile(),
+                this.loadMatches(),
+                this.loadFriends(),
+            ]);
+
+            await this.loadFriendRequests();
+
+        } catch (error) {
+            console.error('Error initializing profile data:', error);
+        }
+    }
+
+
+    /* === loadProfile : ==================================================== */
+    async loadProfile() {
 
         const profileUrl = `${profileGateway.getProfileUrl}?id=${this.userId}`;
-        this.profile = (await Http.getwithAuth(profileUrl))?.json[0] || ProfileApp.myProfile;
+        const profileResponse = await Http.getwithAuth(profileUrl);
+        this.profile  = profileResponse?.json[0] || undefined;
 
-
-
-
-
-
-        ProfileApp.myProfile = ProfileApp.myProfile ?? (await Http.getwithAuth(myProfileUrl)).json;
-
-        console.log(ProfileApp.myProfile);
         if (!this.profile) {
-            profileUrl = profileGateway.myProfileUrl;
+            const myProfileUrl    = profileGateway.myProfileUrl;
+            const profileResponse = await Http.getwithAuth(myProfileUrl);
+            this.profile = profileResponse?.json;
             history.replaceState(null, null, "/profile");
-            this.profile = (await Http.getwithAuth(profileUrl)).json
+            this.isMyProfile = true;
         }
     }
 
-    /* === initMyProfile : ================================================== */
-    async initMyProfile() {
 
-        const myProfileUrl  =  profileGateway.myProfileUrl;
-        const myFriendsUrl  = profileGateway.getFriendsUrl;
+    /* === loadMatches : ==================================================== */
+    async loadMatches() {
 
-        if (!ProfileApp.myProfile)
-            ProfileApp.myProfile = (await Http.getwithAuth(myProfileUrl)).json;
-
-        if (!ProfileApp.myFriends)
-            ProfileApp.myFriends = (await Http.get(myFriendsUrl)).json["friends"] || [];
-
+        const matchesUrl = `${profileGateway.getMatchesHistoryUrl}?id=${this.userId}`;
+        const response   =  await Http.getwithAuth(matchesUrl);
+        this.matches = response?.json || {};
     }
 
-    /* === render : ========================================================= */
-    render() {
-        super.render();
-        this.updatePage();
+
+    /* === loadFriends : ===================================================== */
+    async loadFriends() {
+
+        const friendsUrl = profileGateway.getFriendsUrl;
+        const response   = await Http.getwithAuth(friendsUrl);
+        this.friends = response?.json?.friends || [];
     }
 
-    /* === reRender : ======================================================= */
-    async reRender() {
-        await this.init();
-        this.updatePage();
+
+    /* === loadFriendRequests : ============================================= */
+    async loadFriendRequests() {
+
+        const recvRequestsUrl    = profileGateway.friendRequestUrl;
+        const response           = await Http.getwithAuth(recvRequestsUrl);
+        const FriendShipRequests = response?.json || [];
+        const MyId               = await Auth.getUserId();
+
+        const filteredRequests = FriendShipRequests.flatMap(request => {
+            if (request.sender_profile.id == MyId)
+            {
+                return {status: "sender", info: request.receiver_profile};
+            }
+            else if (request.receiver_profile.id == MyId)
+            {
+                return {status: "receiver", info: request.sender_profile};
+            }
+            return [];
+        });
+
+        this.friendRequests = filteredRequests;
     }
 
-    /* === updatePage : ===================================================== */
-    updatePage() {
-        const frendNav = this.shadowRoot.getElementById('frend-nav');
-        const eventBottons = this.shadowRoot.getElementById('event-buttons');
-        const content = this.shadowRoot.getElementById('contentt');
-        content.classList.add('mw-70');
 
-        this.updateProfile();
-        this.updateProfileButtons();
+    /* === getFriendshipStatus : ============================================ */
+    getFriendshipStatus() {
 
-        if (!this.isMyProfile) {
-            eventBottons.classList.remove('d-none');
-            frendNav.classList.add('d-none');
-            content.classList.remove('mw-70');
-            return ;
-        }
+        if (this.isMyProfile) return 'self';
 
-        eventBottons.classList.add('d-none');
-        frendNav.classList.remove('d-none');
-    }
+        const friendship = this.friends.find(friend => friend.id == this.userId);
+        if (friendship) return 'friend';
 
-    /* === Profile Update : ================================================= */
-    updateProfile() {
-        const avatar   = this.shadowRoot.getElementById('avatar');
-        const userInfo = this.shadowRoot.getElementById('user-info');
-        const username = this.shadowRoot.getElementById('username');
+        const request = this.friendRequests.find(request => request.info.id == this.userId);
+        if (request?.status == 'sender') return 'sent_request';
+        if (request?.status == 'receiver') return 'recv_request';
 
-        avatar.src = this.profile?.avatar || '/static/assets/imgs/user_avatar.png';
-        userInfo.textContent = this.profile?.first_name || 'Anonymous';
-        userInfo.textContent += " " +this.profile?.last_name || '';
-        username.textContent = "@" +this.profile?.username || 'anonymous';
-    }
-
-    /* === updateProfileButtons : =========================================== */
-    updateProfileButtons() {
-
-        const eventBottons = this.shadowRoot.getElementById('event-buttons');
-
+        return 'none';
     }
 
     /* === template : ======================================================= */
@@ -115,11 +148,11 @@ export class ProfileApp extends Component {
                 <!-- Profile Banner Section -->
                 <div class="profile-banner position-relative">
                     <img src="/static/assets/imgs/banner.jpg" alt="Profile Banner"
-                         class="banner-img img-fluid w-100">
+                        class="banner-img img-fluid w-100">
                     <div class="position-absolute top-100 start-50 translate-middle">
                         <img id="avatar" src="/static/assets/imgs/user_avatar.png"
-                             class="profile-avatar rounded-circle border border-5 border-light"
-                             alt="Profile picture"
+                            class="profile-avatar rounded-circle border border-5 border-light"
+                            alt="Profile picture"
                         >
                     </div>
                 </div>
@@ -132,8 +165,8 @@ export class ProfileApp extends Component {
 
                 <!-- Profile Buttons Section -->
                 <div id="event-buttons" class="profile-buttons text-center">
-                    <button class="btn btn-primary mx-2">Follow</button>
-                    <button class="btn btn-secondary mx-2">Message</button>
+                    <button id="friend-btn"  class="btn btn-primary mx-2">Follow</button>
+                    <button id="message-btn" class="btn btn-secondary mx-2">Message</button>
                 </div>
 
                 <!-- profile Body Section-->
@@ -146,30 +179,30 @@ export class ProfileApp extends Component {
                             <h4 class="title mt-0">History Matches</h4>
                             <div class="stat-item">
                                 <span>Games Played</span>
-                                <span id="game-played">100</span>
+                                <span id="game-played">0</span>
                             </div>
 
                             <div class="stat-item">
                                 <span>Win Rate</span>
-                                <span id="win-rate">65%</span>
+                                <span id="win-rate">0%</span>
                             </div>
 
                             <div class="stat-item">
                                 <span>Lose Rate</span>
-                                <span id="lose-rate">35%</span>
+                                <span id="lose-rate">0%</span>
                             </div>
 
                             <div class="stat-item">
                                 <span>Highest Score</span>
-                                <span id="highest-score">2300</span>
+                                <span id="highest-score">0</span>
                             </div>
-                          </div>
+                        </div>
 
-                          <div id="matches-slider-show" class="match-slider w-100">
-                              <h4 id="matches-title" class="title">History Matches</h4>
-                              <div id="matches-list" class="match-slide">
-                              </div>
-                          </div>
+                        <div id="matches-slider-show" class="match-slider w-100">
+                            <h4 id="matches-title" class="title">History Matches</h4>
+                            <div id="matches-list" class="match-slide">
+                            </div>
+                        </div>
 
                     </div>
 
@@ -179,12 +212,12 @@ export class ProfileApp extends Component {
 
                         <h4 id="request-title" class="title mt-0">Friends request</h4>
                         <div class="overflow-x-hidden overflow-y-auto mh-50 user-friends"
-                             id ="friend-requests">
+                            id ="friend-requests">
                         </div>
 
                         <h4  id="friends-title" class="title mt-0">Friends list</h4>
                         <div class="overflow-x-hidden overflow-y-auto mh-50 user-friends"
-                             id="friends-list">
+                            id="friends-list">
                         </div>
                     </div>
 
@@ -193,6 +226,7 @@ export class ProfileApp extends Component {
             </main>
         `;
     }
+
 
     /* === styles : ======================================================== */
     get styles() {
@@ -414,7 +448,8 @@ export class ProfileApp extends Component {
                 }
             }
 
-            @media (max-width: 1180px) {
+            @media (max-width: 1280px) {
+
                 .profile-banner {
                     height: 140px;
                 }
@@ -530,4 +565,285 @@ export class ProfileApp extends Component {
         `;
     }
 
+
+    /* === render : ========================================================= */
+    render() {
+        super.render();
+        this.updateProfile();
+        this.updateMatches();
+        this.updateStats();
+        this.updateFrindNav();
+    }
+
+
+    /* === reRender : ======================================================= */
+    async reRender() {
+        await this.init();
+        this.updateProfile();
+        this.updateMatches();
+        this.updateStats();
+        this.updateFrindNav();
+    }
+
+
+    /* === Profile Update : ================================================= */
+    updateProfile() {
+        const avatar    = this.shadowRoot.getElementById('avatar');
+        const userInfo  = this.shadowRoot.getElementById('user-info');
+        const username  = this.shadowRoot.getElementById('username');
+        const eventBtn  = this.shadowRoot.getElementById('event-buttons');
+
+        avatar.src = this.profile?.avatar || '/static/assets/imgs/user_avatar.png';
+        userInfo.textContent = this.profile?.first_name || 'Anonymous';
+        userInfo.textContent += " " +this.profile?.last_name || '';
+        username.textContent = "@" +this.profile?.username || 'anonymous';
+        eventBtn.classList.add('d-none');
+
+        if (this.isMyProfile) return ;
+        const friendShip = this.getFriendshipStatus();
+        this.updateFriendBtnStatus(friendShip);
+        eventBtn.classList.remove('d-none');
+    }
+
+
+    /* === Update Matches : ================================================= */
+    updateMatches() {
+        const matchesListTitle = this.shadowRoot.getElementById('matches-title');
+        const matchesList = this.shadowRoot.getElementById('matches-list');
+
+        matchesListTitle.classList.remove('d-none');
+        matchesList.classList.remove('d-none');
+        _.clear(matchesList);
+
+        this.status = {wins: 0, losses: 0 , n_match: 0, highestScore: 0};
+        Object.entries(this.matches).forEach(([date, matchesInDay]) => {
+            matchesInDay.forEach(match => {
+                const matchCard = new MatchCard(date, match, this.profile);
+                matchCard.classList.add("animateScroll");
+                matchesList.appendChild(matchCard);
+
+                this.status.highestScore = Math.max(this.status.highestScore,
+                                                     matchCard.myScore);
+
+                match.status === "win" ? this.status.wins++
+                                       : this.status.losses++;
+                this.status.n_match++;
+            });
+        });
+
+        if (this.status.n_match <= 2) {
+            const elements = matchesList.querySelectorAll('.animateScroll');
+            elements.forEach(element => {
+                element.classList.remove('animateScroll');
+            })
+        }
+
+        if (this.status.n_match) return;
+        matchesListTitle.classList.add('d-none');
+        matchesList.classList.add('d-none');
+    }
+
+
+    /* === Update Stats : =================================================== */
+    updateStats() {
+        const gamePlayed = this.shadowRoot.getElementById('game-played');
+        const winRate = this.shadowRoot.getElementById('win-rate');
+        const loseRate = this.shadowRoot.getElementById('lose-rate');
+        const HighestScore = this.shadowRoot.getElementById('highest-score');
+
+        gamePlayed.textContent = (this.status.n_match || 0) + " Matches";
+        winRate.textContent = (this.status.wins / this.status.n_match * 100 || 0) + "%";
+        loseRate.textContent = (this.status.losses / this.status.n_match * 100 || 0) + "%";
+        HighestScore.textContent = this.status.highestScore + " pts";
+    }
+
+
+    /* === updateFrindNav : ================================================= */
+    updateFrindNav() {
+
+        const content = this.shadowRoot.getElementById('contentt');
+        const frendNav = this.shadowRoot.getElementById('frend-nav');
+
+        this.isMyProfile ? frendNav.classList.remove('d-none')
+                         : frendNav.classList.add('d-none');
+
+        this.isMyProfile ? content.classList.add('mw-70')
+                         : content.classList.remove('mw-70');
+
+        this.updateRequests();
+        this.updateFrinds();
+
+        if (!this.friends.length && !this.recevedRequests.length) {
+            content.classList.remove('mw-70');
+            frendNav.classList.add('d-none');
+        }
+    }
+
+
+    /* === Update Requests : ================================================ */
+    updateRequests() {
+        const requestsListTitle = this.shadowRoot.getElementById('request-title');
+        const requestList = this.shadowRoot.getElementById('friend-requests');
+
+        requestsListTitle.classList.remove('d-none');
+        requestList.classList.remove('d-none');
+        _.clear(requestList);
+
+
+        this.recevedRequests = this.friendRequests.filter(request =>
+                                                   request.status === 'receiver'
+                                                );
+
+        if (!this.recevedRequests.length) {
+            requestsListTitle.classList.add('d-none');
+            requestList.classList.add('d-none');
+            return;
+        }
+
+
+        this.recevedRequests.forEach(request => {
+            requestList.appendChild(new FriendCard(
+                request.info,
+                true,
+                FriendEventHandler.bind(this)
+            ));
+        });
+    }
+
+    /* === update Frinds : ================================================= */
+    updateFrinds() {
+        const friendsTitleElement = this.shadowRoot.getElementById('friends-title');
+        const friendsListElement = this.shadowRoot.getElementById('friends-list');
+
+        friendsTitleElement.classList.remove('d-none');
+        friendsListElement.classList.remove('d-none');
+        _.clear(friendsListElement);
+
+        if (this.friends.length === 0) {
+            friendsTitleElement.classList.add('d-none');
+            friendsListElement.classList.add('d-none');
+            return;
+        }
+
+        this.friends.forEach(friend => {
+            const friendCard = new FriendCard(friend);
+            friendsListElement.appendChild(friendCard);
+        });
+    }
+
+    /* === updateFriendBtnStatus : ========================================== */
+    updateFriendBtnStatus(status) {
+		const button = this.shadowRoot.getElementById('friend-btn');
+		const statusInfo = this.friendShipStatus[status];
+		button.classList.remove(...statusInfo.classToremove);
+		button.classList.add(statusInfo.classToAdd);
+        button.textContent = statusInfo.buttonText;
+        button.onclick = statusInfo.callBack;
+	}
+}
+
+
+/* ************************************************************************** */
+/*   * Event Handlers :                                                       */
+/* ************************************************************************** */
+
+/* === addFriend : ========================================================== */
+async function addFriend(event) {
+
+    event.preventDefault();
+    const requestUrl = profileGateway.friendRequestUrl;
+    const receiver_id = this.profile.id;
+    const requestHeaders = { 'Content-Type': 'application/json' };
+	const requestData = JSON.stringify({ receiver_id });
+
+    const response = await Http.postwithAuth(requestUrl, requestHeaders, requestData);
+    if (!response.info.ok) {
+        const alert = document.createElement('custom-alert');
+        alert.setMessage("something went wrong...");
+        alert.modalInstance.show();
+        return this.reRender();
+    }
+
+    this.friendRequests.push({status: "sender", info: this.profile});
+    this.updateFriendBtnStatus('sent_request');
+}
+
+
+/* === cancelRequest : ======================================================= */
+async function cancelRequest(event) {
+
+    event.preventDefault();
+    const receiver_id = this.profile.id;
+	const requestUrl = profileGateway.cancelFriendRequestUrl;
+	const requestHeaders = { 'Content-Type': 'application/json' };
+	const requestData = JSON.stringify({ receiver_id });
+
+    const response = await Http.postwithAuth(requestUrl, requestHeaders, requestData);
+    if (!response.info.ok) {
+        const alert = document.createElement('custom-alert');
+        alert.setMessage("something went wrong...");
+        alert.modalInstance.show();
+        return this.reRender();
+    }
+
+    this.friendRequests = this.friendRequests
+                    .filter(request => request.info.id !== receiver_id);
+    this.updateFriendBtnStatus('none');
+}
+
+/* === removeFriend : ======================================================= */
+async function removeFriend(event) {
+
+    event.preventDefault();
+    const friend_id = this.profile.id;
+	const url = profileGateway.removeFriendUrl;
+	const headers = { 'Content-Type': 'application/json' };
+	const data = JSON.stringify({ friend_id });
+
+    const response = await Http.postwithAuth(url, headers, data);
+    if (!response.info.ok) {
+        const alert = document.createElement('custom-alert');
+        alert.setMessage("something went wrong...");
+        alert.modalInstance.show();
+        return this.reRender();
+    }
+
+    this.friends = this.friends.filter(friend => friend.id !== friend_id);
+    this.updateFriendBtnStatus('none');
+}
+
+/* === acceptRequest : ======================================================= */
+async function acceptRequest(event) {
+
+    event.preventDefault();
+
+    const url = profileGateway.acceptFriendRequestUrl;
+    const headers = { 'Content-Type': 'application/json' };
+    const data = JSON.stringify({ sender_id: this.profile.id });
+
+    const response = await Http.postwithAuth(url, headers, data);
+    if (!response.info.ok) {
+        const alert = document.createElement('custom-alert');
+        alert.setMessage("something went wrong...");
+        alert.modalInstance.show();
+        return this.reRender();
+    }
+
+    this.friends.push(this.friend);
+    this.friendRequests = this.friendRequests.filter(
+        (request) => request.info.id !== this.profile.id
+    );
+    this.updateFriendBtnStatus('friend');
+}
+
+
+/* === Friend EventHandler : ================================================ */
+function FriendEventHandler(friend, isAccepted) {
+
+    this.friendRequests = this.friendRequests.filter(
+        (request) => request.info.id !== friend.id
+    );
+
+    if (isAccepted) this.friends.push(friend);
+    return this.updateFrindNav();
 }

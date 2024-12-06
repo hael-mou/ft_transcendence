@@ -39,7 +39,7 @@ export class BasePage extends Component
             <div class="container-main">
                 <nav id="nav" class="container-nav">
                     ${this.navItems.map((navItem, index) => /* html */ `
-                        <div class="nav-item ${index === 0 ? 'selected' : ''}"
+                        <div class="nav-item ${navItem.href === window.location.pathname ? 'selected' : ''}"
                             data-link="${navItem.href}">
 
                             <div class="nav-background"></div>

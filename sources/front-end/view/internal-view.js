@@ -6,10 +6,6 @@ import { Auth } from "../tools/http.js";
 /* === renderWebPage : ====================================================== */
 async function renderContentPage(appTagName) {
 
-    if (!Router.isRedirect && !(await Auth.isConnected())) {
-        return await Router.redirect('/sign-in');
-    }
-
     const appRoot = document.querySelector('app-root');
     let  basePage = appRoot.querySelector('base-page');
 
@@ -21,6 +17,10 @@ async function renderContentPage(appTagName) {
 
     if (!basePage.querySelector(appTagName)) {
         _.clear(basePage);
+
+        const loadingScreen = document.getElementById("loading-screen");
+        loadingScreen.style.opacity = "1";
+
         basePage.appendChild(document.createElement(appTagName));
     }
 }
@@ -28,7 +28,17 @@ async function renderContentPage(appTagName) {
 /* === profileView : ======================================================== */
 export async function profileView() {
 
+    if (!Router.isRedirect && !(await Auth.isConnected())) {
+        return await Router.redirect('/sign-in');
+    }
+
     await renderContentPage('profile-app');
+    const profileElement = document.querySelector('profile-app');
+    const userId = _.getQueryParams().id || await Auth.getUserId();
+
+    if (profileElement.userId !== userId) {
+        await profileElement.reRender();
+    }
 }
 
 /* === ternementsView : ===================================================== */
