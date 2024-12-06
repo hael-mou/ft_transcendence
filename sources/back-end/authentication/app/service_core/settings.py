@@ -79,7 +79,7 @@ PASSWORD_POLICY = PasswordPolicy.from_names(
     uppercase=1,
     numbers=1,
     special=0,
-    strength=(0.33, 30),
+    strength=(0.1, 20), 
 )
 
 

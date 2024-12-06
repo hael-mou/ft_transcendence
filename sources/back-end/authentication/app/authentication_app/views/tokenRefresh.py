@@ -28,17 +28,6 @@ class TokenRefreshView(TokenViewBase):
                 {"access": validated_data["access"]},
                 status=status.HTTP_200_OK
             )
-
-            if api_settings.ROTATE_REFRESH_TOKENS:
-                response.set_cookie(
-                    key="r_token",
-                    value=validated_data["refresh"],
-                    httponly=True,
-                    secure=True,
-                    samesite="Lax",
-                    max_age=api_settings.REFRESH_TOKEN_LIFETIME.total_seconds(),
-                )
-
             return response
 
         except Exception as error:

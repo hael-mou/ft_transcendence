@@ -55,3 +55,8 @@ export async function setNewPasswordView() {
 
     await renderAuthView('set-new-password-form');
 }
+
+/* === verify2FaView : ======================================================= */
+export async function verify2FaView() {
+    await renderAuthView('otp-verification-form');
+}

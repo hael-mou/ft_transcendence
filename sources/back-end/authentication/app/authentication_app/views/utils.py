@@ -48,22 +48,6 @@ class Util:
         Util.create_email_data(request, email, token)
 
     @staticmethod
-    def create_user_profile(user):
-        api_url = os.environ.get("PROFILE_SERVICE_URL")
-        headers = {
-            'Content-Type': 'application/json',
-        }
-        payload = {
-            "username": user.username,
-        }
-        response = requests.post(api_url + "/profile/", json=payload, headers=headers)
-
-        if response.status_code == 201:
-            return True
-        else:
-            return False
-
-    @staticmethod
     def build_response(validated_data):
         response = Response(
             {
@@ -103,7 +87,7 @@ class Util:
 
         response = Response(
             {
-                "message": "Provide OTP code",
+                "2fa_enabled": "true",
                 "email": validated_data["email"],
             },
             status=status.HTTP_200_OK,
@@ -116,16 +100,15 @@ class Util:
             'redirecType': 'login',
             'action': "complete login",
         }
-        jwt_token = jwt.encode(payload=payload, key=os.environ.get("JWT_SECRET"), algorithm="HS256")
+        jwt_token = jwt.encode(payload=payload, key=os.environ.get("JWT_2FA_SECRET"), algorithm="HS256")
         response.set_cookie(
             key="token",
             value=str(jwt_token),
             httponly=True,
-            secure=True,
-            samesite="Strict",
-            max_age=1800,
-            expires=1800,
-            path=os.environ.get("2FA_TOKEN_PATH"),
+            secure=True, 
+            samesite="lax",  
+            max_age=timedelta(minutes=10).total_seconds(),
+            path=os.environ.get("TWO_FA_PATH"),
         )
         return response
     @staticmethod

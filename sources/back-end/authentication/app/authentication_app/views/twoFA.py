@@ -1,3 +1,4 @@
+import os
 import qrcode
 import base64
 from io import BytesIO
@@ -78,8 +79,10 @@ class CodeQrGenerator(APIView):
         buffer = BytesIO()
         qr.save(buffer, "PNG")
         buffer.seek(0)
-
-        img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        try:
+            img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response({"qr_code": img_base64}, status=status.HTTP_200_OK)
     
 
@@ -89,14 +92,18 @@ class Verify2FaView(generics.GenericAPIView):
     serializer_class = Verify2faSerializer
 
     def post(self, request):
-        # user is in jwt token 
         serializer = self.serializer_class(data=request.data, context={"request": request})
         if serializer.is_valid(raise_exception=True):
             response = Util.build_response(serializer.validated_data)
             response.set_cookie(
-                key="token", 
-                value="", 
+                key="token",
+                value="",
+                httponly=True,
+                secure=True,
+                samesite="lax",  
                 max_age=0,
-                expires=0,)
+                expires=0,
+                path=os.environ.get("TWO_FA_PATH")
+            )
             return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

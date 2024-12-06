@@ -9,6 +9,8 @@ from .views.reset_password import PasswordResetView, PasswordResetConfirmView, S
 from .views.twoFA import Enable2FaView, Disable2FaView, CodeQrGenerator, Verify2FaView
 from .views.resend_otp import ResendOtpView
 from .views.verifyToken import TokenVerifyView
+from .views.change_username import ChangeUsernameView
+from .views.remove_account import RemoveAccountView
 
 urlpatterns = [
     # Sign Up
@@ -49,6 +51,9 @@ urlpatterns = [
     # Verify_token
     path('verify_token/', TokenVerifyView.as_view(), name='verify_token'),
 
-    # add change username
-    # add remove account
+    # to test later in settings
+    path('change-username/', ChangeUsernameView.as_view(), name='change_username'),
+
+    #remove Account
+    path('remove-account/', RemoveAccountView.as_view(), name='remove_account'),
 ]

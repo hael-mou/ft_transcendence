@@ -91,6 +91,13 @@ export class Http {
         headers['Authorization'] = `Bearer ${accessToken}`;
         return await request('POST', url, headers, data);
     }
+    /* === patchwithAuth : ================================================== */
+    static async patchwithAuth(url, headers = {}, data) {
+
+        accessToken = await Auth.getAccessToken();
+        headers['Authorization'] = `Bearer ${accessToken}`;
+        return await request('PATCH', url, headers, data);
+    }
 
     /* === put : ============================================================ */
     static async put(url, headers = {}, data) {

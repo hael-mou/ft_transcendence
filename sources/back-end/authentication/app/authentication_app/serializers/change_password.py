@@ -12,12 +12,11 @@ class ChangePasswordSerializer(serializers.Serializer):
         old_password = attrs.get('old_password')
         new_password = attrs.get('new_password')
         user = self.context['request'].user
-        if not user.check_password(old_password):
-            raise serializers.ValidationError({'error': 'Invalid credentials'})
-        try:
-            PASSWORD_POLICY.test(new_password)
-        except PASSWORD_POLICY.PasswordPolicyError as e:
-            raise serializers.ValidationError({'error': str(e)})
+        if not user or not user.check_password(old_password):
+            raise serializers.ValidationError({'error': 'Invalid Password'})
+        errors = PASSWORD_POLICY.test(new_password)
+        if len(errors) > 0:
+            raise serializers.ValidationError({'error': 'Password does not meet the requirements.'})
         attrs['user'] = user
         return attrs
     

@@ -93,10 +93,9 @@ class CompleteProfileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'error': 'Invalid token.'})
 
         password = attrs.get('password')
-        try:
-            PASSWORD_POLICY.test(password)
-        except PASSWORD_POLICY.PasswordPolicyError as e:
-            raise serializers.ValidationError({'error': str(e)})
+        errors = PASSWORD_POLICY.test(password)
+        if len(errors) > 0:
+            raise serializers.ValidationError({'error': 'Password does not meet the requirements.'})
         if CustomUser.objects.filter(email=email).exists():
             raise serializers.ValidationError({'error': 'User already exists.'})
         attrs['email'] = email

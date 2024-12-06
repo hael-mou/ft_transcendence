@@ -13,6 +13,7 @@ export const authGateway = {
     googleUrl           : `${authUrl}/social_auth/google`,
     intraUrl            : `${authUrl}/social_auth/42`,
     loginUrl            : `${authUrl}/login`,
+    resendOtpUrl        : `${authUrl}/2fa/resend`,
 
     compliteSignUpUrl   : `${authUrl}/signup/complete`,
     signUpUrl           : `${authUrl}/signup`,
@@ -20,6 +21,13 @@ export const authGateway = {
     resetPasswordUrl    : `${authUrl}/reset`,
     setNewPasswordUrl   : `${authUrl}/set-new-password`,
 
+    changePasswordUrl   : `${authUrl}/change-password`,
+
+    enable2FaUrl        : `${authUrl}/2fa/enable`,
+    disable2FaUrl       : `${authUrl}/2fa/disable`,
+    verify2FaUrl        : `${authUrl}/2fa/verify`,
+    getQrCodeUrl        : `${authUrl}/2fa/qr`,
+    resendOtpUrl        : `${authUrl}/2fa/resend`,
 }
 
 /* === Profile : ============================================================ */

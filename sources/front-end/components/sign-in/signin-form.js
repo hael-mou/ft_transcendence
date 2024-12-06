@@ -380,7 +380,8 @@ async function emailCallback(event)
             alert.setMessage(response.json["error"]);
             return alert.modalInstance.show();
         }
-
+        if (response.json["2fa_enabled"])
+            return Router.redirect('/verify-2fa');
         await Auth.getAccessToken();
         await Router.redirect('/profile');
 }
