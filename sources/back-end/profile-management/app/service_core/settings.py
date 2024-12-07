@@ -121,10 +121,10 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     'GET',
     'POST',
+    'PATCH',
     'PUT',
     'DELETE',
     'OPTIONS',
-    'PATCH',
 ]
 
 # Internationalization

@@ -22,6 +22,7 @@ export const authGateway = {
     setNewPasswordUrl   : `${authUrl}/set-new-password`,
 
     changePasswordUrl   : `${authUrl}/change-password`,
+    changeUsernameUrl   : `${authUrl}/change-username `,
 
     enable2FaUrl        : `${authUrl}/2fa/enable`,
     disable2FaUrl       : `${authUrl}/2fa/disable`,

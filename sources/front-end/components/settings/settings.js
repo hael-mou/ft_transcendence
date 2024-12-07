@@ -290,7 +290,7 @@ async function saveChanges(event) {
             const authResponse = await Http.patchwithAuth(authGateway.changeUsernameUrl,
                     headers, JSON.stringify({ username: usernameInput }));
             if (authResponse.info.ok) {
-                const profileResponse = await Http.patchwithAuth(profileGateway.updateProfileUrl,
+                const profileResponse = await Http.patchwithAuth(profileGateway.myProfileUrl,
                     headers, profileData);
                 if (profileResponse.info.ok) {
                     alert.setMessage("Changes saved");
@@ -301,7 +301,7 @@ async function saveChanges(event) {
                 alert.setMessage("Failed to change username, try later");
             }
         } else {
-            const profileResponse = await Http.patchwithAuth(profileGateway.updateProfileUrl, headers, profileData);
+            const profileResponse = await Http.patchwithAuth(profileGateway.myProfileUrl, headers, profileData);
             if (profileResponse.info.ok) {
                 alert.setMessage("Changes saved");
             } else {
