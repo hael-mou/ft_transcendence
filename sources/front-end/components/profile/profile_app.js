@@ -53,8 +53,8 @@ export class ProfileApp extends Component {
             this.userId      = _.getQueryParams().id || myId;
             this.isMyProfile = (myId == this.userId);
 
+            await this.loadProfile(),
             await Promise.all([
-                this.loadProfile(),
                 this.loadMatches(),
                 this.loadFriends(),
             ]);

@@ -17,10 +17,6 @@ async function renderContentPage(appTagName) {
 
     if (!basePage.querySelector(appTagName)) {
         _.clear(basePage);
-
-        const loadingScreen = document.getElementById("loading-screen");
-        loadingScreen.style.opacity = "1";
-
         basePage.appendChild(document.createElement(appTagName));
     }
 }
