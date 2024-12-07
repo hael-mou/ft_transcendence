@@ -271,6 +271,7 @@ function handleNavClick(event) {
 /* === SaveChanges ================================================ */
 async function saveChanges(event) {
     event.preventDefault();
+
     const alert = document.createElement('custom-alert');
     const firstNameInput = this.shadowRoot.getElementById('first_name_input').value;
     const lastNameInput = this.shadowRoot.getElementById('last_name_input').value;
@@ -281,23 +282,37 @@ async function saveChanges(event) {
         alert.modalInstance.show();
         return;
     }
-    const url = profileGateway.updateProfileUrl;
+
     const headers = { 'Content-Type': 'application/json' };
-    const data = JSON.stringify({ first_name: firstNameInput, last_name: lastNameInput, username: usernameInput});
-
-    if (usernameInput)
-    {
-        const response = await Http.patch(authGateway.changeUsernameUrl, 
-            headers, JSON.stringify({ username: usernameInput }));
-    }
-    try{
-        const response = await Http.patch(url, headers, data); // to change with PostwithAuth
-        alert.setMessage("Changes saved");  // to handle error later 
+    const profileData = JSON.stringify({ first_name: firstNameInput, last_name: lastNameInput, username: usernameInput });
+    try {
+        if (usernameInput) {
+            const authResponse = await Http.patchwithAuth(authGateway.changeUsernameUrl,
+                    headers, JSON.stringify({ username: usernameInput }));
+            if (authResponse.info.ok) {
+                const profileResponse = await Http.patchwithAuth(profileGateway.updateProfileUrl,
+                    headers, profileData);
+                if (profileResponse.info.ok) {
+                    alert.setMessage("Changes saved");
+                } else {
+                    alert.setMessage("Failed to update profile, try later");
+                }
+            } else {
+                alert.setMessage("Failed to change username, try later");
+            }
+        } else {
+            const profileResponse = await Http.patchwithAuth(profileGateway.updateProfileUrl, headers, profileData);
+            if (profileResponse.info.ok) {
+                alert.setMessage("Changes saved");
+            } else {
+                alert.setMessage("Failed to update profile");
+            }
+        }
+        
         alert.modalInstance.show();
-
     } catch (error) {
         console.error(error);
+        alert.setMessage("An error occurred while saving changes, try later");
+        alert.modalInstance.show();
     }
-
-    console.log('Save changes');
 }
