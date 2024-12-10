@@ -1,4 +1,5 @@
 from ..models import Profile
+from django.db.models import Q
 from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
@@ -7,11 +8,9 @@ from ..serializers.profile import ProfileSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from .authentication import AuthenticationWithID
-
-
+ 
 #########################CRUD OPERATIONS#####################################
-class Profiles(ListAPIView):
-
+class Profiles(ListAPIView): 
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     authentication_classes = [AuthenticationWithID]
@@ -19,9 +18,14 @@ class Profiles(ListAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         query_params = self.request.query_params
+        search_query = query_params.get('search', None)
+
+        if search_query:
+            search_filter = Q(username__icontains=search_query) | Q(first_name__icontains=search_query) | Q(last_name__icontains=search_query)
+            queryset = queryset.filter(search_filter)
 
         for key, value in query_params.items():
-            if hasattr(Profile, key):
+            if hasattr(Profile, key) and key != 'search':
                 filter_kwargs = {key: value}
                 queryset = queryset.filter(**filter_kwargs)
 
@@ -70,11 +74,16 @@ class MyProfile(CreateAPIView, RetrieveUpdateDestroyAPIView):
         """Update the authenticated user's profile partially."""
 
         kwargs["partial"] = True
-        request_data = request.data
         user = request.user
-        for field in ["avatar", "username", "last_name", "first_name"]:
-            request_data.setdefault(field, getattr(user, field))
-            setattr(user, field, request_data[field])
-        user.save()
+        request_data = request.data
+        updatable_fields = ["avatar", "username", "last_name", "first_name"]
 
-        return super().partial_update(request, *args, **kwargs)
+        for field in updatable_fields:
+            new_value = request_data.get(field, None)
+            if new_value not in [None, ""]:
+                setattr(user, field, new_value)
+        try:
+            user.save()
+        except Exception as e:
+            return Response({"error": f"Profile update failed: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Profile updated"}, status=status.HTTP_200_OK)
