@@ -12,7 +12,7 @@ ENV     PATH="/venv/bin:$PATH"
 COPY    ./app/ app/
 WORKDIR /app
 
-EXPOSE 7070
+EXPOSE 8000
 
 ENTRYPOINT ["/tools/entrypoint.sh"]
 CMD ["gunicorn", "service_core.wsgi:application", "-c" , "gunicorn.conf.py"]

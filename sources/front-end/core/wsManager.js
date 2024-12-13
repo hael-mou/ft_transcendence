@@ -1,4 +1,5 @@
 
+import { Auth } from "../tools/http.js";
 
 /* *************************************************************************** #
 #   * wsManager Component Class :                                              #
@@ -18,11 +19,11 @@ class WebSocketManager
     }
 
     /* === connect : ======================================================== */
-    connect() {
+    async connect() {
 
         if (this.socket && this.socket.readyState === WebSocket.OPEN) return ;
 
-        this.socket = new WebSocket(this.url);
+        this.socket = new WebSocket(this.url + `?token=${await Auth.getAccessToken()}`);
 
         this.socket.onopen = (event) => {
             console.log('WebSocket connection opened');
@@ -50,8 +51,20 @@ class WebSocketManager
         };
     }
 
+    /* === terminate : ===================================================== */
+    terminate() {
+
+        if (this.socket)
+        {
+            this.socket.close();
+            this.socket = null;
+        }
+    }
+
     /* === reconnect : ====================================================== */
     reconnect() {
+
+        if (!this.socket) return;
 
         setTimeout(() => {
             this.connect();
@@ -71,9 +84,7 @@ class WebSocketManager
     callListeners(event, constext, data) {
 
         if (this.listeners[event]?.[constext])
-        {
             this.listeners[event][constext].forEach(callback => callback(data));
-        }
     }
 
     /* === addListener : ==================================================== */
@@ -82,7 +93,6 @@ class WebSocketManager
         if (!this.listeners[event]) this.listeners[event] = {};
         if (!this.listeners[event][context]) this.listeners[event][context] = [];
         this.listeners[event][context].push(callback);
-        console.log(this.listeners);
     }
 
     /* === removeListener : ================================================= */
@@ -91,8 +101,8 @@ class WebSocketManager
         if (this.listeners[event]?.[context])
         {
             this.listeners[event][context] =
-                this.listeners[event][context].filter(
-                    listener => listener !== callback
+            this.listeners[event][context].filter(
+                listener => listener !== callback
                 );
         }
     }
@@ -121,3 +131,4 @@ class WebSocketManager
 /*   * wsm Instance exported :                                                */
 /* ************************************************************************** */
 export const wsm = new WebSocketManager();
+wsm.url = 'wss://127.0.0.1:8080/ws/';

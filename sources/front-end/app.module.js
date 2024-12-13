@@ -22,6 +22,11 @@ import { FriendCard } from "./components/profile/friend_card.js";
 import { ProfileApp } from "./components/profile/profile_app.js";
 import { MatchCard } from "./components/profile/match_card.js";
 
+import { MessageCard } from "./components/chat/message_card.js";
+import { InviteCard } from "./components/chat/invite_card.js";
+import { ChatWindow } from "./components/chat/chat_window.js";
+import { UserCard } from "./components/chat/user_card.js";
+import { ChatApp } from "./components/chat/chat_app.js";
 
 /* === Custom Auth Elements : =============================================== */
 customElements.define("custom-alert", Alert);
@@ -42,6 +47,12 @@ customElements.define("profile-app", ProfileApp);
 
 customElements.define("settings-app", Settings);
 customElements.define("security-settings", SecuritySettings);
+
+customElements.define("message-card", MessageCard);
+customElements.define("invite-card", InviteCard);
+customElements.define("chat-window", ChatWindow);
+customElements.define("user-card", UserCard);
+customElements.define("chat-app", ChatApp);
 
 /* === Smooth appendChild : ================================================= */
 const originalAppendChild = Element.prototype.appendChild;

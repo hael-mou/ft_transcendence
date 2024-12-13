@@ -89,6 +89,52 @@ services:
         volumes:
             - "./back-end/profile-management/app:/app"
 
+    # === RabbitMQ : ===========================================================
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: rabbitmq
+        restart: always
+        env_file:
+            - ./secrets/rabbitmq.env
+
+        # for Devlopment:
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+
+    # === ws_gateway : =========================================================
+    ws_gateway:
+        image: ws-gateway:pingo
+        container_name: ws_gateway
+        build: ./back-end/ws-gateway
+        restart: always
+        env_file:
+            - ./secrets/ws_gateway.env
+
+        #for Devlopment
+        volumes:
+            - "./back-end/ws-gateway/app:/app"
+
+        ports:
+          - "8001:8000"
+
+
+    # === Message_Delivery : ===================================================
+    message_delivery:
+        image: message-delivery:pingo
+        container_name: message_delivery
+        build: ./back-end/message-delivery
+        restart: always
+        # env_file:
+        #     - ./secrets/message_delivery.env
+
+        # for Devlopment
+        # command: python3 manage.py runserver 0.0.0.0:8000
+        volumes:
+            - "./back-end/message-delivery/app:/app"
+        ports:
+          - "8000:8000"
+
 
 #* ************************************************************************** *#
 #*     * Volumes :                                                            *#

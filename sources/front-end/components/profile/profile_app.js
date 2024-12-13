@@ -2,6 +2,7 @@
 import { profileGateway }  from "../../core/config.js";
 import { Component } from "../../core/component.js";
 import { utils as _ } from "../../tools/utils.js";
+import { Router } from "../../core/routing.js";
 import { FriendCard } from "./friend_card.js";
 import { MatchCard } from "./match_card.js";
 import { Http } from  "../../tools/http.js";
@@ -588,10 +589,11 @@ export class ProfileApp extends Component {
 
     /* === Profile Update : ================================================= */
     updateProfile() {
-        const avatar    = this.shadowRoot.getElementById('avatar');
-        const userInfo  = this.shadowRoot.getElementById('user-info');
-        const username  = this.shadowRoot.getElementById('username');
-        const eventBtn  = this.shadowRoot.getElementById('event-buttons');
+        const avatar      = this.shadowRoot.getElementById('avatar');
+        const userInfo    = this.shadowRoot.getElementById('user-info');
+        const username    = this.shadowRoot.getElementById('username');
+        const eventBtn    = this.shadowRoot.getElementById('event-buttons');
+        const messageBtn  = this.shadowRoot.getElementById('message-btn');
 
         avatar.src = this.profile?.avatar || '/static/assets/imgs/user_avatar.png';
         userInfo.textContent = this.profile?.first_name || 'Anonymous';
@@ -603,6 +605,7 @@ export class ProfileApp extends Component {
         const friendShip = this.getFriendshipStatus();
         this.updateFriendBtnStatus(friendShip);
         eventBtn.classList.remove('d-none');
+        messageBtn.setAttribute('data-link', `/chat?room=${this.profile.id}`);
     }
 
 
@@ -710,6 +713,7 @@ export class ProfileApp extends Component {
         });
     }
 
+
     /* === update Frinds : ================================================= */
     updateFrinds() {
         const friendsTitleElement = this.shadowRoot.getElementById('friends-title');
@@ -731,6 +735,7 @@ export class ProfileApp extends Component {
         });
     }
 
+
     /* === updateFriendBtnStatus : ========================================== */
     updateFriendBtnStatus(status) {
 		const button = this.shadowRoot.getElementById('friend-btn');
@@ -740,6 +745,14 @@ export class ProfileApp extends Component {
         button.textContent = statusInfo.buttonText;
         button.onclick = statusInfo.callBack;
 	}
+
+    /* === onConnected : =================================================== */
+    onConnected() {
+
+        const messageBtn  = this.shadowRoot.getElementById('message-btn');
+        this.addEventListener(messageBtn, 'click', Router.handleRouting.bind(this));
+    }
+
 }
 
 

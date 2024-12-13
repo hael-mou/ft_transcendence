@@ -50,3 +50,15 @@ export const profileGateway = {
     // matches :
     getMatchesHistoryUrl    : `${profileUrl}/matches`,
 }
+
+/* === Chat : ================================================================ */
+const chatUrl = `${backendUrl}/chat`;
+
+export const chatGateway = {
+
+    getRoomsUrl            : `${chatUrl}/get_rooms/`,
+    getMessagesUrl         : `${chatUrl}/get_messages/`,
+    unReadMsgsUrl          : `${chatUrl}/unread_messages/`,
+    getUserStatusUrl       : `${chatUrl}/isConnected/`,
+    blockUserUrl           : `${chatUrl}/block_rooms/`,
+}

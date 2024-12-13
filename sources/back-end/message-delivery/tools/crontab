@@ -1,0 +1,1 @@
+* * * * * root /venv/bin/python3 /app/manage.py remove_old_connections >> /var/log/cron.out 2>&1

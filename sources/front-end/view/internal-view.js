@@ -1,10 +1,13 @@
 
 import { utils as _ } from "../tools/utils.js";
 import { Router } from "../core/routing.js";
+import { wsm } from "../core/wsManager.js";
 import { Auth } from "../tools/http.js";
 
 /* === renderWebPage : ====================================================== */
 async function renderContentPage(appTagName) {
+
+    await wsm.connect();
 
     const appRoot = document.querySelector('app-root');
     let  basePage = appRoot.querySelector('base-page');
@@ -40,11 +43,19 @@ export async function profileView() {
 /* === ternementsView : ===================================================== */
 export async function ternementsView() {
 
+    if (!Router.isRedirect && !(await Auth.isConnected())) {
+        return await Router.redirect('/sign-in');
+    }
+
     await renderContentPage('ternements-app');
 }
 
 /* === chatView : =========================================================== */
 export async function chatView() {
+
+    if (!Router.isRedirect && !(await Auth.isConnected())) {
+        return await Router.redirect('/sign-in');
+    }
 
     await renderContentPage('chat-app');
 }
@@ -52,11 +63,19 @@ export async function chatView() {
 /* === gameView : =========================================================== */
 export async function gameView() {
 
+    if (!Router.isRedirect && !(await Auth.isConnected())) {
+        return await Router.redirect('/sign-in');
+    }
+
     await renderContentPage('game-app');
 }
 
 /* === settingView : ======================================================== */
 export async function settingsView() {
+
+    if (!Router.isRedirect && !(await Auth.isConnected())) {
+        return await Router.redirect('/sign-in');
+    }
 
     await renderContentPage('settings-app');
 }

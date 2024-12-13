@@ -1,6 +1,7 @@
 
 import { utils as _ } from "../tools/utils.js";
 import { Router } from "../core/routing.js";
+import { wsm } from "../core/wsManager.js";
 import { Auth } from "../tools/http.js";
 
 /* === renderAuthView : ====================================================== */
@@ -9,6 +10,8 @@ async function renderAuthView(formName) {
     if (!Router.isRedirect && (await Auth.isConnected())) {
         return await Router.redirect('/profile');
     }
+
+    wsm.terminate();
 
     const appRoot  = document.querySelector('app-root');
     let   authPage = appRoot.querySelector('auth-page');
