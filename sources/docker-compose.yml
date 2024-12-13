@@ -20,6 +20,7 @@ services:
         volumes:
             - "./front-end/:/usr/share/nginx/html:ro"
             - "./secrets/certs:/etc/nginx/certs:ro"
+            - "media_volume:/var/www/media"
 
             # for Devlopment
             - "./api-gateway/config/conf.d:/etc/nginx/conf.d:ro"
@@ -88,6 +89,7 @@ services:
         command: python3 manage.py runserver 0.0.0.0:8000
         volumes:
             - "./back-end/profile-management/app:/app"
+            - "media_volume:/var/www/media"
 
 
 #* ************************************************************************** *#
@@ -96,3 +98,4 @@ services:
 volumes:
   postgres_data:
   pgadmin_data:
+  media_volume:

@@ -599,6 +599,7 @@ export class ProfileApp extends Component {
         username.textContent = "@" +this.profile?.username || 'anonymous';
         eventBtn.classList.add('d-none');
 
+        localStorage.setItem('avatar', avatar.src);
         if (this.isMyProfile) return ;
         const friendShip = this.getFriendshipStatus();
         this.updateFriendBtnStatus(friendShip);

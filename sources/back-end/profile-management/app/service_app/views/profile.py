@@ -1,10 +1,8 @@
 from ..models import Profile
-from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from ..serializers.profile import ProfileSerializer
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from .authentication import AuthenticationWithID
 
@@ -62,19 +60,24 @@ class MyProfile(CreateAPIView, RetrieveUpdateDestroyAPIView):
 
 
     def perform_destroy(self, instance):
-        instance.delete()
+        instance.delete() 
         # not tested yet
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def partial_update(self, request, *args, **kwargs):
         """Update the authenticated user's profile partially."""
-
         kwargs["partial"] = True
-        request_data = request.data
         user = request.user
-        for field in ["avatar", "username", "last_name", "first_name"]:
-            request_data.setdefault(field, getattr(user, field))
-            setattr(user, field, request_data[field])
-        user.save()
+        request_data = request.data
 
-        return super().partial_update(request, *args, **kwargs)
+        try:
+            if 'avatar' in request.FILES:
+                avatar_file = request.FILES['avatar']
+                user.avatar = avatar_file
+            for field in ["username", "last_name", "first_name"]:
+                request_data.setdefault(field, getattr(user, field))
+                setattr(user, field, request_data[field])
+            user.save()
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+        return Response(self.get_serializer(user).data, status=status.HTTP_200_OK)

@@ -21,7 +21,7 @@ export class BasePage extends Component
                 </div>
 
                 <div class="notification-container">
-                    <img src="/static/assets/imgs/user_avatar.png"
+                    <img src="${localStorage.getItem('avatar')}"
                          class="user-avatar" alt="User Avatar">
 
                     <span class="user-name">Hael-mou</span>
