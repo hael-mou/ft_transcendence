@@ -10,23 +10,27 @@ import { profileGateway } from "../../core/config.js"
 # *************************************************************************** */
 export class Settings extends Component
 {
+    constructor(){
+        super();
+        this.avatarSrc = localStorage.getItem('avatar');
+    }
+
     /* === template : ======================================================= */
     get template()
     {
         return /* html */ `
         <div class="settings-container">
-        <!-- Profile Banner Section -->
-        <div class="profile-banner position-relative">
-            <img src="/static/assets/imgs/banner.jpg" alt="Profile Banner"
-                class="banner-img img-fluid w-100">
-            <div class="position-absolute top-100 start-50 translate-middle">
-                <img id="avatar" src="/static/assets/imgs/user_avatar.png"
-                    class="profile-avatar rounded-circle border border-5 border-light"
-                    alt="Profile picture"
-                >
-            </div>
+        <div class="header-banner position-relative d-flex justify-content-center align-items-end">
+            <label class="outer">
+                <input class="d-none" type="file" id="avatarInput" accept="image/*">
+                <img id="profile-avatar" src="${this.avatarSrc}" class="profile-avatar"/>
+                <div class="inner">
+                    <div class="text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="16" viewBox="0 0 19 16"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
+                    </div>
+                </div>
+            </label>
         </div>
-
         <nav class="mynav d-flex justify-content-center">
             ${this.navItems.map(navItem => /* html */ `
                 <div class="nav-item ${navItem.active ? 'active' : ''}" data-nav="${navItem.name}" data-target="${navItem.name}-settings">
@@ -131,13 +135,11 @@ export class Settings extends Component
             }
 
             .profile-avatar {
-                width: 130px;
-                height: 130px;
-                object-fit: cover;
-                border: 1px solid #fff !important;
-                background-color: #2c2c2c;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                background: lightgray 50% / cover no-repeat;
             }
-
             .mynav {
                 background: #007189;
                 padding: 10px;
@@ -196,7 +198,7 @@ export class Settings extends Component
                 margin-bottom: 10px;
                 box-shadow: 0 0 12px 0px rgb(159 159 159 / 54%);
             }
-
+    
             .input-container {
                 box-sizing: border-box;
                 background-color: rgba(255, 255, 255, 0.1);
@@ -234,8 +236,6 @@ export class Settings extends Component
                 width: 50%;
                 margin-left: auto;
             }
-
-
             .save-changes-btn:hover {
                 background-color: #005f74;
             }
@@ -243,12 +243,30 @@ export class Settings extends Component
             .active {
                 box-shadow: inset 0 0 9px 5px #005061;
             }
+            .outer{
+                height:120px;
+                width: 120px;
+                transform: translateY(50%);
+                position: relative;
+                bottom: 0;
+                right: 0;
+            }
+            .inner{
+                background-color: #007189;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+            }
         `;
     };
 
     onConnected() {
         this.nav_items = this.shadowRoot.querySelectorAll('.nav-item');
         const saveChangesBtn = this.shadowRoot.getElementById('saveButton');
+        const changeAvatarInput = this.shadowRoot.getElementById('avatarInput');
 
         this.nav_items.forEach(navItem => {
             this.addEventListener(navItem, 'click', handleNavClick.bind(this));
@@ -258,6 +276,7 @@ export class Settings extends Component
         }
 
         this.addEventListener(saveChangesBtn, 'click', saveChanges.bind(this));
+        this.addEventListener(changeAvatarInput, 'change', changeAvatar.bind(this));
     }
 }
 
@@ -330,4 +349,27 @@ async function saveChanges(event) {
         alert.setMessage("An error occurred while saving changes, try later");
         alert.modalInstance.show();
     }
+}
+
+/* === ChangeAvatar ==================================================== */
+async function changeAvatar(event) {
+    event.preventDefault();
+    const alert = document.createElement('custom-alert');
+    const avatarInput = this.shadowRoot.getElementById('avatarInput');
+    const AvatarImage = this.shadowRoot.getElementById('profile-avatar');
+
+    AvatarImage.src = URL.createObjectURL(avatarInput.files[0]);
+
+    const formData = new FormData();
+    formData.append('avatar', avatarInput.files[0]);
+    const url = profileGateway.myProfileUrl; 
+    const headers = {};
+    const response = await Http.patchwithAuth(url, headers, formData);
+    if (!response.info.ok) {
+        alert.setMessage(response.json["error"]); 
+        return alert.modalInstance.show();
+    }
+    localStorage.setItem('avatar', response.json["avatar"]);
+    alert.setMessage("Avatar changed successfully");
+    alert.modalInstance.show();
 }

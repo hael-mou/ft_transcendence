@@ -170,7 +170,6 @@ export class OtpVerification extends Component
 async function  verifyCallback() {
     const otpInputs = this.shadowRoot.querySelectorAll('.otp-input');
     const otp = Array.from(otpInputs).map(input => input.value).join('');
-    console.log(otp);
     const url = authGateway.verify2FaUrl;
     const headers = { 'Content-Type': 'application/json' };
     const data = JSON.stringify({ otp });
@@ -186,7 +185,6 @@ async function  verifyCallback() {
         alert.setMessage(`${response.json["error"]}, demand a new code`);
         return alert.modalInstance.show();
     }
-    console.log(response);
     await Auth.getAccessToken();
     await Router.redirect('/profile');
 }

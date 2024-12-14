@@ -476,7 +476,6 @@ async function Disable_2fa(password, choice) {
     const data = JSON.stringify({ password, choice });
 
     const response = await Http.postwithAuth(url, headers, data);
-    console.log("Response", response);
     if (!response.info.ok) {
         alert.setMessage(response.json["error"]);
         return alert.modalInstance.show();
