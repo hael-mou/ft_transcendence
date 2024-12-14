@@ -40,6 +40,8 @@ export async function profileView() {
     }
 }
 
+
+
 /* === ternementsView : ===================================================== */
 export async function ternementsView() {
 
@@ -68,6 +70,27 @@ export async function gameView() {
     }
 
     await renderContentPage('game-app');
+}
+
+/* === matchmakerView : ===================================================== */
+export async function matchmakerView() {
+
+    if (!Router.isRedirect && !(await Auth.isConnected())) {
+        return await Router.redirect('/sign-in');
+    }
+
+    await renderContentPage('matchmaking-component');
+
+}
+
+/* === playingView : ======================================================== */
+export async function playingView() {
+
+    if (!Router.isRedirect && !(await Auth.isConnected())) {
+        return await Router.redirect('/sign-in');
+    }
+
+    await renderContentPage('game-component');
 }
 
 /* === settingView : ======================================================== */

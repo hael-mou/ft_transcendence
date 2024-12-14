@@ -28,6 +28,12 @@ services:
             - auth_service
             - profileM_service
             - pgadmin
+            - message_delivery
+            - ws_gateway
+            - matchmaking
+            - gameplay
+            - celery_matchmaking
+            - celery_gameplay
 
     # === postgres : ===========================================================
     postgres:
@@ -132,8 +138,73 @@ services:
         # command: python3 manage.py runserver 0.0.0.0:8000
         volumes:
             - "./back-end/message-delivery/app:/app"
+        # ports:
+          # - "8000:8000"
+
+
+    # === matchmaker : =========================================================
+    matchmaking:
+        image: matchmaker:pingo
+        container_name: matchmaking
+        build: ./back-end/matchmaking
+        restart: always
+        # env_file:
+        #     - ./secrets/matchmaker.env
+
+        # for Devlopment
+        # command: python3 manage.py runserver 0.0.0.0:8000
+        # volumes:
+        #     - "./back-end/matchmaker:/app"
         ports:
           - "8000:8000"
+
+    # === gameplay : ===========================================================
+    gameplay:
+        image: gameplay:pingo
+        container_name: gameplay
+        build: ./back-end/gameplay
+        restart: always
+        # env_file:
+        #     - ./secrets/gameplay.env
+
+        # for Devlopment
+        # command: python3 manage.py runserver 0.0.0.0:8000
+        # volumes:
+        #     - "./gameplay/app:/app"
+        ports:
+          - "8003:8001"
+
+
+    # === celery_matchmaking : =================================================
+    celery_matchmaking:
+        image: celery-matchmaking:pingo
+        container_name: celery_matchmaking
+        build: ./back-end/matchmaking
+        command: celery -A matchmaking_service worker -l info -Q matchmaking_queue
+        restart: always
+        depends_on:
+          - redis
+
+
+    # === celery_gameplay : ====================================================
+    celery_gameplay:
+        image: celery-gameplay:pingo
+        container_name: celery_gameplay
+        build: ./back-end/gameplay
+        command: celery -A gameplay worker -l info -Q gameplay_queue
+        restart: always
+        depends_on:
+          - redis
+
+
+    # === redis : ==============================================================
+    redis:
+        image: redis:latest
+        container_name: redis
+        restart: always
+        ports:
+            - "6379:6379"
+
 
 
 #* ************************************************************************** *#

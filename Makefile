@@ -29,8 +29,8 @@ up: .header
 down:
 	@docker-compose -f ${SRCS}/docker-compose.yml down --remove-orphans
 
-clean: down
-	@docker-compose -f ${SRCS}/docker-compose.yml down --volumes --rmi all --remove-orphans
+# clean: down
+# 	@docker-compose -f ${SRCS}/docker-compose.yml down --volumes --rmi all --remove-orphans
 
 logs:
 	@docker-compose -f ${SRCS}/docker-compose.yml logs -f -t $(if $(SERVICE),$(SERVICE),)

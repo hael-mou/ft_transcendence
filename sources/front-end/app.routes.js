@@ -3,6 +3,7 @@ import { signUpView, signInView, completeSignUpView, verify2FaView } from "./vie
 import { resetPasswordView, setNewPasswordView } from "./view/auth-view.js";
 import { gameView, chatView, settingsView } from "./view/internal-view.js";
 import { profileView, ternementsView } from "./view/internal-view.js";
+import { matchmakerView, playingView } from "./view/internal-view.js";
 import { rootView } from "./view/base-view.js";
 
 export const appRoutes = [
@@ -18,8 +19,9 @@ export const appRoutes = [
     /* internal path : ====================================================== */
     { path: '/profile', view: profileView },
     { path: '/tournaments', view: ternementsView },
-    { path: '/game', view: gameView },
     { path: '/chat', view: chatView },
     { path: '/settings', view: settingsView },
-
+    { path: '/game', view: gameView },
+    { path: '/game/matchmaker', view: matchmakerView },
+    { path: '/game/playing', view: playingView },
 ]

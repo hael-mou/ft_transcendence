@@ -39,7 +39,7 @@ export class BasePage extends Component
             <div class="container-main">
                 <nav id="nav" class="container-nav">
                     ${this.navItems.map((navItem, index) => /* html */ `
-                        <div class="nav-item ${navItem.href === window.location.pathname ? 'selected' : ''}"
+                        <div class="nav-item ${window.location.pathname.startsWith(navItem.href) ? 'selected' : ''}"
                             data-link="${navItem.href}">
 
                             <div class="nav-background"></div>
@@ -297,6 +297,7 @@ export class BasePage extends Component
                 flex-grow: 1;
                 padding: 20px;
                 overflow-y: auto;
+                position: relative;
             }
 
             @keyframes flash {

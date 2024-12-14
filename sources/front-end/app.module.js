@@ -28,6 +28,11 @@ import { ChatWindow } from "./components/chat/chat_window.js";
 import { UserCard } from "./components/chat/user_card.js";
 import { ChatApp } from "./components/chat/chat_app.js";
 
+import gameComponent from "./components/game/gameComponent.js";
+import matchMakinComponent from "./components/game/matchMakingComponent.js";
+import { GameApp } from "./components/game/game_app.js";
+
+
 /* === Custom Auth Elements : =============================================== */
 customElements.define("custom-alert", Alert);
 customElements.define("auth-page", AuthPage);
@@ -53,6 +58,10 @@ customElements.define("invite-card", InviteCard);
 customElements.define("chat-window", ChatWindow);
 customElements.define("user-card", UserCard);
 customElements.define("chat-app", ChatApp);
+
+customElements.define("matchmaking-component", matchMakinComponent);
+customElements.define("game-component", gameComponent);
+customElements.define("game-app", GameApp);
 
 /* === Smooth appendChild : ================================================= */
 const originalAppendChild = Element.prototype.appendChild;

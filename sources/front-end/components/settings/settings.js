@@ -15,8 +15,16 @@ export class Settings extends Component
     {
         return /* html */ `
         <div class="settings-container">
-        <div class="header-banner position-relative d-flex justify-content-center align-items-end">
-            <img src="/static/assets/imgs/user_avatar.png" alt="User Avatar" class="profile-avatar img-fluid">
+        <!-- Profile Banner Section -->
+        <div class="profile-banner position-relative">
+            <img src="/static/assets/imgs/banner.jpg" alt="Profile Banner"
+                class="banner-img img-fluid w-100">
+            <div class="position-absolute top-100 start-50 translate-middle">
+                <img id="avatar" src="/static/assets/imgs/user_avatar.png"
+                    class="profile-avatar rounded-circle border border-5 border-light"
+                    alt="Profile picture"
+                >
+            </div>
         </div>
 
         <nav class="mynav d-flex justify-content-center">
@@ -33,21 +41,21 @@ export class Settings extends Component
                 <div class="row mb-3 gy-3">
                     <div class="col-md-6">
                         <div class="input-container">
-                            <img src="/static/assets/imgs/email_icon.svg" alt="first name Icon">
+                            <img src="/static/assets/imgs/user_icon.svg" alt="first name Icon">
                             <input id="first_name_input" type="text" class="input-field"
                                 placeholder="First Name">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="input-container">
-                            <img src="/static/assets/imgs/email_icon.svg" alt="last name Icon">
+                            <img src="/static/assets/imgs/user_icon.svg" alt="last name Icon">
                             <input id="last_name_input" type="text" class="input-field"
                                 placeholder="Last Name">
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="input-container">
-                            <img src="/static/assets/imgs/email_icon.svg" alt="last name Icon">
+                            <img src="/static/assets/imgs/user_icon.svg" alt="last name Icon">
                             <input id="username_input" type="text" class="input-field"
                                 placeholder="Username">
                         </div>
@@ -99,30 +107,35 @@ export class Settings extends Component
 
             .settings-container {
                 width: 100%;
+                height: auto;
+                font-family: 'Exo2', sans-serif;
+                background-color: #2c2c2c;
+                border-radius: 20px;
+                overflow: hidden;
+                min-height: 100%;
                 display: flex;
                 flex-direction: column;
-                align-items: center;
                 gap: 2.5rem;
             }
 
-            .header-banner {
+            .profile-banner {
+                height: 250px;
+                background-color: #333;
+                border-bottom: 1px solid #fff;
+            }
+
+            .banner-img {
+                object-fit: cover;
+                height: 100%;
                 width: 100%;
-                height: 230px;
-                position: relative;
-                border-radius: 30px;
-                background: url("/static/assets/imgs/banner.jpg") lightgray 50% / cover no-repeat;
-                margin-bottom: 4.5rem;
             }
 
             .profile-avatar {
-                position: absolute;
-                transform: translateX(-50%);
-                bottom: -60px;
-                left: 50%;
-                width: 120px;
-                height: 120px;
-                border-radius: 50%;
-                background: lightgray 50% / cover no-repeat;
+                width: 130px;
+                height: 130px;
+                object-fit: cover;
+                border: 1px solid #fff !important;
+                background-color: #2c2c2c;
             }
 
             .mynav {
@@ -131,6 +144,8 @@ export class Settings extends Component
                 width: min(500px, 100%);
                 border-radius: 54px;
                 color: white;
+                align-self: center;
+                margin-top: 50px;
             }
 
             .nav-item{
@@ -162,6 +177,7 @@ export class Settings extends Component
 
             .profile-settings {
                 width: min(500px, 100%);
+                align-self: center;
             }
 
             .save-changes-btn, .input-container {
@@ -170,7 +186,7 @@ export class Settings extends Component
                 align-items: center;
                 justify-content: center;
                 padding: 1rem 0.5rem;
-                border-radius: 50px;
+                border-radius: 14px;
                 border: none;
                 font-family: inherit;
                 font-size: 1rem;
@@ -210,7 +226,6 @@ export class Settings extends Component
                 color: white;
                 border: none;
                 padding: 10px 20px;
-                border-radius: 25px;
                 cursor: pointer;
                 font-size: 1em;
                 font-weight: bold;
@@ -251,7 +266,7 @@ export class Settings extends Component
 function handleNavClick(event) {
     const clickedNavItem = event.currentTarget;
     const targetContentId = clickedNavItem.getAttribute('data-target');
-    
+
     this.nav_items.forEach(item => {
         item.classList.remove('active');
     });
@@ -287,12 +302,12 @@ async function saveChanges(event) {
 
     if (usernameInput)
     {
-        const response = await Http.patch(authGateway.changeUsernameUrl, 
+        const response = await Http.patch(authGateway.changeUsernameUrl,
             headers, JSON.stringify({ username: usernameInput }));
     }
     try{
         const response = await Http.patch(url, headers, data); // to change with PostwithAuth
-        alert.setMessage("Changes saved");  // to handle error later 
+        alert.setMessage("Changes saved");  // to handle error later
         alert.modalInstance.show();
 
     } catch (error) {
