@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from .authentication import AuthenticationWithID
 
-
+ 
 #########################CRUD OPERATIONS#####################################
 class Profiles(ListAPIView):
 
@@ -70,11 +70,16 @@ class MyProfile(CreateAPIView, RetrieveUpdateDestroyAPIView):
         """Update the authenticated user's profile partially."""
 
         kwargs["partial"] = True
-        request_data = request.data
         user = request.user
-        for field in ["avatar", "username", "last_name", "first_name"]:
-            request_data.setdefault(field, getattr(user, field))
-            setattr(user, field, request_data[field])
-        user.save()
+        request_data = request.data
+        updatable_fields = ["avatar", "username", "last_name", "first_name"]
 
-        return super().partial_update(request, *args, **kwargs)
+        for field in updatable_fields:
+            new_value = request_data.get(field, None)
+            if new_value not in [None, ""]:
+                setattr(user, field, new_value)
+        try:
+            user.save()
+        except Exception as e:
+            return Response({"error": f"Profile update failed: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Profile updated"}, status=status.HTTP_200_OK)

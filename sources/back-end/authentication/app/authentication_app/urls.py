@@ -52,8 +52,8 @@ urlpatterns = [
     path('verify_token/', TokenVerifyView.as_view(), name='verify_token'),
 
     # to test later in settings
-    path('change-username/', ChangeUsernameView.as_view(), name='change_username'),
+    path('change-username', ChangeUsernameView.as_view(), name='change_username'),
 
     #remove Account
-    path('remove-account/', RemoveAccountView.as_view(), name='remove_account'),
+    path('remove-account', RemoveAccountView.as_view(), name='remove_account'),
 ]
