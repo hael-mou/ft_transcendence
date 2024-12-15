@@ -99,7 +99,7 @@ services:
 
     # === RabbitMQ : ===========================================================
     rabbitmq:
-        image: rabbitmq:3-management
+        image: rabbitmq:3.9-management
         container_name: rabbitmq
         restart: always
         env_file:
@@ -206,6 +206,20 @@ services:
         restart: always
         ports:
             - "6379:6379"
+    
+    # === tournament : =========================================================
+    tournament:
+        image: tournament:pingo
+        container_name: tournament
+        build: ./back-end/tournament
+        restart: always
+        # env_file:
+        #     - ./secrets/tournament.env
+
+        # for Devlopment
+        command: python3 manage.py runserver 0.0.0.0:8000
+        volumes:
+            - "./back-end/tournament/app:/app"
 
 
 

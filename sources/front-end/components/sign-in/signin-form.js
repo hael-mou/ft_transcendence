@@ -372,7 +372,6 @@ async function emailCallback(event)
 
         const headers = { 'Content-Type': 'application/json' };
         const data = JSON.stringify({ email, password });
-
         const response = await Http.post(authGateway.loginUrl, headers, data);
 
         if (!response.info.ok) {

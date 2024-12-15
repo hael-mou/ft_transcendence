@@ -33,6 +33,11 @@ import matchMakinComponent from "./components/game/matchMakingComponent.js";
 import { GameApp } from "./components/game/game_app.js";
 
 
+import { Tournaments } from "./components/tournament/tournament-app.js";
+import { TournamentCard } from "./components/tournament/tournament-card.js";
+import { TournamentMatch } from "./components/tournament/tournament-match.js";
+
+
 /* === Custom Auth Elements : =============================================== */
 customElements.define("custom-alert", Alert);
 customElements.define("auth-page", AuthPage);
@@ -62,6 +67,10 @@ customElements.define("chat-app", ChatApp);
 customElements.define("matchmaking-component", matchMakinComponent);
 customElements.define("game-component", gameComponent);
 customElements.define("game-app", GameApp);
+
+customElements.define("tournements-app", Tournaments);
+customElements.define("tournament-card", TournamentCard);
+customElements.define("tournament-match", TournamentMatch);
 
 /* === Smooth appendChild : ================================================= */
 const originalAppendChild = Element.prototype.appendChild;

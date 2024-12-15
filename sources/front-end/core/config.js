@@ -63,3 +63,16 @@ export const chatGateway = {
     getUserStatusUrl       : `${chatUrl}/isConnected/`,
     blockUserUrl           : `${chatUrl}/block_rooms/`,
 }
+
+/* === Tournament : ========================================================== */
+const tournamentUrl = `${backendUrl}/tournament`;
+
+export const tournamentGateway = {
+
+    getTournamentsUrl       : `${tournamentUrl}/`,
+    createTournamentUrl     : `${tournamentUrl}/create`,
+    joinTournamentUrl       : `${tournamentUrl}/join`,
+    leaveTournamentUrl      : `${tournamentUrl}/leave`,
+    resultsUrl              : `${tournamentUrl}/results`,
+    getMyTournamentUrl      : `${tournamentUrl}/me`,
+}

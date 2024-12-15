@@ -14,7 +14,7 @@ export const appRoutes = [
     { path: '/complete-sign-up', view: completeSignUpView },
     { path: '/reset-password', view: resetPasswordView },
     { path: '/set-new-password', view: setNewPasswordView },
-    { path: '/verify-2fa', view: verify2FaView },
+    { path: '/verify-2fa', view: verify2FaView }, 
 
     /* internal path : ====================================================== */
     { path: '/profile', view: profileView },

@@ -1,7 +1,9 @@
 
+import { tournamentGateway } from "../core/config.js";
 import { utils as _ } from "../tools/utils.js";
 import { Router } from "../core/routing.js";
 import { wsm } from "../core/wsManager.js";
+import { Http } from "../tools/http.js";
 import { Auth } from "../tools/http.js";
 
 /* === renderWebPage : ====================================================== */
@@ -44,12 +46,16 @@ export async function profileView() {
 
 /* === ternementsView : ===================================================== */
 export async function ternementsView() {
-
     if (!Router.isRedirect && !(await Auth.isConnected())) {
         return await Router.redirect('/sign-in');
     }
 
-    await renderContentPage('ternements-app');
+    const url = tournamentGateway.getMyTournamentUrl;
+    const response = await Http.getwithAuth(url);
+    if (!response.json || response.json['n_players'] < 4)
+        await renderContentPage('tournements-app');
+    else
+        await renderContentPage('tournament-match');
 }
 
 /* === chatView : =========================================================== */
