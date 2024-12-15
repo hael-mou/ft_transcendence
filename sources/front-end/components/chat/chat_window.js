@@ -4,6 +4,7 @@ import { utils as _ } from "../../tools/utils.js";
 import { MessageCard } from "./message_card.js";
 import { Router } from "../../core/routing.js";
 import { InviteCard } from "./invite_card.js";
+import { Auth } from "../../tools/http.js";
 
 /* *************************************************************************** #
 #   * AuthApp Component Class :                                                #
@@ -27,6 +28,10 @@ export class ChatWindow extends Component {
         return { msgDay, msgTime };
     }
 
+    /* === init : =========================================================== */
+    async init() {
+        this.myId = await Auth.getUserId();
+    }
 
     /* === New Day Card : =================================================== */
     newDayCard(dateString) {
@@ -77,7 +82,7 @@ export class ChatWindow extends Component {
             const messageCard = new MessageCard(msgTime, message.type, message.trackingNo);
 
             if (message.contentType === 'invite') {
-                messageCard.appendChild(new InviteCard(message.type));
+                messageCard.appendChild(new InviteCard(message, this.myId, user.id));
             }
             else {
                 messageCard.textContent = message.body;
@@ -92,7 +97,7 @@ export class ChatWindow extends Component {
 
 
     /* === add Message : ==================================================== */
-    addMessage(message) {
+    addMessage(message, peerId) {
         const messagesElement = this.shadowRoot.getElementById('messages');
         const messagesArea = this.shadowRoot.getElementById('messages-area');
         const { msgDay, msgTime } = this.getDateString(message.time);
@@ -105,7 +110,7 @@ export class ChatWindow extends Component {
         const messageCard = new MessageCard(msgTime, message.type, message.trackingNo);
 
         if (message.contentType === 'invite') {
-            messageCard.appendChild(new InviteCard(message.type));
+            messageCard.appendChild(new InviteCard(message, this.myId, peerId));
         }
         else {
             messageCard.textContent = message.body;

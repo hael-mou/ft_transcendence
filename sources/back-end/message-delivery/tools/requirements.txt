@@ -51,3 +51,4 @@ virtualenv==20.26.5
 wsproto==1.2.0
 yarl==1.18.3
 zope.interface==7.1.1
+psycopg2-binary==2.9.10

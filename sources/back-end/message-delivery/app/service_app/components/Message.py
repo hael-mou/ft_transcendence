@@ -41,7 +41,7 @@ class Message(models.Model):
     #=== fields : ===============================================================
     sender_id       = models.CharField(max_length=255)
     tracking_no     = models.CharField(max_length=255, blank=False)
-    sent_at         = models.IntegerField(blank=False)
+    sent_at         = models.BigIntegerField(blank=False)
     content_type    = models.CharField(max_length=255, blank=False)
     body            = models.TextField(max_length=500, blank=False)
     chat            = models.ForeignKey('Chat', on_delete=models.CASCADE,

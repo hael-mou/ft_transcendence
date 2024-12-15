@@ -1,5 +1,6 @@
 
 import { Component } from "../../core/component.js";
+import { Router } from "../../core/routing.js";
 
 /* *************************************************************************** #
 #   * InviteCard Component Class :                                             #
@@ -7,10 +8,31 @@ import { Component } from "../../core/component.js";
 export class InviteCard extends Component {
 
     /* === Constructor : ==================================================== */
-    constructor(type)
+    constructor(message, myId, opponentId)
     {
         super();
-        this.type = type || 'sent';
+        this.type = message.type || 'sent';
+        this.myId = myId;
+        this.opponentId = opponentId;
+        this.room_id = message.body;
+    }
+
+    /* === onConnected : ==================================================== */
+    onConnected() {
+
+        const join = this.shadowRoot.getElementById('join');
+        this.addEventListener(join, 'click', async (event) => {
+
+            localStorage.setItem("mode", JSON.stringify("multiplayer"));
+            localStorage.setItem("aiDifficulty", JSON.stringify("normal"));
+            localStorage.setItem("chosenColor", JSON.stringify("#1E90FF"));
+            localStorage.setItem("gameData", JSON.stringify({
+                    playerId: this.myId,
+                    adversaryId: this.opponentId,
+                    roomId: this.room_id
+            }));
+            await Router.handleRouting.call(this, event);
+        });
     }
 
     /* === Template : ====================================================== */
@@ -19,7 +41,7 @@ export class InviteCard extends Component {
         return /* html */ `
             <div class="invite-card">
                 <p> You're invited to join the game 🎮</p>
-                <button id="join"> >> Join << </button>
+                <button id="join" data-link="/game/playing"> >> Join << </button>
             </div>
         `;
     }

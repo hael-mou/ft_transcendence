@@ -1,6 +1,8 @@
 import Game from './entities/Game.js'
 import loadingoverlay from './loadingOverlayComponent.js'
 import avatarsComponent from './avatarsContainerComponent.js';
+import { Alert } from '../custem-alert.js';
+import { Router } from "../../core/routing.js";
 
 const style = `<style>
 * {
@@ -93,6 +95,7 @@ class gameComponent extends HTMLElement {
         // local storage data
         this.gameMode = JSON.parse(localStorage.getItem("mode"));
         this.gameData = JSON.parse(localStorage.getItem("gameData"));
+        console.log(this.gameData);
         this.aiDifficulty = JSON.parse(localStorage.getItem('aiDifficulty'));
         this.defaultAiDifficulty = "normal";
         this.chosenColor = JSON.parse(localStorage.getItem("chosenColor"));
@@ -103,14 +106,6 @@ class gameComponent extends HTMLElement {
         this.paddleSpeed = 5;
         this.ballRadius = 10;
         this.ballSpeed = 8;
-        // ai data
-
-        if (!this.gameMode || (this.gameMode === "multiplayer" || this.gameMode === "tournament") && !this.gameData) {
-            const custemAlert = document.createElement('custem-alert');
-            custemAlert.setMessage("problem encountered, please try again");
-            custemAlert.modalInstance.show();
-            Router.redirect('/game');
-        }
     }
 
     render () {
@@ -118,6 +113,14 @@ class gameComponent extends HTMLElement {
     }
 
     async connectedCallback () {
+
+        if (!this.gameMode || (this.gameMode === "multiplayer" || this.gameMode === "tournament") && !this.gameData) {
+            const custemAlert = new Alert();
+            custemAlert.setMessage("problem encountered, please try again");
+            custemAlert.modalInstance.show();
+            return await Router.redirect('/game');
+        }
+
         this.render();
         this.game = new Game(this.paddleWidth, this.paddleHeight, this.paddleSpeed, this.ballRadius, this.ballSpeed,
             this.aiDifficulty === null ? this.defaultAiDifficulty : this.aiDifficulty, this.chosenColor === null ? this.

@@ -231,7 +231,7 @@ class matchMakinComponent extends HTMLElement {
     async matchMaking () {
         if (this.mode !== "multiplayer" && this.mode !== "tournament") {
             this.enableStartButton();
-            this.fetchAvatars();
+            await this.fetchAvatars();
             this.startButtonEvent();
         } else {
             const url = "wss://127.0.0.1:8080/matchmaking/ws/matchmaker/"
@@ -243,12 +243,12 @@ class matchMakinComponent extends HTMLElement {
                 socket.send(JSON.stringify({rank: "1"}));
             };
 
-            socket.onmessage = (event) => {
+            socket.onmessage = async (event) => {
                 console.log("[WS: ClientSocket]: data is recieved");
                 const data = JSON.parse(event.data);
                 localStorage.setItem("gameData", JSON.stringify({playerId: data.player_id, adversaryId: data.opponent_id, roomId: data.room_id}));
                 this.enableStartButton();
-                this.fetchAvatars();
+                await this.fetchAvatars();
                 this.startButtonEvent();
             };
 
@@ -298,9 +298,9 @@ class matchMakinComponent extends HTMLElement {
         this.startButtonEvent();
     }
 
-    fetchAvatars() {
+    async fetchAvatars() {
         // Set default avatar URLs
-        const defaultAvatar = "/static/assets/imgs/avatar.png";
+        const defaultAvatar = "/static/assets/imgs/avatar.png"; // get my profile picture
         let clientAvatar = defaultAvatar;
         let adversaryAvatar;
 
@@ -308,7 +308,7 @@ class matchMakinComponent extends HTMLElement {
         if (this.mode === "local") {
             adversaryAvatar = "/static/assets/imgs/avatar2.png";
         } else if (this.mode === "multiplayer" || this.mode === "tournament") {
-            adversaryAvatar = null;
+            adversaryAvatar = null; // get my opponent's profile picture
         } else {
             adversaryAvatar = "/static/assets/imgs/normalAi.png";
         }

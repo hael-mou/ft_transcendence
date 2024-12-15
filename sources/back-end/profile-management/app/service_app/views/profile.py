@@ -6,7 +6,7 @@ from ..serializers.profile import ProfileSerializer
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from .authentication import AuthenticationWithID
 
- 
+
 #########################CRUD OPERATIONS#####################################
 class Profiles(ListAPIView):
 
@@ -60,7 +60,7 @@ class MyProfile(CreateAPIView, RetrieveUpdateDestroyAPIView):
 
 
     def perform_destroy(self, instance):
-        instance.delete() 
+        instance.delete()
         # not tested yet
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -74,6 +74,9 @@ class MyProfile(CreateAPIView, RetrieveUpdateDestroyAPIView):
             if 'avatar' in request.FILES:
                 avatar_file = request.FILES['avatar']
                 user.avatar = avatar_file
+                import sys
+                print(user.avatar, avatar_file, file=sys.stderr)
+
             for field in ["username", "last_name", "first_name"]:
                 request_data.setdefault(field, getattr(user, field))
                 setattr(user, field, request_data[field])

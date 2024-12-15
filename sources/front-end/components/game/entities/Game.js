@@ -67,9 +67,9 @@ class Game {
         };
 
         this.socket.onerror = () => {
-            const customAlert = document.createElement("custom-alert");
-            customAlert.setMessage("matchmaking is down currently, try again later!");
-            customAlert.modalInstance.show();
+            const alert = document.createElement("custom-alert");
+            alert.setMessage("matchmaking is down currently, try again later!");
+            alert.modalInstance.show();
             Router.redirect('/game');
         }
     }
@@ -136,6 +136,10 @@ class Game {
                 this.infoSpan.textContent = `You've lost! score: ${this.clientPlayer.score}-${this.adversaryPlayer.score}`;
             }
         }, 500);
+        localStorage.removeItem("gameData");
+        localStorage.removeItem("gameMode");
+        localStorage.removeItem("aiDifficulty");
+        localStorage.removeItem("chosenColor");
     }
 
     pauseGame() {

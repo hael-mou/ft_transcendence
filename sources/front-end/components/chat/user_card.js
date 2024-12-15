@@ -139,7 +139,6 @@ export class UserCard  extends Component {
         } else {
             const response      = await Http.getwithAuth(this.statusUrl);
             const data          = response?.json;
-            console.log(data);
             if (data.status === 'disconnected')
             {
                 onlineElement.classList.remove('online');

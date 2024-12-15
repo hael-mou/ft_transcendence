@@ -432,7 +432,9 @@ async function userEvents(event) {
     }
 
     if (event?.target.id === 'invite') {
-        sendMessage.call(this, null, "inviteUrl", 'invite');
+        const myId = this.myId;
+        const opponentId = this.selectedRoom.user.id
+        sendMessage.call(this, null, `${myId}${opponentId}-${new Date().getTime()}`, 'invite');
     }
 }
 
@@ -534,7 +536,7 @@ function sendMessage(event, message= null, constentType= 'txt') {
         };
 
         this.selectedRoom.messages.push(messageData);
-        chat_window.addMessage(messageData);
+        chat_window.addMessage(messageData, this.selectedRoom.id);
 
         wsm.send(JSON.stringify({
             tracking_no    : trackingNumber,
@@ -579,7 +581,7 @@ async function receiveMessage(event) {
     if (this.selectedRoom === targetRoom) {
         sendReadReceipts(targetRoom);
         const chatWindow = this.shadowRoot.getElementById('chat-window');
-        chatWindow.addMessage(message);
+        chatWindow.addMessage(message, this.selectedRoom.id);
     }
 }
 

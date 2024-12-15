@@ -68,7 +68,7 @@ class avatarComponent extends HTMLElement {
     }
 
     async setAvatar (src) {
-        const defaultAvatarSrc = "/static/assets/imgs/user_avatar.png";
+        const defaultAvatarSrc = localStorage.getItem('avatar') || "/static/assets/imgs/user_avatar.png";
         try {
             const response = await fetch(src);
             const blob = await response.blob();
